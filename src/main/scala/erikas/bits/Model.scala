@@ -65,3 +65,10 @@ object SessionResponse {
     casecodec1(SessionResponse.apply, SessionResponse.unapply)("sessionId")
 }
 
+case class RequestFindElement(using: String, value: String)
+
+object RequestFindElement {
+  implicit def RequestFindElementJson =
+    casecodec2(RequestFindElement.apply, RequestFindElement.unapply)("using","value")
+}
+
