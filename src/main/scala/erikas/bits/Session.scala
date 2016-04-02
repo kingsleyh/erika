@@ -1,9 +1,8 @@
 package erikas.bits
 
+import argonaut.Argonaut._
 import argonaut._
-import Argonaut._
 import erikas.bits.Driver.handleFailedRequest
-import io.shaka.http.Response
 
 class Session(host: String, port: Int, desiredCapabilities: Capabilities = Capabilities(),
               requiredCapabilities: Capabilities = Capabilities()) {
@@ -29,9 +28,11 @@ class Session(host: String, port: Int, desiredCapabilities: Capabilities = Capab
   }
 
   def findElement(by: By): Unit = {
-    val apiElement = RequestFindElement(by.locatorStrategy, by.value).asJson
-    val response = driver.doPost(s"$sessionUrl/element", apiElement)
-
+    val response = driver.doPost(s"$sessionUrl/element", RequestFindElement(by.locatorStrategy, by.value).asJson)
+    handleFailedRequest(sessionUrl, response)
+    println(response.entityAsString)
+    val elementId = response.entityAsString.decodeOption[ElementResponse].get.value.get("ELEMENT").get
+    new WebElement(elementId, sessionId, sessionUrl, driver, this)
   }
 
 

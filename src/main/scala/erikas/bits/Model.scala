@@ -1,6 +1,6 @@
 package erikas.bits
 
-import argonaut._, Argonaut._
+import argonaut.Argonaut._
 
 case class Proxy(proxyType: String = "",
                  proxyAutoconfigUrl: String = "",
@@ -11,11 +11,11 @@ case class Proxy(proxyType: String = "",
                  socksUsername: String = "",
                  socksPassword: String = "",
                  noProxy: String = "")
-object Proxy {
 
+object Proxy {
   implicit def ProxyJson =
-     casecodec9(Proxy.apply, Proxy.unapply)("proxyType", "proxyAutoconfigUrl","ftpProxy","httpProxy","sslProxy","socksProxy",
-       "socksUsername","socksPassword","noProxy")
+    casecodec9(Proxy.apply, Proxy.unapply)("proxyType", "proxyAutoconfigUrl", "ftpProxy", "httpProxy", "sslProxy", "socksProxy",
+      "socksUsername", "socksPassword", "noProxy")
 }
 
 case class Capabilities(browserName: String = "phantomjs",
@@ -36,17 +36,15 @@ case class Capabilities(browserName: String = "phantomjs",
                         proxy: Proxy = Proxy())
 
 object Capabilities {
-
   implicit def CapabilitiesJson =
-      casecodec16(Capabilities.apply, Capabilities.unapply)("browserName", "platform", "version", "javascriptEnabled", "takeScreenshot", "handleAlerts",
-      "databaseEnabled","locationContextEnabled","applicationCacheEnabled","browserConnectionEnabled","cssSelectorsEnabled","webStorageEnabled",
+    casecodec16(Capabilities.apply, Capabilities.unapply)("browserName", "platform", "version", "javascriptEnabled", "takeScreenshot", "handleAlerts",
+      "databaseEnabled", "locationContextEnabled", "applicationCacheEnabled", "browserConnectionEnabled", "cssSelectorsEnabled", "webStorageEnabled",
       "rotatable", "acceptSslCerts", "nativeEvents", "proxy")
 }
 
 case class RequestSession(desiredCapabilities: Capabilities, requiredCapabilities: Capabilities)
 
 object RequestSession {
-
   implicit def RequestSessionJson =
     casecodec2(RequestSession.apply, RequestSession.unapply)("desiredCapabilities", "requiredCapabilities")
 }
@@ -55,7 +53,7 @@ case class RequestUrl(url: String)
 
 object RequestUrl {
   implicit def RequestUrlJson =
-     casecodec1(RequestUrl.apply, RequestUrl.unapply)("url")
+    casecodec1(RequestUrl.apply, RequestUrl.unapply)("url")
 }
 
 case class SessionResponse(sessionId: String)
@@ -69,6 +67,12 @@ case class RequestFindElement(using: String, value: String)
 
 object RequestFindElement {
   implicit def RequestFindElementJson =
-    casecodec2(RequestFindElement.apply, RequestFindElement.unapply)("using","value")
+    casecodec2(RequestFindElement.apply, RequestFindElement.unapply)("using", "value")
 }
 
+case class ElementResponse(sessionId: String, status: Int, value: Map[String, String])
+
+object ElementResponse {
+  implicit def ElementResponseJson =
+    casecodec3(ElementResponse.apply, ElementResponse.unapply)("sessionId", "status", "value")
+}
