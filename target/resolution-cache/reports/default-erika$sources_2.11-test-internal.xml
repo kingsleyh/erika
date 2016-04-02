@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="default"
+		module="erika$sources_2.11"
+		revision="1.0"
+		conf="test-internal"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool"
+		date="20160402180533"/>
+	<dependencies>
+		<module organisation="io.shaka" name="naive-http_2.11">
+			<revision name="85" status="release" pubdate="20160212191957" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/timt/naive-http" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="3">
+				<license name="Apache-2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+				<metadata-artifact status="no" details="" size="3056" time="0" location="/Users/kings/.ivy2/cache/io.shaka/naive-http_2.11/ivy-85.xml" searched="false" origin-is-local="false" origin-location="http://boost-build2.local:8081/nexus/content/groups/all-maven/io/shaka/naive-http_2.11/85/naive-http_2.11-85.pom"/>
+				<caller organisation="default" name="erika$sources_2.11" conf="test, compile, provided, test-internal, runtime, optional" rev="85" rev-constraint-default="85" rev-constraint-dynamic="85" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="naive-http_2.11" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="16396" time="0" location="/Users/kings/.ivy2/cache/io.shaka/naive-http_2.11/srcs/naive-http_2.11-85-sources.jar">
+						<origin-location is-local="false" location="http://boost-build2.local:8081/nexus/content/groups/all-maven/io/shaka/naive-http_2.11/85/naive-http_2.11-85-sources.jar"/>
+					</artifact>
+					<artifact name="naive-http_2.11" type="jar" ext="jar" status="no" details="" size="330913" time="0" location="/Users/kings/.ivy2/cache/io.shaka/naive-http_2.11/jars/naive-http_2.11-85.jar">
+						<origin-location is-local="false" location="http://boost-build2.local:8081/nexus/content/groups/all-maven/io/shaka/naive-http_2.11/85/naive-http_2.11-85.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.argonaut" name="argonaut_2.11">
+			<revision name="6.2-M1" status="release" pubdate="20160220111224" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://argonaut.io" extra-info.apiURL="http://argonaut.io/scaladocs/" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="1">
+				<license name="BSD-3-Clause" url="http://www.opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="3039" time="0" location="/Users/kings/.ivy2/cache/io.argonaut/argonaut_2.11/ivy-6.2-M1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/io/argonaut/argonaut_2.11/6.2-M1/argonaut_2.11-6.2-M1.pom"/>
+				<caller organisation="default" name="erika$sources_2.11" conf="test, compile, provided, test-internal, runtime, optional" rev="6.2-M1" rev-constraint-default="6.2-M1" rev-constraint-dynamic="6.2-M1" callerrev="1.0" extra-info.apiURL="http://argonaut.io/scaladocs/"/>
+				<artifacts>
+					<artifact name="argonaut_2.11" type="jar" ext="jar" status="no" details="" size="2053005" time="0" location="/Users/kings/.ivy2/cache/io.argonaut/argonaut_2.11/jars/argonaut_2.11-6.2-M1.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/io/argonaut/argonaut_2.11/6.2-M1/argonaut_2.11-6.2-M1.jar"/>
+					</artifact>
+					<artifact name="argonaut_2.11" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="33424" time="0" location="/Users/kings/.ivy2/cache/io.argonaut/argonaut_2.11/srcs/argonaut_2.11-6.2-M1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/io/argonaut/argonaut_2.11/6.2-M1/argonaut_2.11-6.2-M1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-reflect">
+			<revision name="2.11.7" status="release" pubdate="20150622211746" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.11.7/" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="2">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2825" time="0" location="/Users/kings/.ivy2/cache/org.scala-lang/scala-reflect/ivy-2.11.7.xml" searched="false" origin-is-local="false" origin-location="http://boost-build-imac.local:8081/nexus/content/groups/all-maven/org/scala-lang/scala-reflect/2.11.7/scala-reflect-2.11.7.pom"/>
+				<caller organisation="default" name="erika$sources_2.11" conf="test, compile, provided, test-internal, runtime, optional" rev="2.11.7" rev-constraint-default="2.11.7" rev-constraint-dynamic="2.11.7" callerrev="1.0" extra-info.apiURL="http://www.scala-lang.org/api/2.11.7/"/>
+				<artifacts>
+					<artifact name="scala-reflect" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="561516" time="0" location="/Users/kings/.ivy2/cache/org.scala-lang/scala-reflect/srcs/scala-reflect-2.11.7-sources.jar">
+						<origin-location is-local="false" location="http://boost-build-imac.local:8081/nexus/content/groups/all-maven/org/scala-lang/scala-reflect/2.11.7/scala-reflect-2.11.7-sources.jar"/>
+					</artifact>
+					<artifact name="scala-reflect" type="jar" ext="jar" status="no" details="" size="4576443" time="0" location="/Users/kings/.ivy2/cache/org.scala-lang/scala-reflect/jars/scala-reflect-2.11.7.jar">
+						<origin-location is-local="false" location="http://boost-build-imac.local:8081/nexus/content/groups/all-maven/org/scala-lang/scala-reflect/2.11.7/scala-reflect-2.11.7.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-library">
+			<revision name="2.11.8" status="release" pubdate="20160304152633" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.11.8/" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="0">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2653" time="0" location="/Users/kings/.ivy2/cache/org.scala-lang/scala-library/ivy-2.11.8.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8.pom"/>
+				<caller organisation="default" name="erika$sources_2.11" conf="test, compile, provided, test-internal, runtime, optional" rev="2.11.8" rev-constraint-default="2.11.8" rev-constraint-dynamic="2.11.8" callerrev="1.0" extra-info.apiURL="http://www.scala-lang.org/api/2.11.8/"/>
+				<artifacts>
+					<artifact name="scala-library" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="911686" time="0" location="/Users/kings/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.11.8-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8-sources.jar"/>
+					</artifact>
+					<artifact name="scala-library" type="jar" ext="jar" status="no" details="" size="5744974" time="0" location="/Users/kings/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.8.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>
