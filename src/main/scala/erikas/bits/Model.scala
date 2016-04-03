@@ -76,3 +76,10 @@ object ElementResponse {
   implicit def ElementResponseJson =
     casecodec3(ElementResponse.apply, ElementResponse.unapply)("sessionId", "status", "value")
 }
+
+case class StringResponse(sessionId: String, status: Int, value: String)
+
+object StringResponse {
+  implicit def StringResponseJson =
+    casecodec3(StringResponse.apply, StringResponse.unapply)("sessionId", "status", "value")
+}

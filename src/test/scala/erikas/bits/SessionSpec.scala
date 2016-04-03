@@ -32,8 +32,11 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.postResponse = Response(OK,entity = Some(Entity("""{"sessionId":"test-session-id","status":0,"value":{}}""")))
       session.visitUrl("http://some-url")
       testDriver.getPostRequest.nospaces should be(PhantomRequests.visitUrl)
-
     }
+
+//    "findElement should find an element" in {
+//
+//    }
 
 
   }

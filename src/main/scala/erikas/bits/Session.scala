@@ -1,9 +1,7 @@
 package erikas.bits
 
 import argonaut.Argonaut._
-import argonaut.Json
 import erikas.bits.Driver.handleFailedRequest
-import io.shaka.http.Response
 
 class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabilities(),
               requiredCapabilities: Capabilities = Capabilities()) {
@@ -15,7 +13,11 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     val response = driver.doPost("/session", RequestSession(desiredCapabilities, requiredCapabilities).asJson)
     handleFailedRequest("/session", response)
 
-    sessionId = response.entityAsString.decodeOption[SessionResponse].get.sessionId
+    sessionId = response.entityAsString.decodeEither[SessionResponse] match {
+      case Left(message) => throw APIResponseError(message)
+      case Right(sessionResponse) => sessionResponse.sessionId
+    }
+
     sessionUrl = s"/session/$sessionId"
 
     println(s"[INFO] creating new session with id: $sessionId")
@@ -31,8 +33,12 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     val response = driver.doPost(s"$sessionUrl/element", RequestFindElement(by.locatorStrategy, by.value).asJson)
     handleFailedRequest(sessionUrl, response)
     println(response.entityAsString)
-    val elementId = response.entityAsString.decodeOption[ElementResponse].get.value.get("ELEMENT").get
-    new WebElement(elementId, sessionId, sessionUrl, driver, this)
+
+    val element: Option[String] = response.entityAsString.decodeEither[ElementResponse] match {
+      case Left(message) => throw APIResponseError(message)
+      case Right(elementResponse) => elementResponse.value.get("ELEMENT")
+    }
+    new WebElement(element.get, sessionId, sessionUrl, driver, this)
   }
 
 
