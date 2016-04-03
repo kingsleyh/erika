@@ -34,11 +34,14 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     handleFailedRequest(sessionUrl, response)
     println(response.entityAsString)
 
-    val element: Option[String] = response.entityAsString.decodeEither[ElementResponse] match {
+    val elementId: String = response.entityAsString.decodeEither[ElementResponse] match {
       case Left(message) => throw APIResponseError(message)
-      case Right(elementResponse) => elementResponse.value.get("ELEMENT")
+      case Right(elementResponse) => elementResponse.value.get("ELEMENT") match {
+        case None => throw APIResponseError("oops")
+        case Some(ele) => ele
+      }
     }
-    new WebElement(element.get, sessionId, sessionUrl, driver, this)
+    new WebElement(elementId, sessionId, sessionUrl, driver, this)
   }
 
 
@@ -50,6 +53,6 @@ object Session extends App {
   val session = new Session(Driver("127.0.0.1", 7878))
   session.create()
   session.visitUrl("http://www.southwark.gov.uk/doitonline")
-//  session.findElement(By.id("SearchSite"))
+  session.findElement(By.id("SearchSite"))
 
 }
