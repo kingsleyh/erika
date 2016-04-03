@@ -1,13 +1,13 @@
 package erikas.bits
 
 import argonaut.Argonaut._
-import argonaut._
+import argonaut.Json
 import erikas.bits.Driver.handleFailedRequest
+import io.shaka.http.Response
 
-class Session(host: String, port: Int, desiredCapabilities: Capabilities = Capabilities(),
+class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabilities(),
               requiredCapabilities: Capabilities = Capabilities()) {
 
-  val driver = new Driver(host, port)
   var sessionId = ""
   var sessionUrl = ""
 
@@ -27,7 +27,7 @@ class Session(host: String, port: Int, desiredCapabilities: Capabilities = Capab
     this
   }
 
-  def findElement(by: By): Unit = {
+  def findElement(by: By): WebElement = {
     val response = driver.doPost(s"$sessionUrl/element", RequestFindElement(by.locatorStrategy, by.value).asJson)
     handleFailedRequest(sessionUrl, response)
     println(response.entityAsString)
@@ -41,9 +41,9 @@ class Session(host: String, port: Int, desiredCapabilities: Capabilities = Capab
 
 object Session extends App {
 
-  val session = new Session("127.0.0.1", 7878)
+  val session = new Session(Driver("127.0.0.1", 7878))
   session.create()
   session.visitUrl("http://www.southwark.gov.uk/doitonline")
-  session.findElement(By.id("SearchSite"))
+//  session.findElement(By.id("SearchSite"))
 
 }
