@@ -1,7 +1,9 @@
 package erikas.bits
 
 import argonaut.Argonaut._
+import argonaut.Json
 import erikas.bits.Driver.handleFailedRequest
+import erikas.bits.ResponseUtils._
 
 class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabilities(),
               requiredCapabilities: Capabilities = Capabilities()) {
@@ -13,10 +15,7 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     val response = driver.doPost("/session", RequestSession(desiredCapabilities, requiredCapabilities).asJson)
     handleFailedRequest("/session", response)
 
-    sessionId = response.entityAsString.decodeEither[SessionResponse] match {
-      case Left(message) => throw APIResponseError(message)
-      case Right(sessionResponse) => sessionResponse.sessionId
-    }
+    sessionId = response.decode[SessionResponse].sessionId
 
     sessionUrl = s"/session/$sessionId"
 
@@ -29,19 +28,20 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     this
   }
 
-  def findElement(by: By): WebElement = {
-    val response = driver.doPost(s"$sessionUrl/element", RequestFindElement(by.locatorStrategy, by.value).asJson)
+  def findElement(by: By): String = {
+    val asJson: Json = RequestFindElement(by.locatorStrategy, by.value).asJson
+    println(asJson)
+    val response = driver.doPost(s"$sessionUrl/element", asJson)
     handleFailedRequest(sessionUrl, response)
     println(response.entityAsString)
 
-    val elementId: String = response.entityAsString.decodeEither[ElementResponse] match {
-      case Left(message) => throw APIResponseError(message)
-      case Right(elementResponse) => elementResponse.value.get("ELEMENT") match {
-        case None => throw APIResponseError("oops")
-        case Some(ele) => ele
-      }
+    val elementId = response.decode[ElementResponse].value.get("ELEMENT") match {
+      case None => throw APIResponseError("oops")
+      case Some(ele) => ele
     }
-    new WebElement(elementId, sessionId, sessionUrl, driver, this)
+
+    elementId
+    //    new WebElement(elementId, sessionId, sessionUrl, driver, this)
   }
 
 

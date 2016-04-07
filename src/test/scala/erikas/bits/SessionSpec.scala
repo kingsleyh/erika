@@ -34,9 +34,20 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.getPostRequest.nospaces should be(PhantomRequests.visitUrl)
     }
 
-//    "findElement should find an element" in {
-//
-//    }
+    "findElement should find an element" in {
+      val testDriver = TestDriver("some-host",1234)
+      val session = new Session(testDriver)
+
+      testDriver.postResponse = Response(OK,entity = Some(Entity("""{"sessionId":"test-session-id"}""")))
+      session.create()
+
+      testDriver.postResponse = Response(OK,entity = Some(Entity("""{"sessionId":"test-session-id","status":0,"value":{"ELEMENT":":wdc:1460015822532"}}""")))
+      val elementId = session.findElement(By.id("some-id"))
+      testDriver.getPostRequest.nospaces should be(PhantomRequests.findElement)
+
+      elementId should be(":wdc:1460015822532")
+
+    }
 
 
   }

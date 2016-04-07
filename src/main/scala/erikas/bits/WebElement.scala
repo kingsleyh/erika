@@ -1,5 +1,7 @@
 package erikas.bits
 
+import erikas.bits.Driver.handleFailedRequest
+
 class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) {
 
   val elementSessionUrl = s"$sessionUrl/element/$elementId"
@@ -14,7 +16,7 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
 //  def getText():String = {
 //    val response = driver.doGet(s"$elementSessionUrl/text")
-//    Driver.handleFailedRequest(elementSessionUrl, response)
+//    handleFailedRequest(elementSessionUrl, response)
 //
 //  }
 
