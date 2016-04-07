@@ -33,9 +33,7 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     elementId
   }
 
-
 }
-
 
 object Session extends App {
 
