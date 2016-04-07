@@ -11,7 +11,9 @@ case class APIResponseError(message: String) extends Exception(message)
 
 trait PhantomDriver {
   def doGet(url: String): Response
+
   def doPost(url: String, json: Json): Response
+
   def doDelete(url: String): Response
 }
 
@@ -39,7 +41,7 @@ object Driver {
 
   def handleRequest(url: String, response: Response) = {
     response match {
-      case r@Response(OK,_,_) => r
+      case r@Response(OK, _, _) => r
       case _ => throw APIResponseError(s"request for $url returned failed error code: ${response.status.code} with message: ${response.entityAsString}")
     }
   }
@@ -47,22 +49,28 @@ object Driver {
 
 class TestDriver(host: String, port: Int) extends PhantomDriver {
 
-  var getResponse = Response(OK, entity = Some(Entity("hello")))
-  var postResponse = Response(OK, entity = Some(Entity("hello")))
-  var deleteResponse = Response(OK, entity = Some(Entity("hello")))
+  private var postResponse = Response(OK, entity = Some(Entity("hello")))
+  private val getResponse = Response(OK, entity = Some(Entity("hello")))
+  private val deleteResponse = Response(OK, entity = Some(Entity("hello")))
 
-  var getPostRequest = Json()
+  private var postRequest = Json()
 
   override def doGet(url: String): Response = getResponse
 
   override def doPost(url: String, json: Json): Response = {
-    getPostRequest = json
+    postRequest = json
     postResponse
   }
 
   override def doDelete(url: String): Response = deleteResponse
 
+  def withPostResponse(cannedResponse: String, action: () => Unit): TestDriver = {
+    postResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    action()
+    this
+  }
 
+  def getPostRequest = postRequest.nospaces
 
 }
 
@@ -71,4 +79,5 @@ object TestDriver {
   def apply(host: String, port: Int): TestDriver = new TestDriver(host, port)
 
   def handleFailedRequest(url: String, response: Response) = Driver.handleRequest(url, response)
+
 }
