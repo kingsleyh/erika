@@ -1,6 +1,6 @@
 package erikas.bits
 
-import erikas.bits.Driver.handleFailedRequest
+import erikas.bits.Driver.handleRequest
 
 class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) {
 

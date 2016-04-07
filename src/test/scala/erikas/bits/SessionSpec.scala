@@ -1,8 +1,7 @@
 package erikas.bits
 
-import argonaut.Json
-import io.shaka.http._
 import io.shaka.http.Status.OK
+import io.shaka.http._
 import org.scalatest.{FreeSpec, Matchers}
 
 class SessionSpec extends FreeSpec with Matchers {

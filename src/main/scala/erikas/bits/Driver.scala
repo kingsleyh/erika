@@ -4,7 +4,7 @@ import argonaut._
 import io.shaka.http.ContentType.APPLICATION_JSON
 import io.shaka.http.Http.http
 import io.shaka.http.Request.{DELETE, GET, POST}
-import io.shaka.http.{Entity, Response}
+import io.shaka.http.{Entity, Response, Status}
 import io.shaka.http.Status.OK
 
 case class APIResponseError(message: String) extends Exception(message)
@@ -37,9 +37,11 @@ object Driver {
 
   def apply(host: String, port: Int): Driver = new Driver(host, port)
 
-  def handleFailedRequest(url: String, response: Response) = {
-    if (response.status != OK)
-      throw APIResponseError(s"request for $url returned failed error code: ${response.status.code} with message: ${response.entityAsString}")
+  def handleRequest(url: String, response: Response) = {
+    response match {
+      case r@Response(OK,_,_) => r
+      case _ => throw APIResponseError(s"request for $url returned failed error code: ${response.status.code} with message: ${response.entityAsString}")
+    }
   }
 }
 
@@ -68,5 +70,5 @@ object TestDriver {
 
   def apply(host: String, port: Int): TestDriver = new TestDriver(host, port)
 
-  def handleFailedRequest(url: String, response: Response) = Driver.handleFailedRequest(url, response)
+  def handleFailedRequest(url: String, response: Response) = Driver.handleRequest(url, response)
 }
