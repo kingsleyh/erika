@@ -50,7 +50,7 @@ object Driver {
 class TestDriver(host: String, port: Int) extends PhantomDriver {
 
   private var postResponse = Response(OK, entity = Some(Entity("hello")))
-  private val getResponse = Response(OK, entity = Some(Entity("hello")))
+  private var getResponse = Response(OK, entity = Some(Entity("hello")))
   private val deleteResponse = Response(OK, entity = Some(Entity("hello")))
 
   private var postRequest = Json()
@@ -70,7 +70,23 @@ class TestDriver(host: String, port: Int) extends PhantomDriver {
     this
   }
 
+  def withPostResponseAction[T](cannedResponse: String, action: () => T): T = {
+    postResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    action()
+  }
+
   def getPostRequest = postRequest.nospaces
+
+  def withGetResponse(cannedResponse: String, action: () => Unit): TestDriver = {
+    getResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    action()
+    this
+  }
+
+  def withGetResponseAction[T](cannedResponse: String, action: () => T): T = {
+    getResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    action()
+  }
 
 }
 

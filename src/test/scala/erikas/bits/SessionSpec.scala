@@ -28,9 +28,25 @@ class SessionSpec extends FreeSpec with Matchers {
     "findElement should find an element" in {
       val (session, testDriver) = SessionHelper()
 
-      testDriver.withPostResponse(PhantomResponses.sessionResponse,     () => session.create())
-                .withPostResponse(PhantomResponses.findElementResponse, () => session.findElement(By.id("some-id")))
-                .getPostRequest should be(PhantomRequests.findElement)
+      val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+                .withPostResponseAction(PhantomResponses.findElementResponse,     () => session.findElement(By.id("some-id")))
+
+      testDriver.getPostRequest should be(PhantomRequests.findElement)
+      element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
+    }
+
+    "Timeouts" - {
+
+      "getGlobalTimeout should return the global timeout in milliseconds" in {
+        val (session, _) = SessionHelper()
+        session.getGlobalTimeout should be(5000)
+      }
+
+      "setGlobalTimeout should set the global timeout" in {
+        val (session, _) = SessionHelper()
+        session.setGlobalTimeout(10000)
+        session.getGlobalTimeout should be(10000)
+      }
 
     }
 

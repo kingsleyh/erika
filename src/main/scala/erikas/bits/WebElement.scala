@@ -1,23 +1,16 @@
 package erikas.bits
 
 import erikas.bits.Driver.handleRequest
+import erikas.bits.ResponseUtils._
 
 class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) {
 
   val elementSessionUrl = s"$sessionUrl/element/$elementId"
 
-//  public string getText()
-//  {
-//    HttpResponse response = driver.doGet(elementSessionUrl ~ "/text");
-//    handleFailedRequest(elementSessionUrl, response);
-//    StringResponse stringResponse = parseJSON(response.content).fromJSON!StringResponse;
-//    return stringResponse.value;
-//  }
-
-//  def getText():String = {
-//    val response = driver.doGet(s"$elementSessionUrl/text")
-//    handleFailedRequest(elementSessionUrl, response)
-//
-//  }
+  def getText:String = {
+    val el = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/text"))
+    println(el.entityAsString)
+    el.decode[StringResponse].value
+  }
 
 }

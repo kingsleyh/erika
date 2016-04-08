@@ -19,6 +19,7 @@ case class By(strategy: LocatorStrategy.Value, value: String) {
 object By {
 
   def id(value: String) = new By(LocatorStrategy.ID, value)
+  def className(value: String) = new By(LocatorStrategy.CLASS_NAME, value)
 
 }
 
