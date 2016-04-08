@@ -6,5 +6,7 @@ object PhantomRequests {
 
   val visitUrl = """{"url":"http://some-url"}"""
 
-  val findElement = """{"using":"id","value":"some-id"}"""
+  val findElementById = """{"using":"id","value":"some-id"}"""
+
+  val findElementByClassName = """{"using":"class name","value":"some-classname"}"""
 }

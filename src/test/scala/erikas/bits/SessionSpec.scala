@@ -25,14 +25,28 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
-    "findElement should find an element" in {
-      val (session, testDriver) = SessionHelper()
+    "Finding Elements" - {
 
-      val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-                .withPostResponseAction(PhantomResponses.findElementResponse,     () => session.findElement(By.id("some-id")))
+      "findElement should find an element by Id" in {
+        val (session, testDriver) = SessionHelper()
 
-      testDriver.getPostRequest should be(PhantomRequests.findElement)
-      element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
+        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+                      .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(By.id("some-id")))
+
+        testDriver.getPostRequest should be(PhantomRequests.findElementById)
+        element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
+      }
+
+      "findElement should find an element by className" in {
+        val (session, testDriver) = SessionHelper()
+
+        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+                      .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(By.className("some-classname")))
+
+        testDriver.getPostRequest should be(PhantomRequests.findElementByClassName)
+        element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
+      }
+
     }
 
     "Timeouts" - {
