@@ -51,8 +51,10 @@ object Session extends App {
   session.create()
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(1000)
-  val element = session.findElement(By.className("entry-title"))
-  Thread.sleep(1000)
-  println(element.getAttribute("class"))
-  element.isEnabled
+  session.getSessions
+
+  //  val element = session.findElement(By.className("entry-title"))
+//  Thread.sleep(1000)
+//  println(element.getAttribute("class"))
+//  element.isEnabled
 }

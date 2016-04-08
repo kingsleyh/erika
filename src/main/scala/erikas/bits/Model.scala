@@ -22,7 +22,7 @@ case class Capabilities(browserName: String = "phantomjs",
                         platform: String = "OSX",
                         version: String = "phantomjs",
                         javascriptEnabled: Boolean = true,
-                        takeScreenshot: Boolean = true,
+                        takesScreenshot: Boolean = true,
                         handlesAlerts: Boolean = true,
                         databaseEnabled: Boolean = true,
                         locationContextEnabled: Boolean = true,
@@ -37,7 +37,7 @@ case class Capabilities(browserName: String = "phantomjs",
 
 object Capabilities {
   implicit def CapabilitiesJson =
-    casecodec16(Capabilities.apply, Capabilities.unapply)("browserName", "platform", "version", "javascriptEnabled", "takeScreenshot", "handleAlerts",
+    casecodec16(Capabilities.apply, Capabilities.unapply)("browserName", "platform", "version", "javascriptEnabled", "takesScreenshot", "handlesAlerts",
       "databaseEnabled", "locationContextEnabled", "applicationCacheEnabled", "browserConnectionEnabled", "cssSelectorsEnabled", "webStorageEnabled",
       "rotatable", "acceptSslCerts", "nativeEvents", "proxy")
 }
@@ -69,7 +69,7 @@ object Sessions {
   implicit def Decoder = jdecode2L(Sessions.apply)("id", "capabilities")
 }
 
-case class SessionResponse(sessionId: String, status: Int, value: List[Sessions])
+case class SessionResponse(sessionId: Option[String], status: Int, value: List[Sessions])
 
 object SessionResponse {
   implicit def Decoder = jdecode3L(SessionResponse.apply)("sessionId","status","value")
