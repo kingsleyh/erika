@@ -12,8 +12,8 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
   var globalTimeout = 5000
 
   def create(): Unit = {
-    sessionId = handleRequest("/session", driver.doPost("/session", RequestSession(desiredCapabilities, requiredCapabilities).asJson))
-      .response.decode[SessionResponse].sessionId
+    sessionId = handleRequest("/session", driver.doPost("/session", SessionRequest(desiredCapabilities, requiredCapabilities).asJson))
+      .response.decode[CreateSessionResponse].sessionId
 
     sessionUrl = s"/session/$sessionId"
     println(s"[INFO] creating new session with id: $sessionId")
@@ -24,18 +24,23 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
   def getGlobalTimeout = globalTimeout
 
   def visitUrl(url: String) = {
-    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/url", RequestUrl(url).asJson))
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/url", UrlRequest(url).asJson))
     this
   }
 
   def findElement(by: By): WebElement = {
-    val elementId = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/element", RequestFindElement(by.locatorStrategy, by.value).asJson))
+    val elementId = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/element", FindElementRequest(by.locatorStrategy, by.value).asJson))
       .response.decode[ElementResponse].value.get("ELEMENT") match {
       case None => throw APIResponseError("oops")
       case Some(ele) => ele
     }
 
     new WebElement(elementId, sessionId, sessionUrl, driver, this)
+  }
+
+  def getSessions: List[Sessions] = {
+    val url = "/sessions"
+    handleRequest(url, driver.doGet(url)).response.decode[SessionResponse].value
   }
 
 }
@@ -47,5 +52,5 @@ object Session extends App {
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(2000)
   val element = session.findElement(By.className("entry-title"))
-  println(element.getText)
+  println(element.getAttribute("class"))
 }

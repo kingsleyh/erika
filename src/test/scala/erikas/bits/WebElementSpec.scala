@@ -6,9 +6,15 @@ class WebElementSpec extends FreeSpec with Matchers {
 
   "WebElement" - {
 
-    "findElement should find an element" in {
+    "getText should return some text" in {
       val element = WebElementHelper()
-      element.withGetResponseAction(WebElementResponses.getTextResponse, () => element.get().getText) should be("some text")
+      element.withGetResponseAction(WebElementResponses.getTextResponse, () => element.get().getText) should be(Some("some text"))
+    }
+
+    "getAttribute should return the attribute" in {
+      val element = WebElementHelper()
+      element.withGetResponseAction(WebElementResponses.getAttributeResponse, () => element.get()
+        .getAttribute("href")) should be(Some("some attribute"))
     }
 
 

@@ -42,44 +42,78 @@ object Capabilities {
       "rotatable", "acceptSslCerts", "nativeEvents", "proxy")
 }
 
-case class RequestSession(desiredCapabilities: Capabilities, requiredCapabilities: Capabilities)
+case class SessionRequest(desiredCapabilities: Capabilities, requiredCapabilities: Capabilities)
 
-object RequestSession {
-  implicit def RequestSessionJson =
-    casecodec2(RequestSession.apply, RequestSession.unapply)("desiredCapabilities", "requiredCapabilities")
+object SessionRequest {
+  implicit def Encoder =
+    jencode2L((o: SessionRequest) => (o.desiredCapabilities, o.requiredCapabilities))("desiredCapabilities", "requiredCapabilities")
 }
 
-case class RequestUrl(url: String)
+case class UrlRequest(url: String)
 
-object RequestUrl {
-  implicit def RequestUrlJson =
-    casecodec1(RequestUrl.apply, RequestUrl.unapply)("url")
+object UrlRequest {
+  implicit def Encoder =
+    jencode1L((o: UrlRequest) => o.url)("url")
 }
 
-case class SessionResponse(sessionId: String)
+case class CreateSessionResponse(sessionId: String)
+
+object CreateSessionResponse {
+  implicit def Decoder =
+    jdecode1L(CreateSessionResponse.apply)("sessionId")
+}
+
+case class Sessions(id: String, capabilities: Capabilities)
+
+object Sessions {
+  implicit def Decoder = jdecode2L(Sessions.apply)("id", "capabilities")
+}
+
+case class SessionResponse(sessionId: String, status: Int, value: List[Sessions])
 
 object SessionResponse {
-  implicit def SessionResponseJson =
-    casecodec1(SessionResponse.apply, SessionResponse.unapply)("sessionId")
+  implicit def Decoder = jdecode3L(SessionResponse.apply)("sessionId","status","value")
 }
 
-case class RequestFindElement(using: String, value: String)
+case class FindElementRequest(using: String, value: String)
 
-object RequestFindElement {
-  implicit def RequestFindElementJson =
-    casecodec2(RequestFindElement.apply, RequestFindElement.unapply)("using", "value")
+object FindElementRequest {
+  implicit def Encoder =
+    jencode2L((o: FindElementRequest) => (o.using, o.value))("using", "value")
 }
 
 case class ElementResponse(sessionId: String, status: Int, value: Map[String, String])
 
 object ElementResponse {
-  implicit def ElementResponseJson =
-    casecodec3(ElementResponse.apply, ElementResponse.unapply)("sessionId", "status", "value")
+  implicit def Decoder =
+    jdecode3L(ElementResponse.apply)("sessionId", "status", "value")
 }
 
-case class StringResponse(sessionId: String, status: Int, value: String)
+case class StringResponse(sessionId: String, status: Int, value: Option[String])
 
 object StringResponse {
-  implicit def StringResponseJson =
-    casecodec3(StringResponse.apply, StringResponse.unapply)("sessionId", "status", "value")
+  implicit def Decoder =
+    jdecode3L(StringResponse.apply)("sessionId", "status", "value")
 }
+
+case class BooleanResponse(sessionId: String, status: Int, value: Boolean)
+
+object BooleanResponse {
+  implicit def Decoder =
+    jdecode3L(BooleanResponse.apply)("sessionId", "status", "value")
+}
+
+case class ElementClickRequest(id: String)
+
+object ElementClickRequest {
+  implicit def Encoder =
+     jencode1L((o: ElementClickRequest) => o.id)("id")
+}
+
+case class ElementClearRequest(id: String, sessionId: String)
+
+object ElementClearRequest {
+  implicit def Encoder =
+     jencode2L((o: ElementClearRequest) => (o.id, o.sessionId))("id", "sessionId")
+}
+
