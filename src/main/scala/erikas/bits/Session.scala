@@ -50,7 +50,9 @@ object Session extends App {
   val session = new Session(Driver("127.0.0.1", 7878))
   session.create()
   session.visitUrl("http://jamesclear.com/")
-  Thread.sleep(2000)
+  Thread.sleep(1000)
   val element = session.findElement(By.className("entry-title"))
+  Thread.sleep(1000)
   println(element.getAttribute("class"))
+  element.isEnabled
 }
