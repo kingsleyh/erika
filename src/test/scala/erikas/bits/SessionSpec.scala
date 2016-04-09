@@ -55,12 +55,59 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
-    "dispose should instruct the server to delete the current session" in {
+    "getWindowHandles should find a list of handles" in {
       val (session, testDriver) = SessionHelper()
 
-      testDriver.withPostResponse(PhantomResponses.sessionResponse,      () => session.create())
-        .withGetResponseAction(PhantomResponses.anyResponse, () => session.dispose) should be("")
+      val expectedResponse = List(WindowHandle("2c6d57d0-fe8f-11e5-ab4d-4bc17e26c21d"))
 
+      testDriver.withPostResponse(PhantomResponses.sessionResponse,       () => session.create())
+        .withGetResponseAction(PhantomResponses.getWindowHandlesResponse, () => session.getWindowHandles) should be(expectedResponse)
+
+    }
+
+    "getWindowHandle should find the current window handle" in {
+      val (session, testDriver) = SessionHelper()
+
+      val expectedResponse = WindowHandle("2c6d57d0-fe8f-11e5-ab4d-4bc17e26c21d")
+
+      testDriver.withPostResponse(PhantomResponses.sessionResponse,       () => session.create())
+        .withGetResponseAction(PhantomResponses.getWindowHandleResponse,  () => session.getWindowHandle) should be(expectedResponse)
+
+    }
+
+    "getUrl should find the url of the current page" in {
+      val (session, testDriver) = SessionHelper()
+
+      testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+        .withGetResponseAction(PhantomResponses.getUrlResponse,     () => session.getUrl) should be(Some("http://someurl.com/"))
+
+    }
+
+    "With nothing to assert" - {
+
+      "dispose should instruct the server to delete the current session" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withDeleteResponse(PhantomResponses.anyResponse,           () => session.dispose)
+
+      }
+
+      "goForward should instruct the server to perform a browser forward" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponse(PhantomResponses.anyResponse, () => session.goForward)
+
+      }
+
+      "goBack should instruct the server to perform a browser back" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponse(PhantomResponses.anyResponse, () => session.goBack)
+
+      }
     }
 
     "Finding Elements" - {

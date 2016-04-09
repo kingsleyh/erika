@@ -1,6 +1,7 @@
 package erikas.bits
 
 import argonaut.Argonaut._
+import argonaut.Json
 import erikas.bits.Driver.handleRequest
 import erikas.bits.ResponseUtils._
 
@@ -65,7 +66,25 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
 
   def dispose = handleRequest(sessionUrl, driver.doDelete(sessionUrl))
 
+  def getWindowHandles: List[WindowHandle] = {
+    handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/window_handles")).decode[WindowHandlesResponse].value.map(h => WindowHandle(h))
+  }
 
+  def getWindowHandle: WindowHandle = {
+    WindowHandle(handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/window_handle")).decode[WindowHandleResponse].value)
+  }
+
+  def getUrl: Option[String] = {
+    handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/url")).decode[StringResponse].value
+  }
+
+  def goForward = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/forward", Json()))
+  }
+
+  def goBack = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/back", Json()))
+  }
 
 
 }
@@ -76,8 +95,8 @@ object Session extends App {
   session.create()
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(1000)
-  println(session.findElements(By.className("entry-title")))
-  session.dispose
+//  println(session.findElements(By.className("entry-title")))
+  println(session.getUrl)
 
   //  val element = session.findElement(By.className("entry-title"))
 //  Thread.sleep(1000)

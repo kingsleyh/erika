@@ -51,7 +51,7 @@ class TestDriver(host: String, port: Int) extends PhantomDriver {
 
   private var postResponse = Response(OK, entity = Some(Entity("hello")))
   private var getResponse = Response(OK, entity = Some(Entity("hello")))
-  private val deleteResponse = Response(OK, entity = Some(Entity("hello")))
+  private var deleteResponse = Response(OK, entity = Some(Entity("hello")))
 
   private var postRequest = Json()
 
@@ -86,6 +86,12 @@ class TestDriver(host: String, port: Int) extends PhantomDriver {
   def withGetResponseAction[T](cannedResponse: String, action: () => T): T = {
     getResponse = Response(OK, entity = Some(Entity(cannedResponse)))
     action()
+  }
+
+  def withDeleteResponse(cannedResponse: String, action: () => Unit): TestDriver = {
+    deleteResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    action()
+    this
   }
 
 }

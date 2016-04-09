@@ -142,3 +142,21 @@ object CapabilityResponse {
   implicit def Decoder = jdecode3L(CapabilityResponse.apply)("sessionId", "status", "value")
 }
 
+case class WindowHandle(handleId: String)
+
+object WindowHandle {
+  implicit def Decoder = jdecode1L(WindowHandle.apply)("handleId")
+}
+
+case class WindowHandleResponse(sessionId: String, status: Int, value: String)
+
+object WindowHandleResponse {
+  implicit def Decoder = jdecode3L(WindowHandleResponse.apply)("sessionId", "status", "value")
+}
+
+case class WindowHandlesResponse(sessionId: String, status: Int, value: List[String])
+
+object WindowHandlesResponse {
+  implicit def Decoder = jdecode3L(WindowHandlesResponse.apply)("sessionId", "status", "value")
+}
+
