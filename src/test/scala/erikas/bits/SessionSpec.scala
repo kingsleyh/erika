@@ -33,31 +33,52 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse,  () => session.create())
                 .withGetResponseAction(PhantomResponses.getSessionsResponse, () => session.getSessions) should be(expectedResponse)
 
-
     }
 
     "Finding Elements" - {
 
       "findElement should find an element by Id" in {
-        val (session, testDriver) = SessionHelper()
-
-        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-                      .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(By.id("some-id")))
-
-        testDriver.getPostRequest should be(PhantomRequests.findElementById)
-        element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
+        AssertFindElementBy(PhantomRequests.findElementById, By.id("some-id"))
       }
 
       "findElement should find an element by className" in {
-        val (session, testDriver) = SessionHelper()
-
-        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-                      .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(By.className("some-classname")))
-
-        testDriver.getPostRequest should be(PhantomRequests.findElementByClassName)
-        element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
+        AssertFindElementBy(PhantomRequests.findElementByClassName, By.className("some-classname"))
       }
 
+      "findElement should find an element by cssSelector" in {
+        AssertFindElementBy(PhantomRequests.findElementByCssSelector, By.cssSelector(".some-selector"))
+      }
+
+      "findElement should find an element by name" in {
+        AssertFindElementBy(PhantomRequests.findElementByName, By.name("name"))
+      }
+
+      "findElement should find an element by linkText" in {
+        AssertFindElementBy(PhantomRequests.findElementByLinkText, By.linkText("some link text"))
+      }
+
+      "findElement should find an element by partialLinkText" in {
+        AssertFindElementBy(PhantomRequests.findElementByPartialLinkText, By.partialLinkText("some partial text"))
+      }
+
+      "findElement should find an element by tagName" in {
+        AssertFindElementBy(PhantomRequests.findElementByTagName, By.tagName("tagname"))
+      }
+
+      "findElement should find an element by xpath" in {
+        AssertFindElementBy(PhantomRequests.findElementByCssSelector, By.xpath("//*path"))
+      }
+
+    }
+
+    def AssertFindElementBy(expectedRequest: String, locator: By) = {
+      val (session, testDriver) = SessionHelper()
+
+      val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+        .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(locator))
+
+      testDriver.getPostRequest should be(expectedRequest)
+      element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
     }
 
     "Timeouts" - {

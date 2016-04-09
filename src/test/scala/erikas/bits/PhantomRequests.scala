@@ -9,4 +9,14 @@ object PhantomRequests {
   val findElementById = """{"using":"id","value":"some-id"}"""
 
   val findElementByClassName = """{"using":"class name","value":"some-classname"}"""
+
+  val findElementByCssSelector = """{"using":"css selector","value":".some-selector"}"""
+
+  val findElementByTagName = """{"using":"css selector","value":".some-selector"}"""
+
+  val findElementByPartialLinkText = """{"using":"css selector","value":".some-selector"}"""
+
+  val findElementByLinkText = """{"using":"css selector","value":".some-selector"}"""
+
+  val findElementByName = """{"using":"name","value":"name"}"""
 }
