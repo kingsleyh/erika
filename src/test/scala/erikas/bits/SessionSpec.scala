@@ -35,6 +35,17 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
+    "getStatus should find the status of the server" in {
+      val (session, testDriver) = SessionHelper()
+
+      val expectedResponse = ServerStatus(Map("version" -> "1.0.4"),Map("name" -> "mac", "version" -> "unknown", "arch" -> "32bit"))
+
+      testDriver.withPostResponse(PhantomResponses.sessionResponse,  () => session.create())
+                .withGetResponseAction(PhantomResponses.getStatusResponse, () => session.getStatus) should be(expectedResponse)
+
+    }
+
+
     "Finding Elements" - {
 
       "findElement should find an element by Id" in {

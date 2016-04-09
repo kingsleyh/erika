@@ -124,3 +124,15 @@ object ElementClearRequest {
      jencode2L((o: ElementClearRequest) => (o.id, o.sessionId))("id", "sessionId")
 }
 
+case class ServerStatus(build: Map[String, String], os: Map[String, String])
+
+object ServerStatus {
+  implicit def Decoder = jdecode2L(ServerStatus.apply)("build","os")
+}
+
+case class ServerStatusResponse(sessionId: Option[String], status: Int, value: ServerStatus)
+
+object ServerStatusResponse {
+  implicit def Decoder = jdecode3L(ServerStatusResponse.apply)("sessionId", "status" ,"value")
+}
+
