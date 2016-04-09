@@ -66,7 +66,7 @@ class SessionSpec extends FreeSpec with Matchers {
       }
 
       "findElement should find an element by xpath" in {
-        AssertFindElementBy(PhantomRequests.findElementByCssSelector, By.xpath("//*path"))
+        AssertFindElementBy(PhantomRequests.findElementByXpath, By.xpath("//*path"))
       }
 
     }

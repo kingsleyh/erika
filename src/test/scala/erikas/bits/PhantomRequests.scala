@@ -12,11 +12,13 @@ object PhantomRequests {
 
   val findElementByCssSelector = """{"using":"css selector","value":".some-selector"}"""
 
-  val findElementByTagName = """{"using":"css selector","value":".some-selector"}"""
+  val findElementByTagName = """{"using":"tag name","value":"tagname"}"""
 
-  val findElementByPartialLinkText = """{"using":"css selector","value":".some-selector"}"""
+  val findElementByPartialLinkText = """{"using":"partial link text","value":"some partial text"}"""
 
-  val findElementByLinkText = """{"using":"css selector","value":".some-selector"}"""
+  val findElementByLinkText = """{"using":"link text","value":"some link text"}"""
 
   val findElementByName = """{"using":"name","value":"name"}"""
+
+  val findElementByXpath = """{"using":"xpath","value":"//*path"}"""
 }
