@@ -30,7 +30,7 @@ class SessionSpec extends FreeSpec with Matchers {
 
       val expectedResponse = List(Sessions("82bed430-fdcf-11e5-ab4d-4bc17e26c21d",Capabilities("phantomjs","mac-unknown-32bit","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true)))
 
-      testDriver.withPostResponse(PhantomResponses.sessionResponse,  () => session.create())
+      testDriver.withPostResponse(PhantomResponses.sessionResponse,          () => session.create())
                 .withGetResponseAction(PhantomResponses.getSessionsResponse, () => session.getSessions) should be(expectedResponse)
 
     }
@@ -40,11 +40,28 @@ class SessionSpec extends FreeSpec with Matchers {
 
       val expectedResponse = ServerStatus(Map("version" -> "1.0.4"),Map("name" -> "mac", "version" -> "unknown", "arch" -> "32bit"))
 
-      testDriver.withPostResponse(PhantomResponses.sessionResponse,  () => session.create())
+      testDriver.withPostResponse(PhantomResponses.sessionResponse,        () => session.create())
                 .withGetResponseAction(PhantomResponses.getStatusResponse, () => session.getStatus) should be(expectedResponse)
 
     }
 
+    "getCapabilities should find the capabilities of the server" in {
+      val (session, testDriver) = SessionHelper()
+
+      val expectedResponse = Capabilities("phantomjs","mac-unknown-32bit","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true,Proxy())
+
+      testDriver.withPostResponse(PhantomResponses.sessionResponse,      () => session.create())
+        .withGetResponseAction(PhantomResponses.getCapabilitiesResponse, () => session.getCapabilities) should be(expectedResponse)
+
+    }
+
+    "dispose should instruct the server to delete the current session" in {
+      val (session, testDriver) = SessionHelper()
+
+      testDriver.withPostResponse(PhantomResponses.sessionResponse,      () => session.create())
+        .withGetResponseAction(PhantomResponses.anyResponse, () => session.dispose) should be("")
+
+    }
 
     "Finding Elements" - {
 

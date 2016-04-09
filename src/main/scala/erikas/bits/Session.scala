@@ -59,6 +59,15 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     handleRequest(url, driver.doGet(url)).decode[ServerStatusResponse].value
   }
 
+  def getCapabilities: Capabilities = {
+    handleRequest(sessionUrl, driver.doGet(sessionUrl)).decode[CapabilityResponse].value
+  }
+
+  def dispose = handleRequest(sessionUrl, driver.doDelete(sessionUrl))
+
+
+
+
 }
 
 object Session extends App {
@@ -68,7 +77,7 @@ object Session extends App {
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(1000)
   println(session.findElements(By.className("entry-title")))
-  println(session.getStatus)
+  session.dispose
 
   //  val element = session.findElement(By.className("entry-title"))
 //  Thread.sleep(1000)

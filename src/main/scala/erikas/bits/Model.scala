@@ -136,3 +136,9 @@ object ServerStatusResponse {
   implicit def Decoder = jdecode3L(ServerStatusResponse.apply)("sessionId", "status" ,"value")
 }
 
+case class CapabilityResponse(sessionId: Option[String], status: Int, value: Capabilities)
+
+object CapabilityResponse {
+  implicit def Decoder = jdecode3L(CapabilityResponse.apply)("sessionId", "status", "value")
+}
+
