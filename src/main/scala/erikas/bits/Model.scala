@@ -89,6 +89,13 @@ object ElementResponse {
     jdecode3L(ElementResponse.apply)("sessionId", "status", "value")
 }
 
+case class ElementResponses(sessionId: String, status: Int, value: List[Map[String, String]])
+
+object ElementResponses {
+  implicit def Decoder =
+    jdecode3L(ElementResponses.apply)("sessionId", "status", "value")
+}
+
 case class StringResponse(sessionId: String, status: Int, value: Option[String])
 
 object StringResponse {

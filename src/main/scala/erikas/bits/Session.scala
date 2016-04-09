@@ -38,6 +38,18 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     new WebElement(elementId, sessionId, sessionUrl, driver, this)
   }
 
+  def findElements(by: By): List[WebElement] = {
+   val elementIds = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/elements", FindElementRequest(by.locatorStrategy, by.value).asJson))
+      .response.decode[ElementResponses].value.map(er => er.get("ELEMENT"))
+
+    for {
+      maybeElementId <- elementIds
+      elementId      <- maybeElementId
+
+    } yield new WebElement(elementId,sessionId, sessionUrl, driver, this)
+  }
+
+
   def getSessions: List[Sessions] = {
     val url = "/sessions"
     handleRequest(url, driver.doGet(url)).response.decode[SessionResponse].value
@@ -51,7 +63,7 @@ object Session extends App {
   session.create()
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(1000)
-  session.getSessions
+  println(session.findElements(By.className("entry-title")))
 
   //  val element = session.findElement(By.className("entry-title"))
 //  Thread.sleep(1000)

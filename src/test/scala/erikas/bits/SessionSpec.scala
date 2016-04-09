@@ -69,16 +69,15 @@ class SessionSpec extends FreeSpec with Matchers {
         AssertFindElementBy(PhantomRequests.findElementByXpath, By.xpath("//*path"))
       }
 
-    }
+      "findElements should find all elements" in {
+        val (session, testDriver) = SessionHelper()
 
-    def AssertFindElementBy(expectedRequest: String, locator: By) = {
-      val (session, testDriver) = SessionHelper()
+        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponseAction(PhantomResponses.findElementsResponse, () => session.findElements(By.id("some-id")))
 
-      val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-        .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(locator))
+        testDriver.getPostRequest should be(PhantomRequests.findElementById)
+      }
 
-      testDriver.getPostRequest should be(expectedRequest)
-      element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
     }
 
     "Timeouts" - {
@@ -96,6 +95,16 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
+  }
+
+  def AssertFindElementBy(expectedRequest: String, locator: By) = {
+    val (session, testDriver) = SessionHelper()
+
+    val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+      .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(locator))
+
+    testDriver.getPostRequest should be(expectedRequest)
+    element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
   }
 
 }
