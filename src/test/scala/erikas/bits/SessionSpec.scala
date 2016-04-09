@@ -83,6 +83,22 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
+    "getSource should find the source of the current page" in {
+      val (session, testDriver) = SessionHelper()
+
+      testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+        .withGetResponseAction(PhantomResponses.getSourceResponse,     () => session.getSource) should be(Some("source"))
+
+    }
+
+    "getTitle should find the title of the current page" in {
+      val (session, testDriver) = SessionHelper()
+
+      testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+        .withGetResponseAction(PhantomResponses.getTitleResponse,     () => session.getTitle) should be(Some("title"))
+
+    }
+
     "With nothing to assert" - {
 
       "dispose should instruct the server to delete the current session" in {
@@ -90,24 +106,29 @@ class SessionSpec extends FreeSpec with Matchers {
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withDeleteResponse(PhantomResponses.anyResponse,           () => session.dispose)
-
       }
 
       "goForward should instruct the server to perform a browser forward" in {
         val (session, testDriver) = SessionHelper()
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-          .withPostResponse(PhantomResponses.anyResponse, () => session.goForward)
-
+          .withPostResponse(PhantomResponses.anyResponse,             () => session.goForward)
       }
 
       "goBack should instruct the server to perform a browser back" in {
         val (session, testDriver) = SessionHelper()
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-          .withPostResponse(PhantomResponses.anyResponse, () => session.goBack)
-
+          .withPostResponse(PhantomResponses.anyResponse,             () => session.goBack)
       }
+
+      "Refresh should instruct the server to perform a browser refresh" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponse(PhantomResponses.anyResponse,             () => session.refresh)
+      }
+
     }
 
     "Finding Elements" - {

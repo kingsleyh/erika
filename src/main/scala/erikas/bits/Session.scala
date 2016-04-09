@@ -86,6 +86,13 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/back", Json()))
   }
 
+  def refresh = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/refresh", Json()))
+  }
+
+  def getSource: Option[String] = handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/source")).decode[StringResponse].value
+
+  def getTitle: Option[String] = handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/title")).decode[StringResponse].value
 
 }
 
@@ -96,7 +103,8 @@ object Session extends App {
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(1000)
 //  println(session.findElements(By.className("entry-title")))
-  println(session.getUrl)
+//  println(session.getSource)
+  println(session.getSource)
 
   //  val element = session.findElement(By.className("entry-title"))
 //  Thread.sleep(1000)

@@ -24,4 +24,10 @@ object PhantomResponses {
 
   val getUrlResponse = """{"sessionId":"b3fb3a40-fe90-11e5-ab4d-4bc17e26c21d","status":0,"value":"http://someurl.com/"}"""
 
+  val getSourceResponse = """{"sessionId":"184375b0-fe93-11e5-88a9-11420d9826e2","status":0,"value":"source"}"""
+
+  val getTitleResponse = """{"sessionId":"184375b0-fe93-11e5-88a9-11420d9826e2","status":0,"value":"title"}"""
+
+
+
 }
