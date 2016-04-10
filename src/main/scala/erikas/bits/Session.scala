@@ -52,6 +52,8 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     } yield new WebElement(elementId,sessionId, sessionUrl, driver, this)
   }
 
+  def elementExists(by: By): Boolean = findElements(by).nonEmpty
+
   def getSessions: List[Sessions] = {
     val url = "/sessions"
     handleRequest(url, driver.doGet(url)).response.decode[SessionResponse].value
@@ -113,9 +115,9 @@ object Session extends App {
   session.create()
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(1000)
-//  println(session.findElements(By.className("entry-title")))
+  println(session.findElements(By.className("entry-title")).nonEmpty)
 //  println(session.getSource)
-  session.takeScreenshot()
+//  session.takeScreenshot()
 
   //  val element = session.findElement(By.className("entry-title"))
 //  Thread.sleep(1000)
