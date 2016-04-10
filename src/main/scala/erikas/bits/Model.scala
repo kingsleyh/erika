@@ -160,3 +160,9 @@ object WindowHandlesResponse {
   implicit def Decoder = jdecode3L(WindowHandlesResponse.apply)("sessionId", "status", "value")
 }
 
+case class ExecuteScriptRequest(script: String, args: List[String])
+
+object ExecuteScriptRequest {
+  implicit def Encoder = jencode2L((o: ExecuteScriptRequest) => (o.script, o.args))("script","args")
+}
+
