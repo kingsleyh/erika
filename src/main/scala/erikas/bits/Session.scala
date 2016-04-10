@@ -78,21 +78,13 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     WindowHandle(handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/window_handle")).decode[WindowHandleResponse].value)
   }
 
-  def getUrl: Option[String] = {
-    handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/url")).decode[StringResponse].value
-  }
+  def getUrl: Option[String] = handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/url")).decode[StringResponse].value
 
-  def goForward = {
-    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/forward", Json()))
-  }
+  def goForward = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/forward", Json()))
 
-  def goBack = {
-    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/back", Json()))
-  }
+  def goBack = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/back", Json()))
 
-  def refresh = {
-    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/refresh", Json()))
-  }
+  def refresh = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/refresh", Json()))
 
   def getSource: Option[String] = handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/source")).decode[StringResponse].value
 
