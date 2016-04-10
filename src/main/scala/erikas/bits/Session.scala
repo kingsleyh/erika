@@ -1,12 +1,10 @@
 package erikas.bits
 
-import java.io.{BufferedWriter, File, FileOutputStream, FileWriter}
-import java.util.Base64
-
 import argonaut.Argonaut._
 import argonaut.Json
 import erikas.bits.Driver.handleRequest
 import erikas.bits.ResponseUtils._
+import java.io.{File, FileOutputStream}
 import sun.misc.BASE64Decoder
 
 class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabilities(),
@@ -99,8 +97,6 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
   }
 
   def takeScreenshot(outputFile: String = "screenshot.png") = {
-    import java.io.{File, FileOutputStream}
-    import sun.misc.BASE64Decoder
     handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/screenshot")).decode[StringResponse].value.foreach { s =>
       val decoded = new BASE64Decoder().decodeBuffer(s)
       val decodedStream = new FileOutputStream(new File(outputFile))
