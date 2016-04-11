@@ -107,6 +107,18 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     }
   }
 
+  def setTimeout(timeoutType: TimeoutType.Value, milliseconds: Int) = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts", TimeoutRequest(timeoutType, milliseconds).asJson))
+  }
+
+  def setAsyncScriptTimeout(timeoutType: TimeoutType.type, milliseconds: Int) = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts/async_script", TimeoutValueRequest(milliseconds).asJson))
+  }
+
+  def setImplicitWaitTimeout(timeoutType: TimeoutType.type, milliseconds: Int) = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts/implicit_wait", TimeoutValueRequest(milliseconds).asJson))
+  }
+
 }
 
 object Session extends App {

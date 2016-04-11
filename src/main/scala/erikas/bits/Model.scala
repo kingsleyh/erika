@@ -1,6 +1,7 @@
 package erikas.bits
 
 import argonaut.Argonaut._
+import argonaut.EncodeJson
 
 case class Proxy(proxyType: String = "",
                  proxyAutoconfigUrl: String = "",
@@ -166,3 +167,20 @@ object ExecuteScriptRequest {
   implicit def Encoder = jencode2L((o: ExecuteScriptRequest) => (o.script, o.args))("script","args")
 }
 
+object TimeoutType extends Enumeration {
+  val SCRIPT = Value("script")
+  val IMPLICIT = Value("implicit")
+  val PAGE_LOAD = Value("page load")
+}
+
+case class TimeoutRequest(timeoutType: TimeoutType.Value, milliseconds: Int)
+
+object TimeoutRequest {
+  implicit def Encoder = jencode2L((o: TimeoutRequest) => (o.timeoutType, o.milliseconds))("type", "ms")
+}
+
+case class TimeoutValueRequest(milliseconds: Int)
+
+object TimeoutValueRequest {
+  implicit def Encoder = jencode1L((o: TimeoutValueRequest) => o.milliseconds)("ms")
+}

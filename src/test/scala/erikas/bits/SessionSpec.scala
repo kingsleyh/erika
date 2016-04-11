@@ -95,8 +95,24 @@ class SessionSpec extends FreeSpec with Matchers {
       val (session, testDriver) = SessionHelper()
 
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-        .withGetResponseAction(PhantomResponses.getTitleResponse,     () => session.getTitle) should be(Some("title"))
+        .withGetResponseAction(PhantomResponses.getTitleResponse,   () => session.getTitle) should be(Some("title"))
 
+    }
+
+    "executeScript should instruct the server to perform a script execution" in {
+      val (session, testDriver) = SessionHelper()
+      val script = "function(){ return 1+1;}"
+      testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+        .withPostResponse(PhantomResponses.anyResponse,             () => session.executeScript(script))
+        .getPostRequest should be(PhantomRequests.executeScript)
+    }
+
+    "executeAsyncScript should instruct the server to perform an async script execution" in {
+      val (session, testDriver) = SessionHelper()
+      val script = "function(){ return 1+1;}"
+      testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+        .withPostResponse(PhantomResponses.anyResponse,             () => session.executeAsyncScript(script))
+        .getPostRequest should be(PhantomRequests.executeScript)
     }
 
     "With nothing to assert" - {
@@ -122,7 +138,7 @@ class SessionSpec extends FreeSpec with Matchers {
           .withPostResponse(PhantomResponses.anyResponse,             () => session.goBack)
       }
 
-      "Refresh should instruct the server to perform a browser refresh" in {
+      "refresh should instruct the server to perform a browser refresh" in {
         val (session, testDriver) = SessionHelper()
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
@@ -188,6 +204,22 @@ class SessionSpec extends FreeSpec with Matchers {
         session.setGlobalTimeout(10000)
         session.getGlobalTimeout should be(10000)
       }
+
+      "setTimeout should instruct the server to set a timeout" in {
+        val (session, testDriver) = SessionHelper()
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponse(PhantomResponses.anyResponse,             () => session.setTimeout(TimeoutType.PAGE_LOAD, 1000))
+          .getPostRequest should be(PhantomRequests.setTimeout)
+      }
+
+//      "setAsyncScriptTimeout should instruct the server to set the async timeout" in {
+//
+//      }
+//
+//      "setImplicitWaitTimeout should instruct the server to set the implicit timeout" in {
+//
+//      }
+
 
     }
 

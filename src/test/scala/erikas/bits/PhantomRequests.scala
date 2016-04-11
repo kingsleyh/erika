@@ -21,4 +21,8 @@ object PhantomRequests {
   val findElementByName = """{"using":"name","value":"name"}"""
 
   val findElementByXpath = """{"using":"xpath","value":"//*path"}"""
+
+  val executeScript = """{"script":"function(){ return 1+1;}","args":[]}"""
+
+  val setTimeout = """"""
 }
