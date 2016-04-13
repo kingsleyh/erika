@@ -196,29 +196,40 @@ class SessionSpec extends FreeSpec with Matchers {
 
       "getGlobalTimeout should return the global timeout in milliseconds" in {
         val (session, _) = SessionHelper()
+
         session.getGlobalTimeout should be(5000)
       }
 
       "setGlobalTimeout should set the global timeout" in {
         val (session, _) = SessionHelper()
+
         session.setGlobalTimeout(10000)
         session.getGlobalTimeout should be(10000)
       }
 
       "setTimeout should instruct the server to set a timeout" in {
         val (session, testDriver) = SessionHelper()
+
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withPostResponse(PhantomResponses.anyResponse,             () => session.setTimeout(TimeoutType.PAGE_LOAD, 1000))
           .getPostRequest should be(PhantomRequests.setTimeout)
       }
 
-//      "setAsyncScriptTimeout should instruct the server to set the async timeout" in {
-//
-//      }
-//
-//      "setImplicitWaitTimeout should instruct the server to set the implicit timeout" in {
-//
-//      }
+      "setAsyncScriptTimeout should instruct the server to set the async timeout" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponse(PhantomResponses.anyResponse,             () => session.setAsyncScriptTimeout(1000))
+          .getPostRequest should be(PhantomRequests.setTimeoutValue)
+      }
+
+      "setImplicitWaitTimeout should instruct the server to set the implicit timeout" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponse(PhantomResponses.anyResponse,             () => session.setImplicitWaitTimeout(1000))
+          .getPostRequest should be(PhantomRequests.setTimeoutValue)
+      }
 
 
     }
