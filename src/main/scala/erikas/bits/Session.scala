@@ -54,6 +54,11 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
 
   def elementExists(by: By): Boolean = findElements(by).nonEmpty
 
+  // why does this return the text "active" intead of an elementId?
+  def getActiveElement(): Option[String] = {
+   handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/element/active")).decode[ElementResponse].value.get("ELEMENT")
+  }
+
   def getSessions: List[Sessions] = {
     val url = "/sessions"
     handleRequest(url, driver.doGet(url)).response.decode[SessionResponse].value
@@ -127,12 +132,14 @@ object Session extends App {
   session.create()
   session.visitUrl("http://jamesclear.com/")
   Thread.sleep(1000)
-  println(session.findElements(By.className("entry-title")).nonEmpty)
+//  println(session.findElements(By.className("entry-title")).nonEmpty)
 //  println(session.getSource)
 //  session.takeScreenshot()
 
-  //  val element = session.findElement(By.className("entry-title"))
-//  Thread.sleep(1000)
+    val element = session.findElement(By.className("entry-title"))
+  Thread.sleep(1000)
+  session.getActiveElement()
+
 //  println(element.getAttribute("class"))
 //  element.isEnabled
 }

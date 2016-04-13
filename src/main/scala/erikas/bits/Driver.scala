@@ -53,16 +53,25 @@ class TestDriver(host: String, port: Int) extends PhantomDriver {
   private var getResponse = Response(OK, entity = Some(Entity("hello")))
   private var deleteResponse = Response(OK, entity = Some(Entity("hello")))
 
+  private var requestUrl = "some-url"
+
   private var postRequest = Json()
 
-  override def doGet(url: String): Response = getResponse
+  override def doGet(url: String): Response = {
+    requestUrl = url
+    getResponse
+  }
 
   override def doPost(url: String, json: Json): Response = {
+    requestUrl = url
     postRequest = json
     postResponse
   }
 
-  override def doDelete(url: String): Response = deleteResponse
+  override def doDelete(url: String): Response = {
+    requestUrl = url
+    deleteResponse
+  }
 
   def withPostResponse(cannedResponse: String, action: () => Unit): TestDriver = {
     postResponse = Response(OK, entity = Some(Entity(cannedResponse)))
@@ -74,6 +83,8 @@ class TestDriver(host: String, port: Int) extends PhantomDriver {
     postResponse = Response(OK, entity = Some(Entity(cannedResponse)))
     action()
   }
+
+  def getRequestUrl = requestUrl
 
   def getPostRequest = postRequest.nospaces
 

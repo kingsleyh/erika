@@ -12,6 +12,8 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
                 .getPostRequest should be(PhantomRequests.create)
 
+      testDriver.getRequestUrl should be("/session")
+
       session.sessionId should be("test-session-id")
       session.sessionUrl should be("/session/test-session-id")
     }
@@ -23,6 +25,8 @@ class SessionSpec extends FreeSpec with Matchers {
                 .withPostResponse(PhantomResponses.visitUrlResponse, () => session.visitUrl("http://some-url"))
                 .getPostRequest should be(PhantomRequests.visitUrl)
 
+      testDriver.getRequestUrl should be("/session/test-session-id/url")
+
     }
 
     "getSessions should find a list of sessions" in {
@@ -32,6 +36,8 @@ class SessionSpec extends FreeSpec with Matchers {
 
       testDriver.withPostResponse(PhantomResponses.sessionResponse,          () => session.create())
                 .withGetResponseAction(PhantomResponses.getSessionsResponse, () => session.getSessions) should be(expectedResponse)
+
+      testDriver.getRequestUrl should be("/sessions")
 
     }
 
@@ -43,6 +49,8 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse,        () => session.create())
                 .withGetResponseAction(PhantomResponses.getStatusResponse, () => session.getStatus) should be(expectedResponse)
 
+      testDriver.getRequestUrl should be("/status")
+
     }
 
     "getCapabilities should find the capabilities of the server" in {
@@ -53,6 +61,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse,      () => session.create())
         .withGetResponseAction(PhantomResponses.getCapabilitiesResponse, () => session.getCapabilities) should be(expectedResponse)
 
+      testDriver.getRequestUrl should be("/session/test-session-id")
     }
 
     "getWindowHandles should find a list of handles" in {
@@ -63,6 +72,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse,       () => session.create())
         .withGetResponseAction(PhantomResponses.getWindowHandlesResponse, () => session.getWindowHandles) should be(expectedResponse)
 
+      testDriver.getRequestUrl should be("/session/test-session-id/window_handles")
     }
 
     "getWindowHandle should find the current window handle" in {
@@ -73,6 +83,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse,       () => session.create())
         .withGetResponseAction(PhantomResponses.getWindowHandleResponse,  () => session.getWindowHandle) should be(expectedResponse)
 
+      testDriver.getRequestUrl should be("/session/test-session-id/window_handle")
     }
 
     "getUrl should find the url of the current page" in {
@@ -81,6 +92,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
         .withGetResponseAction(PhantomResponses.getUrlResponse,     () => session.getUrl) should be(Some("http://someurl.com/"))
 
+      testDriver.getRequestUrl should be("/session/test-session-id/url")
     }
 
     "getSource should find the source of the current page" in {
@@ -89,6 +101,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
         .withGetResponseAction(PhantomResponses.getSourceResponse,     () => session.getSource) should be(Some("source"))
 
+      testDriver.getRequestUrl should be("/session/test-session-id/source")
     }
 
     "getTitle should find the title of the current page" in {
@@ -97,6 +110,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
         .withGetResponseAction(PhantomResponses.getTitleResponse,   () => session.getTitle) should be(Some("title"))
 
+      testDriver.getRequestUrl should be("/session/test-session-id/title")
     }
 
     "executeScript should instruct the server to perform a script execution" in {
@@ -105,6 +119,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
         .withPostResponse(PhantomResponses.anyResponse,             () => session.executeScript(script))
         .getPostRequest should be(PhantomRequests.executeScript)
+      testDriver.getRequestUrl should be("/session/test-session-id/execute")
     }
 
     "executeAsyncScript should instruct the server to perform an async script execution" in {
@@ -113,6 +128,7 @@ class SessionSpec extends FreeSpec with Matchers {
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
         .withPostResponse(PhantomResponses.anyResponse,             () => session.executeAsyncScript(script))
         .getPostRequest should be(PhantomRequests.executeScript)
+      testDriver.getRequestUrl should be("/session/test-session-id/execute_async")
     }
 
     "With nothing to assert" - {
@@ -122,6 +138,7 @@ class SessionSpec extends FreeSpec with Matchers {
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withDeleteResponse(PhantomResponses.anyResponse,           () => session.dispose)
+          .getRequestUrl should be("/session/test-session-id")
       }
 
       "goForward should instruct the server to perform a browser forward" in {
@@ -129,6 +146,7 @@ class SessionSpec extends FreeSpec with Matchers {
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withPostResponse(PhantomResponses.anyResponse,             () => session.goForward)
+          .getRequestUrl should be("/session/test-session-id/forward")
       }
 
       "goBack should instruct the server to perform a browser back" in {
@@ -136,6 +154,7 @@ class SessionSpec extends FreeSpec with Matchers {
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withPostResponse(PhantomResponses.anyResponse,             () => session.goBack)
+          .getRequestUrl should be("/session/test-session-id/back")
       }
 
       "refresh should instruct the server to perform a browser refresh" in {
@@ -143,6 +162,15 @@ class SessionSpec extends FreeSpec with Matchers {
 
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withPostResponse(PhantomResponses.anyResponse,             () => session.refresh)
+          .getRequestUrl should be("/session/test-session-id/refresh")
+      }
+
+      "getActiveElement seems to be broken in phantomjs" in {
+        val (session, testDriver) = SessionHelper()
+
+        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withGetResponse(PhantomResponses.anyResponse, () => session.getActiveElement())
+          .getRequestUrl should be("/session/test-session-id/element/active")
       }
 
     }
@@ -188,6 +216,7 @@ class SessionSpec extends FreeSpec with Matchers {
           .withPostResponseAction(PhantomResponses.findElementsResponse, () => session.findElements(By.id("some-id")))
 
         testDriver.getPostRequest should be(PhantomRequests.findElementById)
+        testDriver.getRequestUrl should be("/session/test-session-id/elements")
       }
 
     }
@@ -213,6 +242,7 @@ class SessionSpec extends FreeSpec with Matchers {
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withPostResponse(PhantomResponses.anyResponse,             () => session.setTimeout(TimeoutType.PAGE_LOAD, 1000))
           .getPostRequest should be(PhantomRequests.setTimeout)
+        testDriver.getRequestUrl should be("/session/test-session-id/timeouts")
       }
 
       "setAsyncScriptTimeout should instruct the server to set the async timeout" in {
@@ -221,6 +251,7 @@ class SessionSpec extends FreeSpec with Matchers {
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withPostResponse(PhantomResponses.anyResponse,             () => session.setAsyncScriptTimeout(1000))
           .getPostRequest should be(PhantomRequests.setTimeoutValue)
+        testDriver.getRequestUrl should be("/session/test-session-id/timeouts/async_script")
       }
 
       "setImplicitWaitTimeout should instruct the server to set the implicit timeout" in {
@@ -229,8 +260,8 @@ class SessionSpec extends FreeSpec with Matchers {
         testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
           .withPostResponse(PhantomResponses.anyResponse,             () => session.setImplicitWaitTimeout(1000))
           .getPostRequest should be(PhantomRequests.setTimeoutValue)
+        testDriver.getRequestUrl should be("/session/test-session-id/timeouts/implicit_wait")
       }
-
 
     }
 
@@ -244,6 +275,7 @@ class SessionSpec extends FreeSpec with Matchers {
 
     testDriver.getPostRequest should be(expectedRequest)
     element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
+    testDriver.getRequestUrl should be("/session/test-session-id/element")
   }
 
 }
