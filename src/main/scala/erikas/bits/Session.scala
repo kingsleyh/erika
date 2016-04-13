@@ -124,6 +124,100 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts/implicit_wait", TimeoutValueRequest(milliseconds).asJson))
   }
 
+
+  def waitFor(element: WebElement, condition: Condition, timeout: Int = getGlobalTimeout) = {
+    Waitress(this).waitFor(element, condition, timeout)
+  }
+
+  def waitFor(by: By, condition: Condition, timeout: Int = getGlobalTimeout) = {
+    Waitress(this).waitFor(by, condition, timeout)
+  }
+//
+//  def waitForUrl(expectedUrl: String, timeout: Int) = {
+//    Waitress(this).waitFor()
+//  }
+
+//  // specify a timeout
+//  public void waitForUrl(string expectedUrl, int timeout)
+//  {
+//    new Waitress(this).waitFor(waitForUrlFunction(expectedUrl, this), timeout);
+//  }
+//
+//  // uses global timeout by default
+//  public void waitForUrl(string expectedUrl)
+//  {
+//    new Waitress(this).waitFor(waitForUrlFunction(expectedUrl, this), getGlobalTimeout());
+//  }
+//
+//  // specify a timeout
+//  public void waitForFunction(Result delegate() runnable, int timeout){
+//    new Waitress(this).waitFor(runnable, timeout);
+//  }
+//
+//  // uses global timeout by default
+//  public void waitForFunction(Result delegate() runnable){
+//    new Waitress(this).waitFor(runnable, getGlobalTimeout());
+//  }
+//
+//  private auto waitForUrlFunction(string expectedUrl, Session s){
+//    return (){
+//      auto actualUrl = s.getUrl();
+//      auto outcome = expectedUrl == actualUrl;
+//      return outcome ? Result(outcome, actualUrl) : Result(outcome, "Error: expected: " ~ expectedUrl ~ " but got: " ~ actualUrl);
+//    };
+//  }
+
+
+
+//  private void waitForElementResult(WebElement element, int count,
+//    Condition condition, int timeout)
+//  {
+//    if (count >= timeout)
+//    {
+//      throw new TimeoutException(
+//        "Timed out while waiting for condition: " ~ condition.asString() ~ " for: " ~ element.asString());
+//    }
+//    else
+//    {
+//      Thread.sleep(dur!("msecs")(100));
+//      WebElement[] elements = [element];
+//      if (condition.isSatisfied(elements))
+//      {
+//        return;
+//      }
+//      else
+//      {
+//        count = count + 100;
+//        waitForElementResult(element, count, condition, timeout);
+//      }
+//
+//    }
+//  }
+}
+
+case class TimeoutException(message: String) extends Exception(message)
+
+class Waitress(session: Session) {
+
+  def waitFor(element: WebElement, condition: Condition, timeout: Int) = {
+    var count = 0
+    waitForElementResult(element, count, condition, timeout)
+  }
+
+  private def waitForElementResult(element: WebElement, count: Int, condition: Condition, timeout: Int): Any = {
+   var counter = count
+    if(counter >= timeout){
+     throw TimeoutException(s"Timed out while waiting for condition: $condition for: $element")
+   } else {
+     Thread.sleep(100)
+     if (condition.isSatisfied(List(element))){
+       counter = counter + 100
+       waitForElementResult(element, counter, condition, timeout)
+     }
+   }
+  }
+
+
 }
 
 object Session extends App {
@@ -137,9 +231,17 @@ object Session extends App {
 //  session.takeScreenshot()
 
     val element = session.findElement(By.className("entry-title"))
-  Thread.sleep(1000)
-  session.getActiveElement
+    session.waitFor(element, Condition.titleIs("wooop"))
+
+    session.waitFor(By.className("entry-title"), Condition.titleIs("wooop"))
+
+
+//  Thread.sleep(1000)
+
+
 
 //  println(element.getAttribute("class"))
 //  element.isEnabled
 }
+
+
