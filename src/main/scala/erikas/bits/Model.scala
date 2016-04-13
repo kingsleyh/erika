@@ -1,7 +1,7 @@
 package erikas.bits
 
 import argonaut.Argonaut._
-import argonaut.EncodeJson
+import argonaut.{EncodeJson, Json}
 
 case class Proxy(proxyType: String = "",
                  proxyAutoconfigUrl: String = "",
@@ -171,12 +171,19 @@ object TimeoutType extends Enumeration {
   val SCRIPT = Value("script")
   val IMPLICIT = Value("implicit")
   val PAGE_LOAD = Value("page load")
+
 }
 
-case class TimeoutRequest(timeoutType: TimeoutType.Value, milliseconds: Int)
+case class TimeoutReq(timeoutType: String, ms: Int)
 
-object TimeoutRequest {
-  implicit def Encoder = jencode2L((o: TimeoutRequest) => (o.timeoutType, o.milliseconds))("type", "ms")
+object TimeoutReq {
+  implicit def Encoder = jencode2L((o: TimeoutReq) => (o.timeoutType, o.ms))("type", "ms")
+}
+
+case class TimeoutRequest(timeoutType: TimeoutType.Value, milliseconds: Int) {
+  def toJson() = {
+    TimeoutReq(timeoutType.toString, milliseconds).asJson
+  }
 }
 
 case class TimeoutValueRequest(milliseconds: Int)

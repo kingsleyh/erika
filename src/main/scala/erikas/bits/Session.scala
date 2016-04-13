@@ -108,7 +108,7 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
   }
 
   def setTimeout(timeoutType: TimeoutType.Value, milliseconds: Int) = {
-    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts", TimeoutRequest(timeoutType, milliseconds).asJson))
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts", TimeoutRequest(timeoutType, milliseconds).toJson()))
   }
 
   def setAsyncScriptTimeout(timeoutType: TimeoutType.type, milliseconds: Int) = {

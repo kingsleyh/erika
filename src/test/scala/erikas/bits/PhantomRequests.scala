@@ -24,5 +24,5 @@ object PhantomRequests {
 
   val executeScript = """{"script":"function(){ return 1+1;}","args":[]}"""
 
-  val setTimeout = """"""
+  val setTimeout = """{"type":"page load","ms":1000}"""
 }
