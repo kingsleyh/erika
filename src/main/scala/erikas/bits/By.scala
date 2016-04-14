@@ -11,7 +11,7 @@ object LocatorStrategy extends Enumeration {
   val XPATH = Value("xpath")
 }
 
-case class By(strategy: LocatorStrategy.Value, value: String) {
+case class By(strategy: LocatorStrategy.Value, value: String) extends Searcher {
   val locatorStrategy = strategy.toString
 }
 

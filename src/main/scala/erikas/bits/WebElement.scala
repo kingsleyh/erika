@@ -4,14 +4,14 @@ import erikas.bits.Driver.handleRequest
 import erikas.bits.ResponseUtils._
 import argonaut.Argonaut._
 
-class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) {
+class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) extends Searcher {
 
   val elementSessionUrl = s"$sessionUrl/element/$elementId"
 
   def getText: Option[String] = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/text")).decode[StringResponse].value
 
   def getAttribute(attribute: String): Option[String] = {
-    handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/attribute")).decode[StringResponse].value
+    handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/attribute/$attribute")).decode[StringResponse].value
   }
 
   def click(): Unit = handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
