@@ -11,6 +11,24 @@ class Waitress(session: Session) {
     }
   }
 
+  def waitFor(runnable: () => Result, timeout: Int) = {
+   waitForFunction(runnable, timeout, count = 0)
+  }
+
+  private def waitForFunction(runnable: () => Result, timeout: Int, count: Int): Unit = {
+    var counter = count
+    val result = runnable()
+    if(counter >= timeout){
+      throw TimeoutException(s"Timed out while waiting for function to evaluate: \n ${result.message}")
+    } else {
+       Thread.sleep(100)
+       if(!result.outcome){
+         counter = counter + 100
+         waitForFunction(runnable, timeout, counter)
+       }
+    }
+  }
+
   private def waitForElementResult(element: WebElement, count: Int, condition: Condition, timeout: Int): Unit = {
    var counter = count
     if(counter >= timeout){
@@ -43,3 +61,5 @@ class Waitress(session: Session) {
 object Waitress{
   def apply(session: Session) = new Waitress(session)
 }
+
+case class Result(outcome: Boolean, message: String)

@@ -128,28 +128,19 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     Waitress(this).waitFor(element, condition, timeout)
   }
 
-//  def waitFor(by: By, condition: Condition, timeout: Int = getGlobalTimeout) = {
-//    Waitress(this).waitFor(by, condition, timeout)
-//  }
+  def waitForFunction(runnable: () => Result, timeout: Int = getGlobalTimeout){
+    Waitress(this).waitFor(runnable, timeout)
+  }
 
-//
-//  // specify a timeout
-//  public void waitForFunction(Result delegate() runnable, int timeout){
-//    new Waitress(this).waitFor(runnable, timeout);
-//  }
-//
-//  // uses global timeout by default
-//  public void waitForFunction(Result delegate() runnable){
-//    new Waitress(this).waitFor(runnable, getGlobalTimeout());
-//  }
-//
-//  private auto waitForUrlFunction(string expectedUrl, Session s){
-//    return (){
-//      auto actualUrl = s.getUrl();
-//      auto outcome = expectedUrl == actualUrl;
-//      return outcome ? Result(outcome, actualUrl) : Result(outcome, "Error: expected: " ~ expectedUrl ~ " but got: " ~ actualUrl);
-//    };
-//  }
+  def waitForUrl(expectedUrl: String, timeout: Int = getGlobalTimeout) = {
+    val waitForUrlFunction: (Session) => Result = (session: Session) => {
+      val actualUrl = session.getUrl
+      val outcome: Boolean = expectedUrl.contains(actualUrl)
+      if(outcome) Result(outcome, actualUrl) else Result(outcome, s"Error: expected: $expectedUrl but got $actualUrl")
+    }
+    Waitress(this).waitFor(waitForUrlFunction, timeout)
+  }
+
 }
 
 object Session extends App {
@@ -166,7 +157,16 @@ object Session extends App {
 //  Thread.sleep(1000)
 //  println(element.getAttribute("class"))
 //    session.waitFor(element, Condition.attributeContains("itemprop","headline"))
-    session.waitFor(By.className("entry-title"), Condition.attributeContains("itemprop","headline"))
+//    session.waitFor(By.className("entry-title"), Condition.attributeContains("itemprop","headline"))
+
+
+  val func = () => {
+    val attr: Option[String] = session.findElement(By.className("entry-title")).getAttribute("itemprop")
+    Result(attr.contains("headline"), "could not find attribute")
+  }
+
+    session.waitForFunction(func,10000)
+
 
 
 //    session.waitFor(element, Condition.titleIs("wooop"))
