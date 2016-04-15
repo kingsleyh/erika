@@ -133,9 +133,9 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
   }
 
   def waitForUrl(expectedUrl: String, timeout: Int = getGlobalTimeout) = {
-    val waitForUrlFunction: (Session) => Result = (session: Session) => {
-      val actualUrl = session.getUrl
-      val outcome: Boolean = expectedUrl.contains(actualUrl)
+    val waitForUrlFunction: () => Result = () => {
+      val actualUrl = this.getUrl.getOrElse("")
+      val outcome: Boolean = expectedUrl == actualUrl
       if(outcome) Result(outcome, actualUrl) else Result(outcome, s"Error: expected: $expectedUrl but got $actualUrl")
     }
     Waitress(this).waitFor(waitForUrlFunction, timeout)
@@ -160,12 +160,10 @@ object Session extends App {
 //    session.waitFor(By.className("entry-title"), Condition.attributeContains("itemprop","headline"))
 
 
-  val func = () => {
+  session.waitForFunction(() => {
     val attr: Option[String] = session.findElement(By.className("entry-title")).getAttribute("itemprop")
-    Result(attr.contains("headline"), "could not find attribute")
-  }
-
-    session.waitForFunction(func,10000)
+    Result(attr.contains("headline"), "Error could not find attribute: itemprop")
+  },10000)
 
 
 
