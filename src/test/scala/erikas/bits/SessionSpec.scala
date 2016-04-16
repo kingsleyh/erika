@@ -265,6 +265,33 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
+    "Wait For" - {
+
+      "should wait for a condition on an element" in {
+        val (session, testDriver) = SessionHelper()
+
+        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(By.className("some-classname")))
+
+        val notFoundResponses = makeResponses(10, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
+        val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
+
+        testDriver.withGetResponses(notFoundResponses ++ foundResponses, () => session.waitFor(element, Condition.attributeContains("name", "Kingsley")))
+      }
+
+      "should wait for a condition with a By" in {
+        val (session, testDriver) = SessionHelper()
+
+        val notFoundResponses = makeResponses(10, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
+        val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
+
+        testDriver
+            .withPostResponses(makeResponses(12, PhantomResponses.findElementsResponse))
+          .withGetResponses(notFoundResponses ++ foundResponses, () => session.waitFor(By.className("some-classname"), Condition.attributeContains("name", "Kingsley")))
+      }
+
+    }
+
   }
 
   def AssertFindElementBy(expectedRequest: String, locator: By) = {
@@ -277,6 +304,8 @@ class SessionSpec extends FreeSpec with Matchers {
     element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
     testDriver.getRequestUrl should be("/session/test-session-id/element")
   }
+
+  private def makeResponses(number: Int, response: String) = 1.to(number).map(n => response).toList
 
 }
 

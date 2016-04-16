@@ -30,7 +30,7 @@ class TitleIsCondition(expectedTitle: String) extends Condition {
 class AttributeContainsCondition(attributeName: String, expectedValue: String) extends Condition {
   override def isSatisfied(webElements: List[WebElement]): Boolean = {
     if(webElements.isEmpty) false else {
-      println(webElements.head.getAttribute("text"))
+      println("attr was: " + webElements.head.getAttribute("text"))
       webElements.head.getAttribute(attributeName).contains(expectedValue)
     }
   }

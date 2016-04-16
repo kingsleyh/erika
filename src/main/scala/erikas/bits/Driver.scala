@@ -6,6 +6,7 @@ import io.shaka.http.Http.http
 import io.shaka.http.Request.{DELETE, GET, POST}
 import io.shaka.http.{Entity, Response, Status}
 import io.shaka.http.Status.OK
+import scala.collection.mutable.Queue
 
 case class APIResponseError(message: String) extends Exception(message)
 
@@ -47,40 +48,54 @@ object Driver {
   }
 }
 
+case class QueueEmptyError(message: String) extends Exception(message)
+case class NoCannedResponseError(message: String) extends Exception(message)
+
 class TestDriver(host: String, port: Int) extends PhantomDriver {
 
-  private var postResponse = Response(OK, entity = Some(Entity("hello")))
-  private var getResponse = Response(OK, entity = Some(Entity("hello")))
-  private var deleteResponse = Response(OK, entity = Some(Entity("hello")))
+  private var postResponse: Option[Response] = None
+  private var getResponse: Option[Response] = None
+  private var deleteResponse: Option[Response] = None
 
-  private var requestUrl = "some-url"
+  private var requestUrl = "url-was-not-specified"
 
   private var postRequest = Json()
 
+  private var getResponses = new Queue[Response]()
+  private var postResponses = new Queue[Response]()
+
   override def doGet(url: String): Response = {
     requestUrl = url
-    getResponse
+    getResponse.foreach(r => getResponses += r)
+    if(getResponses.isEmpty){
+     throw QueueEmptyError("Error: The response queue was empty")
+    }
+    getResponses.dequeue()
   }
 
   override def doPost(url: String, json: Json): Response = {
     requestUrl = url
     postRequest = json
-    postResponse
+    postResponse.foreach(r => postResponses += r)
+    if(postResponses.isEmpty){
+      throw QueueEmptyError("Error: The response queue was empty")
+    }
+    postResponses.dequeue()
   }
 
   override def doDelete(url: String): Response = {
     requestUrl = url
-    deleteResponse
+    deleteResponse.getOrElse(throw NoCannedResponseError(s"No canned delete response for: $url"))
   }
 
   def withPostResponse(cannedResponse: String, action: () => Unit): TestDriver = {
-    postResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    postResponse = Some(Response(OK, entity = Some(Entity(cannedResponse))))
     action()
     this
   }
 
   def withPostResponseAction[T](cannedResponse: String, action: () => T): T = {
-    postResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    postResponse = Some(Response(OK, entity = Some(Entity(cannedResponse))))
     action()
   }
 
@@ -89,18 +104,30 @@ class TestDriver(host: String, port: Int) extends PhantomDriver {
   def getPostRequest = postRequest.nospaces
 
   def withGetResponse(cannedResponse: String, action: () => Unit): TestDriver = {
-    getResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    getResponse = Some(Response(OK, entity = Some(Entity(cannedResponse))))
+    action()
+    this
+  }
+
+  def withGetResponses(cannedResponses: List[String], action: () => Unit): TestDriver = {
+    cannedResponses.foreach(cr => getResponses += Response(OK, entity = Some(Entity(cr))))
+    action()
+    this
+  }
+
+  def withPostResponses(cannedResponses: List[String], action: () => Unit = () => {}): TestDriver = {
+    cannedResponses.foreach(cr => postResponses += Response(OK, entity = Some(Entity(cr))))
     action()
     this
   }
 
   def withGetResponseAction[T](cannedResponse: String, action: () => T): T = {
-    getResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    getResponse = Some(Response(OK, entity = Some(Entity(cannedResponse))))
     action()
   }
 
   def withDeleteResponse(cannedResponse: String, action: () => Unit): TestDriver = {
-    deleteResponse = Response(OK, entity = Some(Entity(cannedResponse)))
+    deleteResponse = Some(Response(OK, entity = Some(Entity(cannedResponse))))
     action()
     this
   }
