@@ -282,12 +282,39 @@ class SessionSpec extends FreeSpec with Matchers {
       "should wait for a condition with a By" in {
         val (session, testDriver) = SessionHelper()
 
-        val notFoundResponses = makeResponses(10, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
+        val notFoundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
         val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
 
         testDriver
-            .withPostResponses(makeResponses(12, PhantomResponses.findElementsResponse))
+            .withPostResponses(makeResponses(6, PhantomResponses.findElementsResponse))
           .withGetResponses(notFoundResponses ++ foundResponses, () => session.waitFor(By.className("some-classname"), Condition.attributeContains("name", "Kingsley")))
+      }
+
+
+      "should wait for a function to return a Result" in {
+        val (session, testDriver) = SessionHelper()
+
+        val notFoundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
+        val foundResponses = makeResponses(1, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
+
+        val func = () => {
+          val attr: Option[String] = session.findElement(By.className("some-classname")).getAttribute("name")
+          Result(attr.contains("Kingsley"), "Error could not find attribute: name")
+        }
+
+        testDriver
+          .withPostResponses(makeResponses(6, PhantomResponses.findElementResponse))
+          .withGetResponses(notFoundResponses ++ foundResponses, () => session.waitForFunction(func))
+      }
+
+      "should wait for url" in {
+        val (session, testDriver) = SessionHelper()
+
+        val notFoundResponses = makeResponses(4, """{"sessionId":"b3fb3a40-fe90-11e5-ab4d-4bc17e26c21d","status":0,"value":"http://not-yet.com/"}""")
+        val foundResponses = makeResponses(1, PhantomResponses.getUrlResponse)
+
+        testDriver
+          .withGetResponses(notFoundResponses ++ foundResponses, () => session.waitForUrl("http://someurl.com/"))
       }
 
     }
