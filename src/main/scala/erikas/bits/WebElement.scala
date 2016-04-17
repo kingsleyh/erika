@@ -1,10 +1,14 @@
 package erikas.bits
 
+import argonaut.Argonaut._
 import erikas.bits.Driver.handleRequest
 import erikas.bits.ResponseUtils._
-import argonaut.Argonaut._
 
-class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) extends Searcher {
+trait Element {
+  def getAttribute(attribute: String): Option[String]
+}
+
+class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) extends Searcher with Element {
 
   val elementSessionUrl = s"$sessionUrl/element/$elementId"
 
@@ -20,4 +24,20 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def isEnabled: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/enabled")).decode[BooleanResponse].value
 
+}
+
+class StubWebElement() extends Element {
+
+  var attr: Option[String] = None
+
+   def withAttribute(attribute: String) = {
+     attr = Some(attribute)
+     this
+   }
+
+   def getAttribute(attribute: String) = attr
+}
+
+object StubWebElement {
+  def apply() = new StubWebElement()
 }

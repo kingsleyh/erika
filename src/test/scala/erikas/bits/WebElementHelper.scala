@@ -13,6 +13,8 @@ class WebElementHelper {
 
   def withPostResponse(cannedResponse: String, action: () => Unit): TestDriver = testDriver.withPostResponse(cannedResponse, action)
 
+  def withGetResponses(cannedResponses: List[String], action: () => Unit = () => {}): TestDriver = testDriver.withGetResponses(cannedResponses, action)
+
 }
 
 object WebElementHelper {
