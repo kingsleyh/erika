@@ -6,6 +6,8 @@ import erikas.bits.Driver.handleRequest
 import erikas.bits.ResponseUtils._
 import java.io.{File, FileOutputStream}
 import sun.misc.BASE64Decoder
+import scala.collection.JavaConverters._
+import scala.sys.process.Process
 
 class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabilities(),
               requiredCapabilities: Capabilities = Capabilities()) {
@@ -73,7 +75,7 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     handleRequest(sessionUrl, driver.doGet(sessionUrl)).decode[CapabilityResponse].value
   }
 
-  def dispose = handleRequest(sessionUrl, driver.doDelete(sessionUrl))
+  def dispose() = handleRequest(sessionUrl, driver.doDelete(sessionUrl))
 
   def getWindowHandles: List[WindowHandle] = {
     handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/window_handles")).decode[WindowHandlesResponse].value.map(h => WindowHandle(h))
@@ -143,17 +145,61 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
 
 }
 
-object Session extends App {
+object Session {
 
-  val session = new Session(Driver("127.0.0.1", 7878))
-  session.create()
-  session.visitUrl("http://jamesclear.com/")
-  Thread.sleep(1000)
+  def apply(desiredCapabilities: Capabilities = Capabilities(),
+            requiredCapabilities: Capabilities = Capabilities(),
+//            phantomJsOptions: PhantomJsOptions = PhantomJsOptions(),
+            pathToPhantom: String = "/usr/local/bin/phantomjs",
+            host: String = "127.0.0.1",
+            port: Int = Session.freePort
+           )(block: (Session) => Unit) = {
+    val commands = s"$pathToPhantom --webdriver=$host:$port"
+
+    println(commands)
+
+    val session = new Session(Driver(host,port),desiredCapabilities, requiredCapabilities)
+
+    val process = Process(commands).run()
+
+    try {
+      block(session)
+    } finally {
+      session.dispose()
+      process.destroy()
+    }
+
+  }
+
+  private def freePort = {
+    val p = new java.net.ServerSocket(0)
+    p.close()
+    p.getLocalPort
+  }
+
+}
+
+object Run extends App {
+
+  Session()(session => {
+    Thread.sleep(2000)
+    session.create()
+    Thread.sleep(2000)
+    session.visitUrl("http://jamesclear.com/")
+    Thread.sleep(1000)
+    println(session.getSource)
+  })
+
+
+//  val session = new Session(Driver("127.0.0.1", 7878))
+//  session.create()
+//  session.visitUrl("http://jamesclear.com/")
+//  Thread.sleep(1000)
 //  println(session.findElements(By.className("entry-title")).nonEmpty)
 //  println(session.getSource)
 //  session.takeScreenshot()
-
-    val element = session.findElement(By.className("entry-title"))
+//
+//    val element = session.findElement(By.className("entry-title"))
 //  Thread.sleep(1000)
 //  println(element.getAttribute("class"))
 //    session.waitFor(element, Condition.attributeContains("itemprop","headline"))
