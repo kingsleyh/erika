@@ -1,12 +1,13 @@
 package erikas.bits
 
+import java.io.{File, FileOutputStream}
+
 import argonaut.Argonaut._
 import argonaut.Json
 import erikas.bits.Driver.handleRequest
 import erikas.bits.ResponseUtils._
-import java.io.{File, FileOutputStream}
 import sun.misc.BASE64Decoder
-import scala.collection.JavaConverters._
+
 import scala.sys.process.Process
 
 class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabilities(),
@@ -158,9 +159,13 @@ object Session {
 
     println(commands)
 
+    val process = Process(commands).run()
+
     val session = new Session(Driver(host,port),desiredCapabilities, requiredCapabilities)
 
-    val process = Process(commands).run()
+    Eventually(10000).tryExecute(() => {
+      session.create()
+    })
 
     try {
       block(session)
@@ -182,11 +187,10 @@ object Session {
 object Run extends App {
 
   Session()(session => {
-    Thread.sleep(2000)
-    session.create()
-    Thread.sleep(2000)
+
     session.visitUrl("http://jamesclear.com/")
-    Thread.sleep(1000)
+      .waitFor(By.className("entry-title"), Condition.attributeContains("itemprop", "headline"))
+
     println(session.getSource)
   })
 
