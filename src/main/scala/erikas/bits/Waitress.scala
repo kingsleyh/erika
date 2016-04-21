@@ -15,6 +15,17 @@ class Waitress(session: Session) {
    waitForFunction(runnable, timeout, count = 0)
   }
 
+  def waitAndFindFirst[T](searcher: T, condition: Condition, timeout: Int): Option[WebElement] = {
+      searcher match {
+        case By(_,_) => waitForFirst(searcher.asInstanceOf[By], count = 0, condition, timeout)
+        case _ => waitForFirstElement(searcher.asInstanceOf[WebElement], count = 0, condition, timeout)
+      }
+    }
+
+  def waitAndFindAll(by: By, condition: Condition, timeout: Int): List[WebElement] = {
+    waitForAll(by, count = 0, condition, timeout)
+  }
+
   private def waitForFunction(runnable: () => Result, timeout: Int, count: Int): Unit = {
     var counter = count
     val result = runnable()
@@ -42,6 +53,21 @@ class Waitress(session: Session) {
    }
   }
 
+  private def waitForFirstElement(element: WebElement, count: Int, condition: Condition, timeout: Int): Option[WebElement] = {
+    var counter = count
+     if(counter >= timeout){
+      None
+    } else {
+      Thread.sleep(100)
+      if (!condition.isSatisfied(List(element))){
+        counter = counter + 100
+        waitForFirstElement(element, counter, condition, timeout)
+      } else {
+        Some(element)
+      }
+    }
+   }
+
   private def waitForResult(by: By, count: Int, condition: Condition, timeout: Int): Unit = {
     var counter = count
     if(counter >= timeout){
@@ -55,6 +81,38 @@ class Waitress(session: Session) {
       }
     }
   }
+
+  private def waitForFirst(by: By, count: Int, condition: Condition, timeout: Int): Option[WebElement] = {
+    var counter = count
+    if(counter >= timeout){
+      None
+    } else {
+      Thread.sleep(100)
+      val elements = session.findElements(by)
+      if(!(elements.nonEmpty && condition.isSatisfied(elements))){
+        counter = counter + 100
+        waitForFirst(by, counter, condition, timeout)
+      } else {
+        Some(elements.head)
+      }
+    }
+  }
+
+  private def waitForAll(by: By, count: Int, condition: Condition, timeout: Int): List[WebElement] = {
+      var counter = count
+      if(counter >= timeout){
+        Nil
+      } else {
+        Thread.sleep(100)
+        val elements = session.findElements(by)
+        if(!(elements.nonEmpty && condition.isSatisfied(elements))){
+          counter = counter + 100
+          waitForAll(by, counter, condition, timeout)
+        } else {
+          elements
+        }
+      }
+    }
 
 }
 

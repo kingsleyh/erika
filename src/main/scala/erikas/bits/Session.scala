@@ -131,6 +131,14 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     Waitress(this).waitFor(element, condition, timeout)
   }
 
+  def findFirst[T <: Searcher](element: T, condition: Condition, timeout: Int = getGlobalTimeout): Option[WebElement] = {
+     Waitress(this).waitAndFindFirst(element, condition, timeout)
+  }
+
+  def findAll(by: By, condition: Condition, timeout: Int = getGlobalTimeout): List[WebElement] = {
+      Waitress(this).waitAndFindAll(by, condition, timeout)
+  }
+
   def waitForFunction(runnable: () => Result, timeout: Int = getGlobalTimeout){
     Waitress(this).waitFor(runnable, timeout)
   }
@@ -189,9 +197,10 @@ object Run extends App {
   Session()(session => {
 
     session.visitUrl("http://jamesclear.com/")
-      .waitFor(By.className("entry-title"), Condition.attributeContains("itemprop", "headline"))
 
-    println(session.getSource)
+      val ele = session.findFirst(By.className("entry-title"), Condition.attributeContains("itemprop", "headline"))
+
+    println(ele)
   })
 
 
