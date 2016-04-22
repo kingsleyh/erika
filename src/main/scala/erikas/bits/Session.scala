@@ -154,20 +154,84 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
 
 }
 
+object SSLProtocol extends Enumeration {
+  val SSLV3 = Value("sslv3")
+  val SSLV2 = Value("sslv2")
+  val TLSV1 = Value("tlsv1")
+  val ANY = Value("any")
+
+}
+
+class PhantomJsOptions {
+
+  private var cookiesFiles = ""
+  private var diskCache = ""
+  private var loadImages = ""
+  private var ignoreSslErrors = ""
+  private var webSecurity = ""
+  private var sslProtocol = ""
+
+  def setCookiesFiles(pathToCookiesFile: String) = {
+    cookiesFiles = s"--cookies-file=$pathToCookiesFile"
+    this
+  }
+
+  def setDiskCache(value: Boolean) = {
+    diskCache = s"--disk-cache=$value"
+    this
+  }
+
+  def setLoadImage(value: Boolean) = {
+    loadImages = s"--load-images=$value"
+    this
+  }
+
+  def setIgnoreSslError(value: Boolean) = {
+    ignoreSslErrors = s"--ignore-ssl-errors=$value"
+    this
+  }
+
+  def setWebSecurity(value: Boolean) = {
+    webSecurity = s"--web-security=$value"
+    this
+  }
+
+  def setSslProtocol(protocol: SSLProtocol.Value) = {
+    sslProtocol = s"--ssl-protocol=$protocol"
+    this
+  }
+
+  def getOptions: String = {
+    List(ignoreSslErrors, diskCache, loadImages, webSecurity, sslProtocol).filterNot(o => o.isEmpty).mkString(" ")
+  }
+
+}
+
+object PhantomJsOptions {
+  def apply() = new PhantomJsOptions()
+}
+
 object Session {
 
   def apply(desiredCapabilities: Capabilities = Capabilities(),
             requiredCapabilities: Capabilities = Capabilities(),
-//            phantomJsOptions: PhantomJsOptions = PhantomJsOptions(),
+            phantomJsOptions: PhantomJsOptions = PhantomJsOptions(),
             pathToPhantom: String = "/usr/local/bin/phantomjs",
             host: String = "127.0.0.1",
             port: Int = Session.freePort
            )(block: (Session) => Unit) = {
-    val commands = s"$pathToPhantom --webdriver=$host:$port"
+
+
+
+    val commands = s"$pathToPhantom --webdriver=$host:$port ${phantomJsOptions.getOptions}"
 
     println(commands)
 
-    val process = Process(commands).run()
+    var process: Process = null
+
+    Eventually(10000).tryExecute(() => {
+      process = Process(commands).run()
+    })
 
     val session = new Session(Driver(host,port),desiredCapabilities, requiredCapabilities)
 
@@ -194,7 +258,9 @@ object Session {
 
 object Run extends App {
 
-  Session()(session => {
+  val options = PhantomJsOptions().setIgnoreSslError(true)
+
+  Session(phantomJsOptions = options)(session => {
 
     session.visitUrl("http://jamesclear.com/")
 
