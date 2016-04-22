@@ -83,19 +83,7 @@ class Waitress(session: Session) {
   }
 
   private def waitForFirst(by: By, count: Int, condition: Condition, timeout: Int): Option[WebElement] = {
-    var counter = count
-    if(counter >= timeout){
-      None
-    } else {
-      Thread.sleep(100)
-      val elements = session.findElements(by)
-      if(!(elements.nonEmpty && condition.isSatisfied(elements))){
-        counter = counter + 100
-        waitForFirst(by, counter, condition, timeout)
-      } else {
-        Some(elements.head)
-      }
-    }
+   waitForAll(by, count, condition, timeout).headOption
   }
 
   private def waitForAll(by: By, count: Int, condition: Condition, timeout: Int): List[WebElement] = {

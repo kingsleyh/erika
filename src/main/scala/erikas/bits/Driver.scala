@@ -109,7 +109,7 @@ class TestDriver(host: String, port: Int) extends PhantomDriver {
     this
   }
 
-  def withGetResponses(cannedResponses: List[String], action: () => Unit): TestDriver = {
+  def withGetResponses(cannedResponses: List[String], action: () => Unit = () => {}): TestDriver = {
     cannedResponses.foreach(cr => getResponses += Response(OK, entity = Some(Entity(cr))))
     action()
     this

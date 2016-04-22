@@ -317,6 +317,52 @@ class SessionSpec extends FreeSpec with Matchers {
           .withGetResponses(notFoundResponses ++ foundResponses, () => session.waitForUrl("http://someurl.com/"))
       }
 
+      "findFirst should return an option of an element after a wait for a condition with a By" in {
+        val (session, testDriver) = SessionHelper()
+
+        val notFoundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
+        val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
+
+        testDriver
+          .withPostResponses(makeResponses(6, PhantomResponses.findElementsResponse))
+          .withGetResponses(notFoundResponses ++ foundResponses)
+
+        val result = session.findFirst(By.className("some-classname"), Condition.attributeContains("name", "Kingsley"))
+        result.isDefined should be(true)
+        result.get.elementSessionUrl should be("/element/:wdc:1460215713666")
+      }
+
+      "findFirst should return an option of an element after a wait for a condition with an element" in {
+        val (session, testDriver) = SessionHelper()
+
+        val notFoundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
+        val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
+
+        testDriver
+          .withPostResponses(makeResponses(6, PhantomResponses.findElementsResponse))
+          .withGetResponses(notFoundResponses ++ foundResponses)
+
+        val element: WebElement = testDriver.withPostResponseAction(PhantomResponses.findElementsResponse, () => session.findElement(By.id("some-id")))
+
+        val result = session.findFirst(element, Condition.attributeContains("name", "Kingsley"))
+        result.isDefined should be(true)
+        result.get.elementSessionUrl should be("/element/:wdc:1460215713666")
+      }
+
+      "findAll should return a List of WebElements after a wait for a condition with a By" in {
+        val (session, testDriver) = SessionHelper()
+
+        val notFoundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
+        val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
+
+        testDriver
+          .withPostResponses(makeResponses(6, PhantomResponses.findElementsResponse))
+          .withGetResponses(notFoundResponses ++ foundResponses)
+
+        val result = session.findAll(By.className("some-classname"), Condition.attributeContains("name", "Kingsley"))
+        result.size should be(2)
+      }
+
     }
 
   }
