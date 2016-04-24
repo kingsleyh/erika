@@ -4,7 +4,7 @@ case class TimeoutException(message: String) extends Exception(message)
 
 class Waitress(session: Session) {
 
-  def waitFor[T](searcher: T, condition: Condition, timeout: Int) = {
+  def waitFor[T](searcher: T, condition: Condition, timeout: Int): WebElement = {
     searcher match {
       case By(_,_) => waitForResult(searcher.asInstanceOf[By], count = 0, condition, timeout)
       case _ => waitForElementResult(searcher.asInstanceOf[WebElement], count = 0, condition, timeout)
@@ -40,7 +40,7 @@ class Waitress(session: Session) {
     }
   }
 
-  private def waitForElementResult(element: WebElement, count: Int, condition: Condition, timeout: Int): Unit = {
+  private def waitForElementResult(element: WebElement, count: Int, condition: Condition, timeout: Int): WebElement = {
    var counter = count
     if(counter >= timeout){
      throw TimeoutException(s"Timed out while waiting for condition: $condition for: $element")
@@ -49,6 +49,8 @@ class Waitress(session: Session) {
      if (!condition.isSatisfied(List(element))){
        counter = counter + 100
        waitForElementResult(element, counter, condition, timeout)
+     } else {
+       element
      }
    }
   }
@@ -68,7 +70,7 @@ class Waitress(session: Session) {
     }
    }
 
-  private def waitForResult(by: By, count: Int, condition: Condition, timeout: Int): Unit = {
+  private def waitForResult(by: By, count: Int, condition: Condition, timeout: Int): WebElement = {
     var counter = count
     if(counter >= timeout){
       throw TimeoutException(s"Timed out while waiting for condition: $condition for: $by")
@@ -78,6 +80,8 @@ class Waitress(session: Session) {
       if(!(elements.nonEmpty && condition.isSatisfied(elements))){
         counter = counter + 100
         waitForResult(by, counter, condition, timeout)
+      } else {
+        elements.filter(e => condition.isSatisfied(List(e))).head
       }
     }
   }

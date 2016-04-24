@@ -127,7 +127,7 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts/implicit_wait", TimeoutValueRequest(milliseconds).asJson))
   }
 
-  def waitFor[T <: Searcher](element: T, condition: Condition, timeout: Int = getGlobalTimeout) = {
+  def waitFor[T <: Searcher](element: T, condition: Condition, timeout: Int = getGlobalTimeout): WebElement = {
     Waitress(this).waitFor(element, condition, timeout)
   }
 
@@ -207,16 +207,21 @@ object Session {
 
 object Run extends App {
 
-  val options = PhantomJsOptions().setIgnoreSslError(true)
+  val options = PhantomJsOptions().setIgnoreSslError(true).setWebSecurity(false).setSslProtocol(SSLProtocol.ANY)
 
   Session(phantomJsOptions = options)(session => {
 
-    session.tryIt()
 //    session.visitUrl("http://jamesclear.com/")
 
-//      val ele = session.findFirst(By.className("entry-title"), Condition.attributeContains("itemprop", "headline"))
+    session.visitUrl("https://fdmtime.co.uk/login")
 
-//    println(ele)
+    val ele: WebElement = session.waitFor(By.id("username"), Condition.isClickable)
+    println(ele.getText)
+
+    ele.sendKeys("woop")
+     Thread.sleep(1000)
+    println(ele.getText)
+
   })
 
 

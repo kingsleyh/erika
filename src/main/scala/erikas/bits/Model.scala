@@ -191,3 +191,9 @@ case class TimeoutValueRequest(milliseconds: Int)
 object TimeoutValueRequest {
   implicit def Encoder = jencode1L((o: TimeoutValueRequest) => o.milliseconds)("ms")
 }
+
+case class SendKeysRequest(value: List[Char])
+
+object SendKeysRequest {
+  implicit def Encoder = jencode1L((o: SendKeysRequest) => o.value)("value")
+}

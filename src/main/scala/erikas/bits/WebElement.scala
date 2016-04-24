@@ -6,6 +6,13 @@ import erikas.bits.ResponseUtils._
 
 trait Element {
   def getAttribute(attribute: String): Option[String]
+  def getText: Option[String]
+  def click(): WebElement
+  def clear(): WebElement
+  def isEnabled: Boolean
+  def isDisplayed: Boolean
+  def isPresent: Boolean
+  def sendKeys(text: String): WebElement
 }
 
 class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) extends Searcher with Element {
@@ -18,11 +25,26 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
     handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/attribute/$attribute")).decode[StringResponse].value
   }
 
-  def click(): Unit = handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
+  def click(): WebElement = {
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
+    this
+  }
 
-  def clear(): Unit = handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/clear", ElementClearRequest(elementId, sessionId).asJson))
+  def clear(): WebElement = {
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/clear", ElementClearRequest(elementId, sessionId).asJson))
+    this
+  }
 
   def isEnabled: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/enabled")).decode[BooleanResponse].value
+
+  def isDisplayed: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/displayed")).decode[BooleanResponse].value
+
+  def isPresent: Boolean = isEnabled && isDisplayed
+
+  def sendKeys(text: String): WebElement = {
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/value", SendKeysRequest(text.toArray.toList).asJson))
+    this
+  }
 
 }
 
@@ -35,7 +57,21 @@ class StubWebElement() extends Element {
      this
    }
 
-   def getAttribute(attribute: String) = attr
+  override def getAttribute(attribute: String) = attr
+
+  override def getText: Option[String] = ???
+
+  override def sendKeys(text: String): WebElement = ???
+
+  override def isPresent: JsonBoolean = ???
+
+  override def isEnabled: JsonBoolean = ???
+
+  override def clear(): WebElement = ???
+
+  override def click(): WebElement = ???
+
+  override def isDisplayed: JsonBoolean = ???
 }
 
 object StubWebElement {
