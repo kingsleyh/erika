@@ -298,7 +298,7 @@ class SessionSpec extends FreeSpec with Matchers {
         val foundResponses = makeResponses(1, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
 
         val func = () => {
-          val attr: Option[String] = session.findElement(By.className("some-classname")).getAttribute("name")
+          val attr: Option[String] = session.findElement(By.className("some-classname")).getAttributeOption("name")
           Result(attr.contains("Kingsley"), "Error could not find attribute: name")
         }
 
