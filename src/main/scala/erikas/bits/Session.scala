@@ -217,23 +217,31 @@ object Run extends App {
 
     session.visitUrl("http://localhost:10270/cb/#login")
 
-     session.waitFor(By.className("cb-username"), Condition.isClickable)
-       .toTextInput.setValue("matt.cully@barclays.com")
-       .waitFor(By.className("cb-password"), Condition.isClickable)
-       .toTextInput.setValue("Password!")
+//    session.waitFor(By.className("cb-username"), Condition.isClickable)
+//       .toTextInput.setValue("matt.cully@barclays.com")
+//       .waitFor(By.className("cb-password"), Condition.isClickable)
+//       .toTextInput.setValue("Password!")
+//       .waitFor(By.className("cb-login"), Condition.isClickable)
+//       .toButton.click()
 
-       println(session.findElement(By.className("cb-username")).toTextInput.getValue)
-       println(session.findElement(By.className("cb-password")).toTextInput.getValue)
+
+    val ele = session.waitFor(By.className("cb-username"), Condition.isClickable)
+    ele.sendKeys(Keys.DECIMAL, Keys.DECIMAL)
+
+    println(ele.getAttribute("value"))
+
+
+//       println(session.findElement(By.className("cb-username")).toTextInput.getValue)
+//       println(session.findElement(By.className("cb-password")).toTextInput.getValue)
 //       println(session.findElement(By.className("cb-login")).click())
 
 
-       session.waitFor(By.className("cb-login"), Condition.isClickable)
-       .click()
-
-
-    Thread.sleep(1000)
+//       session.waitFor(By.className("cb-login"), Condition.isClickable)
+//       .click()
 //
-    println(session.getUrl)
+//
+
+
 
 
 //

@@ -4,6 +4,7 @@ import argonaut.Argonaut._
 import argonaut.Json
 import erikas.bits.Driver.handleRequest
 import erikas.bits.ResponseUtils._
+import io.shaka.http.Response
 
 trait Element {
   def getAttributeOption(attribute: String): Option[String]
@@ -25,14 +26,18 @@ case class IncorrectElementException(message: String) extends Exception(message)
 case class TextInput(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
   def getValue = waitFor(this, Condition.isClickable).getAttribute("value")
-  def setValue(value: String) = waitFor(this, Condition.isClickable).clear().sendKeys(value) ; this
-  def clearValue = waitFor(this, Condition.isClickable).clear() ; this
+  def setValue(value: String) = waitFor(this, Condition.isClickable).clear().sendKeys(value)
+  def clearValue = waitFor(this, Condition.isClickable).clear()
 }
 
-case class Button(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session)
+class Button(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
   def getValue = waitFor(this, Condition.isClickable).getAttribute("value")
-  override def click() = waitFor(this, Condition.isClickable).click() ; this
+  override def click(): Button = {
+    waitFor(this, Condition.isClickable)
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
+    this
+  }
 }
 
 class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) extends Searcher with Element {
@@ -50,7 +55,7 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def toButton = {
     if(!isButton) throw IncorrectElementException(s"WebElement was not a <text input>. It is a: $getName")
-    Button(elementId, sessionId, sessionUrl, driver, session)
+    new Button(elementId, sessionId, sessionUrl, driver, session)
   }
 
   def getTextOption: Option[String] = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/text")).decode[StringResponse].value
@@ -85,6 +90,12 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def sendKeys(text: String): WebElement = {
     handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/value", SendKeysRequest(text.toArray.toList).asJson))
+    this
+  }
+
+  def sendKeys(key: Keys.Value*): WebElement = {
+    val values = key.flatMap(_.toString.toCharArray).toList
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/value", SendKeysRequest(values).asJson))
     this
   }
 
@@ -145,6 +156,8 @@ class StubWebElement() extends Element {
   override def clear(): WebElement = ???
 
   override def click(): WebElement = ???
+
+//  override def click2(): Unit = ???
 
   override def isDisplayed: Boolean = ???
 }
