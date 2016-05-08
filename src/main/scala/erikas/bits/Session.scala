@@ -207,28 +207,28 @@ object Session {
 
 object Run extends App {
 
-  val options = PhantomJsOptions().setIgnoreSslError(true).setWebSecurity(false).setSslProtocol(SSLProtocol.ANY)
-
-  Session(phantomJsOptions = options)(session => {
-
-    session.setGlobalTimeout(20000)
-    session.setTimeout(TimeoutType.IMPLICIT, 20000)
-    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
-
-    session.visitUrl("http://localhost:10270/cb/#login")
-
-//    session.waitFor(By.className("cb-username"), Condition.isClickable)
-//       .toTextInput.setValue("matt.cully@barclays.com")
-//       .waitFor(By.className("cb-password"), Condition.isClickable)
-//       .toTextInput.setValue("Password!")
-//       .waitFor(By.className("cb-login"), Condition.isClickable)
-//       .toButton.click()
-
-
-    val ele = session.waitFor(By.className("cb-username"), Condition.isClickable)
-    ele.sendKeys(Keys.DECIMAL, Keys.DECIMAL)
-
-    println(ele.getAttribute("value"))
+//  val options = PhantomJsOptions().setIgnoreSslError(true).setWebSecurity(false).setSslProtocol(SSLProtocol.ANY)
+//
+//  Session(phantomJsOptions = options)(session => {
+//
+//    session.setGlobalTimeout(20000)
+//    session.setTimeout(TimeoutType.IMPLICIT, 20000)
+//    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+//
+//    session.visitUrl("http://localhost:10270/cb/#login")
+//
+////    session.waitFor(By.className("cb-username"), Condition.isClickable)
+////       .toTextInput.setValue("matt.cully@barclays.com")
+////       .waitFor(By.className("cb-password"), Condition.isClickable)
+////       .toTextInput.setValue("Password!")
+////       .waitFor(By.className("cb-login"), Condition.isClickable)
+////       .toButton.click()
+//
+//
+//    val ele = session.waitFor(By.className("cb-username"), Condition.isClickable)
+//    ele.sendKeys(Keys.DECIMAL, Keys.DECIMAL)
+//
+//    println(ele.getAttribute("value"))
 
 
 //       println(session.findElement(By.className("cb-username")).toTextInput.getValue)
@@ -254,17 +254,32 @@ object Run extends App {
 //     Thread.sleep(1000)
 //    println(ele.getText)
 
-  })
+//  })
 
 
-//  val session = new Session(Driver("127.0.0.1", 7878))
-//  session.create()
-//  Thread.sleep(5000)
+ val chromeCapability = Capabilities(browserName = "chrome")
+  val session = new Session(Driver("127.0.0.1", 4444, "/wd/hub"), chromeCapability, chromeCapability)
+  session.create()
+  Thread.sleep(2000)
 //  session.visitUrl("https://www.uptrends.com/tools/website-speed-test")
 //  Thread.sleep(5000)
 //  println(session.getSource)
 
-//  session.visitUrl("http://jamesclear.com/")
+
+  session.setGlobalTimeout(20000)
+      session.setTimeout(TimeoutType.IMPLICIT, 20000)
+      session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+
+      session.visitUrl("http://localhost:10270/cb/#login")
+
+      session.waitFor(By.className("cb-username"), Condition.isClickable)
+         .toTextInput.setValue("matt.cully@barclays.com")
+         .waitFor(By.className("cb-password"), Condition.isClickable)
+         .toTextInput.setValue("Password!")
+         .waitFor(By.className("cb-login"), Condition.isClickable)
+         .toButton.click()
+
+
 //  Thread.sleep(1000)
 //  println(session.findElements(By.className("entry-title")).nonEmpty)
 //  println(session.getSource)

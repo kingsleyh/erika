@@ -3,7 +3,7 @@ package erikas.bits
 import argonaut.Argonaut._
 import argonaut.{EncodeJson, Json}
 
-case class Proxy(proxyType: String = "",
+case class Proxy(proxyType: String = ProxyType.DIRECT,
                  proxyAutoconfigUrl: String = "",
                  ftpProxy: String = "",
                  httpProxy: String = "",
@@ -19,8 +19,30 @@ object Proxy {
       "socksUsername", "socksPassword", "noProxy")
 }
 
+sealed abstract class Enum(val value: String){
+  def apply() = value
+}
+
+object Platform {
+  def WINDOWS = "WINDOWS"
+  def XP = "XP"
+  def VISTA = "VISTA"
+  def MAC = "MAC"
+  def LINUX = "LINUX"
+  def UNIX = "UNIX"
+}
+
+
+object ProxyType {
+  def DIRECT = "direct"
+  def MANUAL = "manual"
+  def PAC = "pac"
+  def AUTODETECT = "autodetect"
+  def SYSTEM = "system"
+}
+
 case class Capabilities(browserName: String = "phantomjs",
-                        platform: String = "OSX",
+                        platform: String = Platform.MAC,
                         version: String = "phantomjs",
                         javascriptEnabled: Boolean = true,
                         takesScreenshot: Boolean = true,
