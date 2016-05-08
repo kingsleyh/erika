@@ -18,9 +18,9 @@ trait PhantomDriver {
   def doDelete(url: String): Response
 }
 
-class Driver(host: String, port: Int, context: String = "") extends PhantomDriver {
+class Driver(host: String, port: Int, context: String = "", transport: String = "http://") extends PhantomDriver {
 
-  val phantomServer = s"http://$host:$port$context"
+  val phantomServer = s"$transport$host:$port$context"
 
   override def doGet(url: String): Response = {
     http(GET(phantomServer + url).contentType(APPLICATION_JSON))
@@ -40,7 +40,7 @@ object Driver {
 
   def apply(host: String, port: Int): Driver = new Driver(host, port)
 
-  def apply(host: String, port: Int, context: String): Driver = new Driver(host, port, context)
+  def apply(host: String, port: Int, context: String, transport: String): Driver = new Driver(host, port, context, transport)
 
   def handleRequest(url: String, response: Response) = {
     response match {

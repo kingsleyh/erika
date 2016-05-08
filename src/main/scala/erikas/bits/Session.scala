@@ -1,6 +1,6 @@
 package erikas.bits
 
-import java.io.{File, FileOutputStream}
+import java.io.{IOException, File, FileOutputStream}
 
 import argonaut.Argonaut._
 import argonaut.Json
@@ -158,16 +158,43 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
 
 }
 
+object Port {
+  def freePort = {
+    withPort(0)
+  }
 
+  def withPort(port: Int) = {
+    val p = new java.net.ServerSocket(port)
+    p.close()
+    p.getLocalPort
+  }
 
-object Session {
+  import util.control.Breaks._
+  def freePort4: Int = {
+    var p = 1025
+    breakable {
+      (1025 to 9999).foreach(port => {
+        try{
+          p = withPort(port)
+          break
+        } catch {
+          case ioe: IOException =>
+        }
+      })
+    }
+    p
+  }
+
+}
+
+object PhantomJsSession {
 
   def apply(desiredCapabilities: Capabilities = Capabilities(),
             requiredCapabilities: Capabilities = Capabilities(),
             phantomJsOptions: PhantomJsOptions = PhantomJsOptions(),
             pathToPhantom: String = "/usr/local/bin/phantomjs",
             host: String = "127.0.0.1",
-            port: Int = Session.freePort
+            port: Int = Port.freePort
            )(block: (Session) => Unit) = {
 
 
@@ -197,19 +224,77 @@ object Session {
 
   }
 
-  private def freePort = {
-    val p = new java.net.ServerSocket(0)
-    p.close()
-    p.getLocalPort
+}
+
+object ChromeSession {
+
+  def apply(desiredCapabilities: Capabilities = Capabilities(),
+            requiredCapabilities: Capabilities = Capabilities(),
+            seleniumServerOptions: SeleniumServerOptions = SeleniumServerOptions(),
+            pathToSeleniumServerStandalone: String = "/usr/local/bin/",
+            pathToChromeDriver: String = "/usr/local/bin/chromedriver",
+            host: String = "127.0.0.1",
+            port: Int = Port.freePort4,
+            transport: String = "http://",
+            serverSuffix: String = "/wd/hub",
+            pathToJava: String = "java"
+           )(block: (Session) => Unit) = {
+
+    val commands = s"$pathToJava -jar $pathToSeleniumServerStandalone -Dwebdriver.chrome.driver=$pathToChromeDriver -port $port ${seleniumServerOptions.getOptions}"
+
+    println(commands)
+
+    var process: Process = null
+
+    Eventually(10000).tryExecute(() => {
+      process = Process(commands).run()
+    })
+
+    val session = new Session(Driver(host, port, serverSuffix, transport), desiredCapabilities, requiredCapabilities)
+
+    Eventually(10000).tryExecute(() => {
+      session.create()
+    })
+
+    try {
+      block(session)
+    } finally {
+      session.dispose()
+      process.destroy()
+    }
+
   }
+
 
 }
 
 object Run extends App {
 
+  ChromeSession(
+    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
+    pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver",
+    requiredCapabilities = Capabilities(proxy = Proxy(proxyType = ProxyType.MANUAL))
+  )(session => {
+
+    session.setGlobalTimeout(20000)
+    session.setTimeout(TimeoutType.IMPLICIT, 20000)
+    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+
+    session.visitUrl("http://localhost:10270/cb/#login")
+
+    session.waitFor(By.className("cb-username"), Condition.isClickable)
+      .toTextInput.setValue("matt.cully@barclays.com")
+      .waitFor(By.className("cb-password"), Condition.isClickable)
+      .toTextInput.setValue("Password!")
+      .waitFor(By.className("cb-login"), Condition.isClickable)
+      .toButton.click()
+
+  })
+
+
 //  val options = PhantomJsOptions().setIgnoreSslError(true).setWebSecurity(false).setSslProtocol(SSLProtocol.ANY)
 //
-//  Session(phantomJsOptions = options)(session => {
+//  PhantomJsSession(phantomJsOptions = options)(session => {
 //
 //    session.setGlobalTimeout(20000)
 //    session.setTimeout(TimeoutType.IMPLICIT, 20000)
@@ -257,27 +342,27 @@ object Run extends App {
 //  })
 
 
- val chromeCapability = Capabilities(browserName = "chrome")
-  val session = new Session(Driver("127.0.0.1", 4444, "/wd/hub"), chromeCapability, chromeCapability)
-  session.create()
-  Thread.sleep(2000)
-//  session.visitUrl("https://www.uptrends.com/tools/website-speed-test")
-//  Thread.sleep(5000)
-//  println(session.getSource)
-
-
-  session.setGlobalTimeout(20000)
-      session.setTimeout(TimeoutType.IMPLICIT, 20000)
-      session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
-
-      session.visitUrl("http://localhost:10270/cb/#login")
-
-      session.waitFor(By.className("cb-username"), Condition.isClickable)
-         .toTextInput.setValue("matt.cully@barclays.com")
-         .waitFor(By.className("cb-password"), Condition.isClickable)
-         .toTextInput.setValue("Password!")
-         .waitFor(By.className("cb-login"), Condition.isClickable)
-         .toButton.click()
+// val chromeCapability = Capabilities(browserName = "chrome")
+//  val session = new Session(Driver("127.0.0.1", 4444, "/wd/hub"), chromeCapability, chromeCapability)
+//  session.create()
+//  Thread.sleep(2000)
+////  session.visitUrl("https://www.uptrends.com/tools/website-speed-test")
+////  Thread.sleep(5000)
+////  println(session.getSource)
+//
+//
+//  session.setGlobalTimeout(20000)
+//      session.setTimeout(TimeoutType.IMPLICIT, 20000)
+//      session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+//
+//      session.visitUrl("http://localhost:10270/cb/#login")
+//
+//      session.waitFor(By.className("cb-username"), Condition.isClickable)
+//         .toTextInput.setValue("matt.cully@barclays.com")
+//         .waitFor(By.className("cb-password"), Condition.isClickable)
+//         .toTextInput.setValue("Password!")
+//         .waitFor(By.className("cb-login"), Condition.isClickable)
+//         .toButton.click()
 
 
 //  Thread.sleep(1000)
