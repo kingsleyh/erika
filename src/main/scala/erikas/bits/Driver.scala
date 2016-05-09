@@ -36,21 +36,33 @@ class Driver(host: String, port: Int, context: String = "", transport: String = 
 
 }
 
-class UrlDriver(remoteUrl: String) extends BaseDriver {
+case class BasicAuth(username: String = "", password: String = "") {
+  def toOption = Option(this)
+}
+
+class UrlDriver(remoteUrl: String, basicAuth: Option[BasicAuth]) extends BaseDriver {
 
   override def doGet(url: String): Response = {
-    http(GET(remoteUrl + url).contentType(APPLICATION_JSON))
+    basicAuth match {
+      case Some(BasicAuth(username, password)) => http(GET(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password))
+      case _ => http(GET(remoteUrl + url).contentType(APPLICATION_JSON))
+    }
   }
 
   override def doPost(url: String, json: Json) = {
-    println(remoteUrl + url);
-    http(POST(remoteUrl + url).contentType(APPLICATION_JSON).entity(json.toString()))
+    basicAuth match {
+      case Some(BasicAuth(username, password)) => http(POST(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password).entity(json.toString()))
+      case _ => http(POST(remoteUrl + url).contentType(APPLICATION_JSON).entity(json.toString()))
+    }
   }
 
   override def doDelete(url: String) = {
-    http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON))
-  }
+    basicAuth match {
+      case Some(BasicAuth(username, password)) => http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password))
+      case _ => http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON))
+    }
 
+  }
 }
 
 
@@ -60,7 +72,7 @@ object Driver {
 
   def apply(host: String, port: Int, context: String, transport: String): Driver = new Driver(host, port, context, transport)
 
-  def apply(url: String) = new UrlDriver(url)
+  def apply(url: String, basicAuth: Option[BasicAuth] = None) = new UrlDriver(url, basicAuth)
 
   def handleRequest(url: String, response: Response) = {
     response match {

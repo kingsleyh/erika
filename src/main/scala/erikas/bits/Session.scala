@@ -320,14 +320,15 @@ object BrowserStackSession {
 
   def apply(desiredCapabilities: Capabilities = Capabilities(browserName = "chrome"),
             requiredCapabilities: Capabilities = Capabilities(browserName = "chrome"),
-            url: String = "http://#{ENV['BS_USERNAME']}:#{ENV['BS_AUTHKEY']}@hub-cloud.browserstack.com/wd/hub"
+            url: String = "http://#{ENV['BS_USERNAME']}:#{ENV['BS_AUTHKEY']}@hub-cloud.browserstack.com/wd/hub",
+            basicAuth: Option[BasicAuth] = None
            )(block: (Session) => Unit) = {
 
-    val session = new Session(new UrlDriver(url), desiredCapabilities, requiredCapabilities)
+    val session = new Session(new UrlDriver(url, basicAuth), desiredCapabilities, requiredCapabilities)
 
-//    Eventually(10000).tryExecute(() => {
+    Eventually(10000).tryExecute(() => {
       session.create()
-//    })
+    })
 
     try {
       block(session)
@@ -350,11 +351,12 @@ object Run extends App {
     resolution = Some("1920x1080"),
     nativeEvents = true,
     project = Some("BOOST [CB]"),
-    browserStackLocal = Some(false)
-
+    browserStackLocal = Some(false),
+    browserStackDebug = Some(true)
   )
-  BrowserStackSession(url = "@hub-cloud.browserstack.com/wd/hub",
-    desiredCapabilities = caps, requiredCapabilities = caps
+
+  BrowserStackSession(url = "http://hub-cloud.browserstack.com/wd/hub",
+    desiredCapabilities = caps
   )(session => {
 
     session.setGlobalTimeout(20000)
@@ -370,7 +372,18 @@ object Run extends App {
 //      .waitFor(By.className("cb-login"), Condition.isClickable)
 //      .toButton.click()
 
+
+    session.visitUrl("https://www.fdmtime.co.uk")
+
+    val ele = session.waitFor(By.id("username"), Condition.isClickable)
+      .toTextInput.setValue("kingsley")
+      .waitFor(By.id("username"), Condition.attributeContains("value", "kingsley"))
+
+
+    println(ele.getAttribute("value"))
+
     println(session.getCapabilities)
+
 
   })
 
