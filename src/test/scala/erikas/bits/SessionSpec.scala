@@ -32,10 +32,14 @@ class SessionSpec extends FreeSpec with Matchers {
     "getSessions should find a list of sessions" in {
       val (session, testDriver) = SessionHelper()
 
-      val expectedResponse = List(Sessions("82bed430-fdcf-11e5-ab4d-4bc17e26c21d",Capabilities("phantomjs","mac-unknown-32bit","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true)))
+      val expectedResponse = List(Sessions("82bed430-fdcf-11e5-ab4d-4bc17e26c21d",Capabilities("phantomjs","MAC","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true)))
 
-      testDriver.withPostResponse(PhantomResponses.sessionResponse,          () => session.create())
-                .withGetResponseAction(PhantomResponses.getSessionsResponse, () => session.getSessions) should be(expectedResponse)
+      val a = testDriver.withPostResponse(PhantomResponses.sessionResponse,          () => session.create())
+                .withGetResponseAction(PhantomResponses.getSessionsResponse, () => session.getSessions)
+
+      println(a)
+
+      a should be(expectedResponse)
 
       testDriver.getRequestUrl should be("/sessions")
 
@@ -56,7 +60,7 @@ class SessionSpec extends FreeSpec with Matchers {
     "getCapabilities should find the capabilities of the server" in {
       val (session, testDriver) = SessionHelper()
 
-      val expectedResponse = Capabilities("phantomjs","mac-unknown-32bit","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true,Proxy())
+      val expectedResponse = Capabilities("phantomjs","mac-unknown-32bit","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true)
 
       testDriver.withPostResponse(PhantomResponses.sessionResponse,      () => session.create())
         .withGetResponseAction(PhantomResponses.getCapabilitiesResponse, () => session.getCapabilities) should be(expectedResponse)
@@ -283,10 +287,10 @@ class SessionSpec extends FreeSpec with Matchers {
         val (session, testDriver) = SessionHelper()
 
         val notFoundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":"Kingsleyx"}""")
-        val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
+        val foundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
 
         testDriver
-            .withPostResponses(makeResponses(6, PhantomResponses.findElementsResponse))
+            .withPostResponses(makeResponses(8, PhantomResponses.findElementsResponse))
           .withGetResponses(notFoundResponses ++ foundResponses, () => session.waitFor(By.className("some-classname"), Condition.attributeContains("name", "Kingsley")))
       }
 
@@ -339,14 +343,14 @@ class SessionSpec extends FreeSpec with Matchers {
         val foundResponses = makeResponses(2, """{"sessionId":"test-session-id","status":0,"value":"Kingsley"}""")
 
         testDriver
-          .withPostResponses(makeResponses(6, PhantomResponses.findElementsResponse))
+          .withPostResponses(makeResponses(6, PhantomResponses.findElementResponse))
           .withGetResponses(notFoundResponses ++ foundResponses)
 
-        val element: WebElement = testDriver.withPostResponseAction(PhantomResponses.findElementsResponse, () => session.findElement(By.id("some-id")))
+        val element: WebElement = testDriver.withPostResponseAction(PhantomResponses.findElementResponse, () => session.findElement(By.id("some-id")))
 
         val result = session.findFirst(element, Condition.attributeContains("name", "Kingsley"))
         result.isDefined should be(true)
-        result.get.elementSessionUrl should be("/element/:wdc:1460215713666")
+        result.get.elementSessionUrl should be("/element/:wdc:1460015822532")
       }
 
       "findAll should return a List of WebElements after a wait for a condition with a By" in {

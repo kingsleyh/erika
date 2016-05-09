@@ -9,14 +9,14 @@ class WebElementSpec extends FreeSpec with Matchers {
 
     "getText should return some text" in {
       val element = WebElementHelper()
-      element.withGetResponseAction(WebElementResponses.getTextResponse, () => element.get().getText) should be(Some("some text"))
+      element.withGetResponseAction(WebElementResponses.getTextResponse, () => element.get().getText) should be("some text")
       element.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460015822532/text")
     }
 
     "getAttribute should return the attribute" in {
       val element = WebElementHelper()
       element.withGetResponseAction(WebElementResponses.getAttributeResponse, () => element.get()
-        .getAttribute("href")) should be(Some("some attribute"))
+        .getAttribute("href")) should be("some attribute")
       element.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460015822532/attribute/href")
     }
 

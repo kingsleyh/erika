@@ -76,6 +76,10 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
     handleRequest(sessionUrl, driver.doGet(sessionUrl)).decode[CapabilityResponse].value
   }
 
+  def getChromeCapabilities: ChromeCapabilities = {
+    handleRequest(sessionUrl, driver.doGet(sessionUrl)).decode[ChromeCapabilityResponse].value
+  }
+
   def dispose() = handleRequest(sessionUrl, driver.doDelete(sessionUrl))
 
   def getWindowHandles: List[WindowHandle] = {
@@ -273,7 +277,8 @@ object Run extends App {
   ChromeSession(
     pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
     pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver",
-    requiredCapabilities = Capabilities(proxy = Proxy(proxyType = ProxyType.MANUAL))
+    requiredCapabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
+    desiredCapabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy()))
   )(session => {
 
     session.setGlobalTimeout(20000)

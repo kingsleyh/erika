@@ -1,7 +1,7 @@
 package erikas.bits
 
 import argonaut.Argonaut._
-import argonaut.{EncodeJson, Json}
+import argonaut.{DecodeJson, EncodeJson, Json}
 
 case class Proxy(proxyType: String = ProxyType.DIRECT,
                  proxyAutoconfigUrl: String = "",
@@ -56,13 +56,112 @@ case class Capabilities(browserName: String = "phantomjs",
                         rotatable: Boolean = true,
                         acceptSslCerts: Boolean = true,
                         nativeEvents: Boolean = true,
-                        proxy: Proxy = Proxy())
+                        proxy: Option[Proxy] = None)
 
 object Capabilities {
   implicit def CapabilitiesJson =
     casecodec16(Capabilities.apply, Capabilities.unapply)("browserName", "platform", "version", "javascriptEnabled", "takesScreenshot", "handlesAlerts",
       "databaseEnabled", "locationContextEnabled", "applicationCacheEnabled", "browserConnectionEnabled", "cssSelectorsEnabled", "webStorageEnabled",
       "rotatable", "acceptSslCerts", "nativeEvents", "proxy")
+}
+
+case class ChromeCapabilities(browserName: String = "chrome",
+                              platform: String = Platform.MAC,
+                              version: String = "phantomjs",
+                              javascriptEnabled: Boolean = true,
+                              takesScreenshot: Boolean = true,
+                              handlesAlerts: Boolean = true,
+                              databaseEnabled: Boolean = true,
+                              locationContextEnabled: Boolean = true,
+                              applicationCacheEnabled: Boolean = true,
+                              browserConnectionEnabled: Boolean = true,
+                              cssSelectorsEnabled: Boolean = true,
+                              webStorageEnabled: Boolean = true,
+                              rotatable: Boolean = true,
+                              acceptSslCerts: Boolean = true,
+                              nativeEvents: Boolean = true,
+                              proxy: Option[Proxy] = None,
+                              args: Option[String] = None,
+                              binary: Option[String] = None,
+                              extensions: Option[String] = None,
+                              localState: Option[String] = None,
+                              prefs: Option[Map[String,String]] = None,
+                              detach: Boolean = false,
+                              debuggerAddress: Option[String] = None,
+                              excludeSwitches: Option[List[String]] = None,
+                              minidumpPath: Option[String] = None,
+                              mobileEmulation: Option[Map[String,String]] = None,
+                              perfLoggingPrefs: Option[Map[String,String]] = None,
+                              windowTypes: Option[String] = None)
+
+object ChromeCapabilities {
+
+  implicit def Encode =
+    EncodeJson((o: ChromeCapabilities) =>
+      ("browserName" := o.browserName)
+      ->: ("platform" := o.platform)
+      ->: ("version" := o.version)
+      ->: ("javascriptEnabled" := o.javascriptEnabled)
+      ->: ("takesScreenshot" := o.takesScreenshot)
+      ->: ("handlesAlerts" := o.handlesAlerts)
+      ->: ("databaseEnabled" := o.databaseEnabled)
+      ->: ("locationContextEnabled" := o.locationContextEnabled)
+      ->: ("applicationCacheEnabled" := o.applicationCacheEnabled)
+      ->: ("browserConnectionEnabled" := o.browserConnectionEnabled)
+      ->: ("cssSelectorsEnabled" := o.cssSelectorsEnabled)
+      ->: ("webStorageEnabled" := o.webStorageEnabled)
+      ->: ("rotatable" := o.rotatable)
+      ->: ("acceptSslCerts" := o.acceptSslCerts)
+      ->: ("nativeEvents" := o.nativeEvents)
+      ->: ("proxy" := o.proxy)
+      ->: ("args" := o.args)
+      ->: ("binary" := o.binary)
+      ->: ("extensions" := o.extensions)
+      ->: ("localState" := o.localState)
+      ->: ("prefs" := o.prefs)
+      ->: ("detach" := o.detach)
+      ->: ("debuggerAddress" := o.debuggerAddress)
+      ->: ("excludeSwitches" := o.excludeSwitches)
+      ->: ("minidumpPath" := o.minidumpPath)
+      ->: ("mobileEmulation" := o.mobileEmulation)
+      ->: ("perfLoggingPrefs" := o.perfLoggingPrefs)
+      ->: ("windowTypes" := o.windowTypes)
+      ->: jEmptyObject)
+
+  implicit def Decode =
+    DecodeJson(c => for {
+      browserName <- (c --\ "browserName").as[String]
+      platform <- (c --\ "platform").as[String]
+      version <- (c --\ "version").as[String]
+      javascriptEnabled <- (c --\ "javascriptEnabled").as[Boolean]
+      takesScreenshot <- (c --\ "takesScreenshot").as[Boolean]
+      handlesAlerts <- (c --\ "handlesAlerts").as[Boolean]
+      databaseEnabled <- (c --\ "databaseEnabled").as[Boolean]
+      locationContextEnabled <- (c --\ "locationContextEnabled").as[Boolean]
+      applicationCacheEnabled <- (c --\ "applicationCacheEnabled").as[Boolean]
+      browserConnectionEnabled <- (c --\ "browserConnectionEnabled").as[Boolean]
+      cssSelectorsEnabled <- (c --\ "cssSelectorsEnabled").as[Boolean]
+      webStorageEnabled <- (c --\ "webStorageEnabled").as[Boolean]
+      rotatable <- (c --\ "rotatable").as[Boolean]
+      acceptSslCerts <- (c --\ "acceptSslCerts").as[Boolean]
+      nativeEvents <- (c --\ "nativeEvents").as[Boolean]
+      proxy <- (c --\ "proxy").as[Option[Proxy]]
+      args <- (c --\ "args").as[Option[String]]
+      binary <- (c --\ "binary").as[Option[String]]
+      extensions <- (c --\ "extensions").as[Option[String]]
+      localState <- (c --\ "localState").as[Option[String]]
+      prefs <- (c --\ "prefs").as[Option[Map[String,String]]]
+      detach <- (c --\ "detach").as[Boolean]
+      debuggerAddress <- (c --\ "debuggerAddress").as[Option[String]]
+      excludeSwitches <- (c --\ "excludeSwitches").as[Option[List[String]]]
+      minidumpPath <- (c --\ "minidumpPath").as[Option[String]]
+      mobileEmulation <- (c --\ "mobileEmulation").as[Option[Map[String,String]]]
+      perfLoggingPrefs <- (c --\ "perfLoggingPrefs").as[Option[Map[String,String]]]
+      windowTypes <- (c --\ "windowTypes").as[Option[String]]
+    } yield ChromeCapabilities(browserName, platform, version, javascriptEnabled, takesScreenshot, handlesAlerts,
+      databaseEnabled, locationContextEnabled, applicationCacheEnabled, browserConnectionEnabled, cssSelectorsEnabled,
+      webStorageEnabled, rotatable, acceptSslCerts, nativeEvents, proxy, args, binary, extensions, localState, prefs,
+      detach, debuggerAddress, excludeSwitches, minidumpPath, mobileEmulation, perfLoggingPrefs, windowTypes))
 }
 
 case class SessionRequest(desiredCapabilities: Capabilities, requiredCapabilities: Capabilities)
@@ -163,6 +262,12 @@ case class CapabilityResponse(sessionId: Option[String], status: Int, value: Cap
 
 object CapabilityResponse {
   implicit def Decoder = jdecode3L(CapabilityResponse.apply)("sessionId", "status", "value")
+}
+
+case class ChromeCapabilityResponse(sessionId: Option[String], status: Int, value: ChromeCapabilities)
+
+object ChromeCapabilityResponse {
+  implicit def Decoder = jdecode3L(ChromeCapabilityResponse.apply)("sessionId", "status", "value")
 }
 
 case class WindowHandle(handleId: String)

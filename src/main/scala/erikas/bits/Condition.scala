@@ -21,7 +21,7 @@ object Condition {
 
 class TitleIsCondition(expectedTitle: String) extends Condition {
   override def isSatisfied(webElements: List[Element]) = {
-    if (webElements.isEmpty) false else webElements.flatMap(e => e.getAttribute("text")).contains(expectedTitle)
+    if (webElements.isEmpty) false else webElements.flatMap(e => e.getAttributeOption("text")).contains(expectedTitle)
   }
 
   override def toString: String = s"TitleIsCondition, expectedTitle: $expectedTitle"
@@ -30,7 +30,7 @@ class TitleIsCondition(expectedTitle: String) extends Condition {
 class AttributeContainsCondition(attributeName: String, expectedValue: String) extends Condition {
   override def isSatisfied(webElements: List[Element]): Boolean = {
     if(webElements.isEmpty) false else {
-      webElements.flatMap(e => e.getAttribute(attributeName)).contains(expectedValue)
+      webElements.flatMap(e => e.getAttributeOption(attributeName)).contains(expectedValue)
     }
   }
 
