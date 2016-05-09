@@ -33,6 +33,7 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
     setGlobalTimeout(20000)
     setTimeout(TimeoutType.IMPLICIT, 20000)
     setTimeout(TimeoutType.PAGE_LOAD, 20000)
+    setTimeout(TimeoutType.SCRIPT, 20000)
   }
 
   def visitUrl(url: String) = {
@@ -156,10 +157,6 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
       if(outcome) Result(outcome, actualUrl) else Result(outcome, s"Error: expected url: $expectedUrl but got url: $actualUrl")
     }
     Waitress(this).waitFor(waitForUrlFunction, timeout)
-  }
-
-  def tryIt() = {
-    handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/cookie"))
   }
 
 }
