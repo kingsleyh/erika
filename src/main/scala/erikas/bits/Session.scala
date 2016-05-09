@@ -10,7 +10,7 @@ import sun.misc.BASE64Decoder
 
 import scala.sys.process.Process
 
-class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabilities(),
+class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabilities(),
               requiredCapabilities: Capabilities = Capabilities()) {
 
   var sessionId = ""
@@ -18,8 +18,13 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
   var globalTimeout = 5000
 
   def create(): Unit = {
+
+    println(SessionRequest(desiredCapabilities, requiredCapabilities).asJson)
+
     sessionId = handleRequest("/session", driver.doPost("/session", SessionRequest(desiredCapabilities, requiredCapabilities).asJson))
       .response.decode[CreateSessionResponse].sessionId
+
+
 
     sessionUrl = s"/session/$sessionId"
     println(s"[INFO] creating new session with id: $sessionId")
@@ -74,10 +79,6 @@ class Session(driver: PhantomDriver, desiredCapabilities: Capabilities = Capabil
 
   def getCapabilities: Capabilities = {
     handleRequest(sessionUrl, driver.doGet(sessionUrl)).decode[CapabilityResponse].value
-  }
-
-  def getChromeCapabilities: ChromeCapabilities = {
-    handleRequest(sessionUrl, driver.doGet(sessionUrl)).decode[ChromeCapabilityResponse].value
   }
 
   def dispose() = handleRequest(sessionUrl, driver.doDelete(sessionUrl))
@@ -232,8 +233,8 @@ object PhantomJsSession {
 
 object ChromeSession {
 
-  def apply(desiredCapabilities: Capabilities = Capabilities(),
-            requiredCapabilities: Capabilities = Capabilities(),
+  def apply(desiredCapabilities: Capabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
+            requiredCapabilities: Capabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
             seleniumServerOptions: SeleniumServerOptions = SeleniumServerOptions(),
             pathToSeleniumServerStandalone: String = "/usr/local/bin/",
             pathToChromeDriver: String = "/usr/local/bin/chromedriver",
@@ -244,7 +245,7 @@ object ChromeSession {
             pathToJava: String = "java"
            )(block: (Session) => Unit) = {
 
-    val commands = s"$pathToJava -jar $pathToSeleniumServerStandalone -Dwebdriver.chrome.driver=$pathToChromeDriver -port $port ${seleniumServerOptions.getOptions}"
+    val commands = s"$pathToJava -jar $pathToSeleniumServerStandalone -port $port ${seleniumServerOptions.getOptions} -Dwebdriver.chrome.driver=$pathToChromeDriver"
 
     println(commands)
 
@@ -269,37 +270,114 @@ object ChromeSession {
 
   }
 
+}
+
+object FirefoxSession {
+
+  def apply(desiredCapabilities: Capabilities = Capabilities(browserName = "firefox"),
+            requiredCapabilities: Capabilities = Capabilities(browserName = "firefox"),
+            seleniumServerOptions: SeleniumServerOptions = SeleniumServerOptions(),
+            pathToSeleniumServerStandalone: String = "/usr/local/bin/",
+            pathToFirefoxDriver: String = "/usr/local/bin/wires",
+            host: String = "127.0.0.1",
+            port: Int = Port.freePort4,
+            transport: String = "http://",
+            serverSuffix: String = "/wd/hub",
+            pathToJava: String = "java"
+           )(block: (Session) => Unit) = {
+
+    val commands = s"$pathToJava -jar $pathToSeleniumServerStandalone -port $port ${seleniumServerOptions.getOptions} -Dwebdriver.gecko.driver=$pathToFirefoxDriver"
+
+    println(commands)
+
+    var process: Process = null
+
+    Eventually(10000).tryExecute(() => {
+      process = Process(commands).run()
+    })
+
+    val session = new Session(Driver(host, port, serverSuffix, transport), desiredCapabilities, requiredCapabilities)
+
+    Eventually(10000).tryExecute(() => {
+      session.create()
+    })
+
+    try {
+      block(session)
+    } finally {
+      session.dispose()
+      process.destroy()
+    }
+
+  }
+
+}
+
+// nativeEvents = true for IE
+// resolution =
+
+object BrowserStackSession {
+
+  def apply(desiredCapabilities: Capabilities = Capabilities(browserName = "chrome"),
+            requiredCapabilities: Capabilities = Capabilities(browserName = "chrome"),
+            url: String = "http://#{ENV['BS_USERNAME']}:#{ENV['BS_AUTHKEY']}@hub-cloud.browserstack.com/wd/hub"
+           )(block: (Session) => Unit) = {
+
+    val session = new Session(new UrlDriver(url), desiredCapabilities, requiredCapabilities)
+
+//    Eventually(10000).tryExecute(() => {
+      session.create()
+//    })
+
+    try {
+      block(session)
+    } finally {
+      session.dispose()
+    }
+
+  }
 
 }
 
 object Run extends App {
 
-  ChromeSession(
-    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
-    pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver",
-    requiredCapabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
-    desiredCapabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy()))
+  val caps = Capabilities(
+    name = Some("Kingsley"),
+    browser = Some("Chrome"),
+    browserVersion = Some("50"),
+    os = Some("Windows"),
+    osVersion = Some("10"),
+    resolution = Some("1920x1080"),
+    nativeEvents = true,
+    project = Some("BOOST [CB]"),
+    browserStackLocal = Some(false)
+
+  )
+  BrowserStackSession(url = "@hub-cloud.browserstack.com/wd/hub",
+    desiredCapabilities = caps, requiredCapabilities = caps
   )(session => {
 
     session.setGlobalTimeout(20000)
     session.setTimeout(TimeoutType.IMPLICIT, 20000)
     session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
 
-    session.visitUrl("http://localhost:10270/cb/#login")
+//    session.visitUrl("http://www.google.co.uk")
 
-    session.waitFor(By.className("cb-username"), Condition.isClickable)
-      .toTextInput.setValue("matt.cully@barclays.com")
-      .waitFor(By.className("cb-password"), Condition.isClickable)
-      .toTextInput.setValue("Password!")
-      .waitFor(By.className("cb-login"), Condition.isClickable)
-      .toButton.click()
+//    session.waitFor(By.className("cb-username"), Condition.isClickable)
+//      .toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password"), Condition.isClickable)
+//      .toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login"), Condition.isClickable)
+//      .toButton.click()
+
+    println(session.getCapabilities)
 
   })
 
-
-//  val options = PhantomJsOptions().setIgnoreSslError(true).setWebSecurity(false).setSslProtocol(SSLProtocol.ANY)
-//
-//  PhantomJsSession(phantomJsOptions = options)(session => {
+//  FirefoxSession(
+//    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
+//    pathToFirefoxDriver = "/Users/hendrkin/Downloads/wires"
+//  )(session => {
 //
 //    session.setGlobalTimeout(20000)
 //    session.setTimeout(TimeoutType.IMPLICIT, 20000)
@@ -307,99 +385,60 @@ object Run extends App {
 //
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
-////    session.waitFor(By.className("cb-username"), Condition.isClickable)
-////       .toTextInput.setValue("matt.cully@barclays.com")
-////       .waitFor(By.className("cb-password"), Condition.isClickable)
-////       .toTextInput.setValue("Password!")
-////       .waitFor(By.className("cb-login"), Condition.isClickable)
-////       .toButton.click()
+//    session.waitFor(By.className("cb-username"), Condition.isClickable)
+//      .toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password"), Condition.isClickable)
+//      .toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login"), Condition.isClickable)
+//      .toButton.click()
+//
+//    println(session.getCapabilities)
+//
+//  })
 //
 //
-//    val ele = session.waitFor(By.className("cb-username"), Condition.isClickable)
-//    ele.sendKeys(Keys.DECIMAL, Keys.DECIMAL)
+//  ChromeSession(
+//    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
+//    pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver"
+//  )(session => {
 //
-//    println(ele.getAttribute("value"))
-
-
-//       println(session.findElement(By.className("cb-username")).toTextInput.getValue)
-//       println(session.findElement(By.className("cb-password")).toTextInput.getValue)
-//       println(session.findElement(By.className("cb-login")).click())
-
-
-//       session.waitFor(By.className("cb-login"), Condition.isClickable)
-//       .click()
+//    session.setGlobalTimeout(20000)
+//    session.setTimeout(TimeoutType.IMPLICIT, 20000)
+//    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
 //
+//    session.visitUrl("http://localhost:10270/cb/#login")
 //
-
-
-
-
+//    session.waitFor(By.className("cb-username"), Condition.isClickable)
+//      .toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password"), Condition.isClickable)
+//      .toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login"), Condition.isClickable)
+//      .toButton.click()
 //
-//    println(ele.getAttribute("placeholder"))
-
-//    println(ele.getText)
+//    println(session.getCapabilities)
 //
-//    Thread.sleep(1000)
-//    ele.sendKeys("woop")
-//     Thread.sleep(1000)
-//    println(ele.getText)
-
 //  })
 
-
-// val chromeCapability = Capabilities(browserName = "chrome")
-//  val session = new Session(Driver("127.0.0.1", 4444, "/wd/hub"), chromeCapability, chromeCapability)
-//  session.create()
-//  Thread.sleep(2000)
-////  session.visitUrl("https://www.uptrends.com/tools/website-speed-test")
-////  Thread.sleep(5000)
-////  println(session.getSource)
 //
+//  PhantomJsSession()(session => {
 //
-//  session.setGlobalTimeout(20000)
-//      session.setTimeout(TimeoutType.IMPLICIT, 20000)
-//      session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+//    session.setGlobalTimeout(20000)
+//    session.setTimeout(TimeoutType.IMPLICIT, 20000)
+//    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
 //
-//      session.visitUrl("http://localhost:10270/cb/#login")
+//    session.visitUrl("http://localhost:10270/cb/#login")
 //
-//      session.waitFor(By.className("cb-username"), Condition.isClickable)
-//         .toTextInput.setValue("matt.cully@barclays.com")
-//         .waitFor(By.className("cb-password"), Condition.isClickable)
-//         .toTextInput.setValue("Password!")
-//         .waitFor(By.className("cb-login"), Condition.isClickable)
-//         .toButton.click()
-
-
-//  Thread.sleep(1000)
-//  println(session.findElements(By.className("entry-title")).nonEmpty)
-//  println(session.getSource)
-//  session.takeScreenshot()
+//    session.waitFor(By.className("cb-username"), Condition.isClickable)
+//      .toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password"), Condition.isClickable)
+//      .toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login"), Condition.isClickable)
+//      .toButton.click()
 //
-//    val element = session.findElement(By.className("entry-title"))
-//  Thread.sleep(1000)
-//  println(element.getAttribute("class"))
-//    session.waitFor(element, Condition.attributeContains("itemprop","headline"))
-//    session.waitFor(By.className("entry-title"), Condition.attributeContains("itemprop","headline"))
+//    println(session.getCapabilities)
+//
+//  })
 
-
-//  session.waitForFunction(() => {
-//    val attr: Option[String] = session.findElement(By.className("entry-title")).getAttribute("itemprop")
-//    Result(attr.contains("headline"), "Error could not find attribute: itemprop")
-//  },10000)
-
-//session.waitForUrl("http://jamesclear.com/")
-
-//    session.waitFor(element, Condition.titleIs("wooop"))
-
-//    session.waitFor(By.className("entry-title"), Condition.titleIs("wooop"))
-
-
-//  Thread.sleep(1000)
-
-
-
-//  println(element.getAttribute("class"))
-//  element.isEnabled
 }
 
 

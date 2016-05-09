@@ -41,6 +41,13 @@ object ProxyType {
   def SYSTEM = "system"
 }
 
+case class ChromeCapabilities(chromedriverVersion: String = "", userDataDir: String = "")
+
+object ChromeCapabilities {
+  implicit def ChromeOptionsJson =
+    casecodec2(ChromeCapabilities.apply, ChromeCapabilities.unapply)("chromedriverVersion", "userDataDir")
+}
+
 case class Capabilities(browserName: String = "phantomjs",
                         platform: String = Platform.MAC,
                         version: String = "phantomjs",
@@ -56,77 +63,74 @@ case class Capabilities(browserName: String = "phantomjs",
                         rotatable: Boolean = true,
                         acceptSslCerts: Boolean = true,
                         nativeEvents: Boolean = true,
-                        proxy: Option[Proxy] = None)
+                        proxy: Option[Proxy] = None,
+                        chrome: Option[ChromeCapabilities] = None,
+                        name: Option[String] = None,
+                        browser: Option[String] = None,
+                        browserVersion: Option[String] = None,
+                        os: Option[String] = None,
+                        osVersion: Option[String] = None,
+                        resolution: Option[String] = None,
+                        browserStackSeleniumVersion: Option[String] = None,
+                        project: Option[String] = None,
+                        build: Option[String] = None,
+                        browserStackLocal: Option[Boolean] = None,
+                        browserStackIENoFlash: Option[Boolean] = None,
+                        browserStackIECompatibility: Option[Boolean] = None,
+                        browserStackIEDriver: Option[String] = None,
+                        browserStackIEEnablePopups: Option[Boolean] = None,
+                        browserStackSafariEnablePopups: Option[Boolean] = None,
+                        browserStackSafariAllowAllCookies: Option[Boolean] = None,
+                        browserStackSafariDriver: Option[String] = None,
+                        browserStackDebug: Option[Boolean] = None,
+                        browserStackVideo: Option[Boolean] = None,
+                        browserStackLocalIdentifier: Option[String] = None
+                              )
+
+
 
 object Capabilities {
-  implicit def CapabilitiesJson =
-    casecodec16(Capabilities.apply, Capabilities.unapply)("browserName", "platform", "version", "javascriptEnabled", "takesScreenshot", "handlesAlerts",
-      "databaseEnabled", "locationContextEnabled", "applicationCacheEnabled", "browserConnectionEnabled", "cssSelectorsEnabled", "webStorageEnabled",
-      "rotatable", "acceptSslCerts", "nativeEvents", "proxy")
-}
-
-case class ChromeCapabilities(browserName: String = "chrome",
-                              platform: String = Platform.MAC,
-                              version: String = "phantomjs",
-                              javascriptEnabled: Boolean = true,
-                              takesScreenshot: Boolean = true,
-                              handlesAlerts: Boolean = true,
-                              databaseEnabled: Boolean = true,
-                              locationContextEnabled: Boolean = true,
-                              applicationCacheEnabled: Boolean = true,
-                              browserConnectionEnabled: Boolean = true,
-                              cssSelectorsEnabled: Boolean = true,
-                              webStorageEnabled: Boolean = true,
-                              rotatable: Boolean = true,
-                              acceptSslCerts: Boolean = true,
-                              nativeEvents: Boolean = true,
-                              proxy: Option[Proxy] = None,
-                              args: Option[String] = None,
-                              binary: Option[String] = None,
-                              extensions: Option[String] = None,
-                              localState: Option[String] = None,
-                              prefs: Option[Map[String,String]] = None,
-                              detach: Boolean = false,
-                              debuggerAddress: Option[String] = None,
-                              excludeSwitches: Option[List[String]] = None,
-                              minidumpPath: Option[String] = None,
-                              mobileEmulation: Option[Map[String,String]] = None,
-                              perfLoggingPrefs: Option[Map[String,String]] = None,
-                              windowTypes: Option[String] = None)
-
-object ChromeCapabilities {
 
   implicit def Encode =
-    EncodeJson((o: ChromeCapabilities) =>
+    EncodeJson((o: Capabilities) =>
       ("browserName" := o.browserName)
-      ->: ("platform" := o.platform)
-      ->: ("version" := o.version)
-      ->: ("javascriptEnabled" := o.javascriptEnabled)
-      ->: ("takesScreenshot" := o.takesScreenshot)
-      ->: ("handlesAlerts" := o.handlesAlerts)
-      ->: ("databaseEnabled" := o.databaseEnabled)
-      ->: ("locationContextEnabled" := o.locationContextEnabled)
-      ->: ("applicationCacheEnabled" := o.applicationCacheEnabled)
-      ->: ("browserConnectionEnabled" := o.browserConnectionEnabled)
-      ->: ("cssSelectorsEnabled" := o.cssSelectorsEnabled)
-      ->: ("webStorageEnabled" := o.webStorageEnabled)
-      ->: ("rotatable" := o.rotatable)
-      ->: ("acceptSslCerts" := o.acceptSslCerts)
-      ->: ("nativeEvents" := o.nativeEvents)
-      ->: ("proxy" := o.proxy)
-      ->: ("args" := o.args)
-      ->: ("binary" := o.binary)
-      ->: ("extensions" := o.extensions)
-      ->: ("localState" := o.localState)
-      ->: ("prefs" := o.prefs)
-      ->: ("detach" := o.detach)
-      ->: ("debuggerAddress" := o.debuggerAddress)
-      ->: ("excludeSwitches" := o.excludeSwitches)
-      ->: ("minidumpPath" := o.minidumpPath)
-      ->: ("mobileEmulation" := o.mobileEmulation)
-      ->: ("perfLoggingPrefs" := o.perfLoggingPrefs)
-      ->: ("windowTypes" := o.windowTypes)
-      ->: jEmptyObject)
+        ->: ("platform" := o.platform)
+        ->: ("version" := o.version)
+        ->: ("javascriptEnabled" := o.javascriptEnabled)
+        ->: ("takesScreenshot" := o.takesScreenshot)
+        ->: ("handlesAlerts" := o.handlesAlerts)
+        ->: ("databaseEnabled" := o.databaseEnabled)
+        ->: ("locationContextEnabled" := o.locationContextEnabled)
+        ->: ("applicationCacheEnabled" := o.applicationCacheEnabled)
+        ->: ("browserConnectionEnabled" := o.browserConnectionEnabled)
+        ->: ("cssSelectorsEnabled" := o.cssSelectorsEnabled)
+        ->: ("webStorageEnabled" := o.webStorageEnabled)
+        ->: ("rotatable" := o.rotatable)
+        ->: ("acceptSslCerts" := o.acceptSslCerts)
+        ->: ("nativeEvents" := o.nativeEvents)
+        ->: ("proxy" :?= o.proxy)
+        ->?: ("chrome" :?= o.chrome)
+        ->?: ("name" :?= o.name)
+        ->?: ("browser" :?= o.browser)
+        ->?: ("browserVersion" :?= o.browserVersion)
+        ->?: ("os" :?= o.os)
+        ->?: ("os_version" :?= o.osVersion)
+        ->?: ("resolution" :?= o.resolution)
+        ->?: ("browserstack.selenium_version" :?= o.browserStackSeleniumVersion)
+        ->?: ("project" :?= o.project)
+        ->?: ("build" :?= o.build)
+        ->?: ("browserstack.local" :?= o.browserStackLocal)
+        ->?: ("browserstack.ie.noFlash" :?= o.browserStackIENoFlash)
+        ->?: ("browserstack.ie.compatibility" :?= o.browserStackIECompatibility)
+        ->?: ("browserstack.ie.driver" :?= o.browserStackIEDriver)
+        ->?: ("browserstack.ie.enablePopups" :?= o.browserStackIEEnablePopups)
+        ->?: ("browserstack.safari.enablePopups" :?= o.browserStackSafariEnablePopups)
+        ->?: ("browserstack.safari.allowAllCookies" :?= o.browserStackSafariAllowAllCookies)
+        ->?: ("browserstack.safari.driver" :?= o.browserStackSafariDriver)
+        ->?: ("browserstack.debug" :?= o.browserStackDebug)
+        ->?: ("browserstack.video" :?= o.browserStackVideo)
+        ->?: ("browserstack.localIdentifier" :?= o.browserStackLocalIdentifier)
+        ->?: jEmptyObject)
 
   implicit def Decode =
     DecodeJson(c => for {
@@ -146,22 +150,35 @@ object ChromeCapabilities {
       acceptSslCerts <- (c --\ "acceptSslCerts").as[Boolean]
       nativeEvents <- (c --\ "nativeEvents").as[Boolean]
       proxy <- (c --\ "proxy").as[Option[Proxy]]
-      args <- (c --\ "args").as[Option[String]]
-      binary <- (c --\ "binary").as[Option[String]]
-      extensions <- (c --\ "extensions").as[Option[String]]
-      localState <- (c --\ "localState").as[Option[String]]
-      prefs <- (c --\ "prefs").as[Option[Map[String,String]]]
-      detach <- (c --\ "detach").as[Boolean]
-      debuggerAddress <- (c --\ "debuggerAddress").as[Option[String]]
-      excludeSwitches <- (c --\ "excludeSwitches").as[Option[List[String]]]
-      minidumpPath <- (c --\ "minidumpPath").as[Option[String]]
-      mobileEmulation <- (c --\ "mobileEmulation").as[Option[Map[String,String]]]
-      perfLoggingPrefs <- (c --\ "perfLoggingPrefs").as[Option[Map[String,String]]]
-      windowTypes <- (c --\ "windowTypes").as[Option[String]]
-    } yield ChromeCapabilities(browserName, platform, version, javascriptEnabled, takesScreenshot, handlesAlerts,
+      chrome <- (c --\ "proxy").as[Option[ChromeCapabilities]]
+      name <- (c --\ "name").as[Option[String]]
+      browser <- (c --\ "browser").as[Option[String]]
+      browserVersion <- (c --\ "browserVersion").as[Option[String]]
+      os <- (c --\ "os").as[Option[String]]
+      osVersion <- (c --\ "osVersion").as[Option[String]]
+      resolution <- (c --\ "resolution").as[Option[String]]
+      project <- (c --\ "project").as[Option[String]]
+      build <- (c --\ "build").as[Option[String]]
+      browserStackSeleniumVersion <- (c --\ "browserstack.selenium.version").as[Option[String]]
+      browserStackLocal <- (c --\ "browserstack.local").as[Option[Boolean]]
+      browserStackIENoFlash <- (c --\ "browserstack.ie.noFlash").as[Option[Boolean]]
+      browserStackIECompatibility <- (c --\ "browserstack.ie.compatibility").as[Option[Boolean]]
+      browserStackIEDriver <- (c --\ "browserstack.ie.driver").as[Option[String]]
+      browserStackIEEnablePopups <- (c --\ "browserstack.ie.enablePopups").as[Option[Boolean]]
+      browserStackSafariEnablePopups <- (c --\ "browserstack.safari.enablePopups").as[Option[Boolean]]
+      browserStackSafariAllowAllCookies <- (c --\ "browserstack.safari.allowAllCookies").as[Option[Boolean]]
+      browserStackSafariDriver <- (c --\ "browserstack.safari.driver").as[Option[String]]
+      browserStackDebug <- (c --\ "browserstack.debug").as[Option[Boolean]]
+      browserStackVideo <- (c --\ "browserstack.video").as[Option[Boolean]]
+      browserStackLocalId <- (c --\ "browserstack.localIdentifier").as[Option[String]]
+    } yield Capabilities(browserName, platform, version, javascriptEnabled, takesScreenshot, handlesAlerts,
       databaseEnabled, locationContextEnabled, applicationCacheEnabled, browserConnectionEnabled, cssSelectorsEnabled,
-      webStorageEnabled, rotatable, acceptSslCerts, nativeEvents, proxy, args, binary, extensions, localState, prefs,
-      detach, debuggerAddress, excludeSwitches, minidumpPath, mobileEmulation, perfLoggingPrefs, windowTypes))
+      webStorageEnabled, rotatable, acceptSslCerts, nativeEvents, proxy, chrome, name, browser, browserVersion, os, osVersion, resolution,
+      project, build, browserStackSeleniumVersion, browserStackLocal, browserStackIENoFlash, browserStackIECompatibility,
+      browserStackIEDriver, browserStackIEEnablePopups, browserStackSafariEnablePopups, browserStackSafariAllowAllCookies, browserStackSafariDriver,
+      browserStackDebug, browserStackVideo, browserStackLocalId))
+
+
 }
 
 case class SessionRequest(desiredCapabilities: Capabilities, requiredCapabilities: Capabilities)
@@ -262,12 +279,6 @@ case class CapabilityResponse(sessionId: Option[String], status: Int, value: Cap
 
 object CapabilityResponse {
   implicit def Decoder = jdecode3L(CapabilityResponse.apply)("sessionId", "status", "value")
-}
-
-case class ChromeCapabilityResponse(sessionId: Option[String], status: Int, value: ChromeCapabilities)
-
-object ChromeCapabilityResponse {
-  implicit def Decoder = jdecode3L(ChromeCapabilityResponse.apply)("sessionId", "status", "value")
 }
 
 case class WindowHandle(handleId: String)

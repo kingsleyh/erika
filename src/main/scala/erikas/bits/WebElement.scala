@@ -23,14 +23,14 @@ trait Element {
 
 case class IncorrectElementException(message: String) extends Exception(message)
 
-case class TextInput(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session)
+case class TextInput(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
   def getValue = waitFor(this, Condition.isClickable).getAttribute("value")
   def setValue(value: String) = waitFor(this, Condition.isClickable).clear().sendKeys(value)
   def clearValue = waitFor(this, Condition.isClickable).clear()
 }
 
-class Button(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session)
+class Button(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
   def getValue = waitFor(this, Condition.isClickable).getAttribute("value")
   override def click(): Button = {
@@ -40,7 +40,7 @@ class Button(elementId :String, sessionId: String, sessionUrl: String, driver: P
   }
 }
 
-class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: PhantomDriver, session: Session) extends Searcher with Element {
+class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session) extends Searcher with Element {
 
   val elementSessionUrl = s"$sessionUrl/element/$elementId"
 

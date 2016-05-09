@@ -10,7 +10,7 @@ import scala.collection.mutable.Queue
 
 case class APIResponseError(message: String) extends Exception(message)
 
-trait PhantomDriver {
+trait BaseDriver {
   def doGet(url: String): Response
 
   def doPost(url: String, json: Json): Response
@@ -18,7 +18,7 @@ trait PhantomDriver {
   def doDelete(url: String): Response
 }
 
-class Driver(host: String, port: Int, context: String = "", transport: String = "http://") extends PhantomDriver {
+class Driver(host: String, port: Int, context: String = "", transport: String = "http://") extends BaseDriver {
 
   val phantomServer = s"$transport$host:$port$context"
 
@@ -36,11 +36,31 @@ class Driver(host: String, port: Int, context: String = "", transport: String = 
 
 }
 
+class UrlDriver(remoteUrl: String) extends BaseDriver {
+
+  override def doGet(url: String): Response = {
+    http(GET(remoteUrl + url).contentType(APPLICATION_JSON))
+  }
+
+  override def doPost(url: String, json: Json) = {
+    println(remoteUrl + url);
+    http(POST(remoteUrl + url).contentType(APPLICATION_JSON).entity(json.toString()))
+  }
+
+  override def doDelete(url: String) = {
+    http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON))
+  }
+
+}
+
+
 object Driver {
 
   def apply(host: String, port: Int): Driver = new Driver(host, port)
 
   def apply(host: String, port: Int, context: String, transport: String): Driver = new Driver(host, port, context, transport)
+
+  def apply(url: String) = new UrlDriver(url)
 
   def handleRequest(url: String, response: Response) = {
     response match {
@@ -53,7 +73,7 @@ object Driver {
 case class QueueEmptyError(message: String) extends Exception(message)
 case class NoCannedResponseError(message: String) extends Exception(message)
 
-class TestDriver(host: String, port: Int) extends PhantomDriver {
+class TestDriver(host: String, port: Int) extends BaseDriver {
 
   private var postResponse: Option[Response] = None
   private var getResponse: Option[Response] = None
