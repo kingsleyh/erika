@@ -2,7 +2,7 @@ package erikas.bits
 
 object PhantomRequests {
 
-  val create = """{"desiredCapabilities":{"browserConnectionEnabled":true,"databaseEnabled":true,"nativeEvents":true,"webStorageEnabled":true,"takesScreenshot":true,"applicationCacheEnabled":true,"locationContextEnabled":true,"acceptSslCerts":true,"browserName":"phantomjs","chrome":null,"version":"phantomjs","rotatable":true,"proxy":null,"javascriptEnabled":true,"handlesAlerts":true,"platform":"MAC","cssSelectorsEnabled":true},"requiredCapabilities":{"browserConnectionEnabled":true,"databaseEnabled":true,"nativeEvents":true,"webStorageEnabled":true,"takesScreenshot":true,"applicationCacheEnabled":true,"locationContextEnabled":true,"acceptSslCerts":true,"browserName":"phantomjs","chrome":null,"version":"phantomjs","rotatable":true,"proxy":null,"javascriptEnabled":true,"handlesAlerts":true,"platform":"MAC","cssSelectorsEnabled":true}}"""
+  val create = """{"desiredCapabilities":{"browserConnectionEnabled":true,"databaseEnabled":true,"nativeEvents":true,"webStorageEnabled":true,"takesScreenshot":true,"applicationCacheEnabled":true,"locationContextEnabled":true,"acceptSslCerts":true,"browserName":"phantomjs","version":"phantomjs","rotatable":true,"javascriptEnabled":true,"handlesAlerts":true,"platform":"MAC","cssSelectorsEnabled":true},"requiredCapabilities":{"browserConnectionEnabled":true,"databaseEnabled":true,"nativeEvents":true,"webStorageEnabled":true,"takesScreenshot":true,"applicationCacheEnabled":true,"locationContextEnabled":true,"acceptSslCerts":true,"browserName":"phantomjs","version":"phantomjs","rotatable":true,"javascriptEnabled":true,"handlesAlerts":true,"platform":"MAC","cssSelectorsEnabled":true}}"""
 
   val visitUrl = """{"url":"http://some-url"}"""
 

@@ -18,6 +18,8 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   var globalTimeout = 5000
 
   def create(): Unit = {
+    println(SessionRequest(desiredCapabilities, requiredCapabilities).asJson)
+
     sessionId = handleRequest("/session", driver.doPost("/session", SessionRequest(desiredCapabilities, requiredCapabilities).asJson))
       .response.decode[CreateSessionResponse].sessionId
 
