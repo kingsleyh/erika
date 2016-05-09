@@ -120,7 +120,7 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
     } yield new WebElement(elementId,sessionId, sessionUrl, driver, session)
   }
 
-  def waitFor[T <: Searcher](element: T, condition: Condition, timeout: Int = session.getGlobalTimeout): WebElement = {
+  def waitFor[T <: Searcher](element: T, condition: Condition = Condition.isClickable, timeout: Int = session.getGlobalTimeout): WebElement = {
     Waitress(session).waitFor(element, condition, timeout)
   }
 

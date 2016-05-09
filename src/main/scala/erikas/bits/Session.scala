@@ -18,13 +18,8 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   var globalTimeout = 5000
 
   def create(): Unit = {
-
-    println(SessionRequest(desiredCapabilities, requiredCapabilities).asJson)
-
     sessionId = handleRequest("/session", driver.doPost("/session", SessionRequest(desiredCapabilities, requiredCapabilities).asJson))
       .response.decode[CreateSessionResponse].sessionId
-
-
 
     sessionUrl = s"/session/$sessionId"
     println(s"[INFO] creating new session with id: $sessionId")
@@ -33,6 +28,12 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   def setGlobalTimeout(timeout: Int) = globalTimeout = timeout
 
   def getGlobalTimeout = globalTimeout
+
+  def setAllTimeouts(timeout: Int) = {
+    setGlobalTimeout(20000)
+    setTimeout(TimeoutType.IMPLICIT, 20000)
+    setTimeout(TimeoutType.PAGE_LOAD, 20000)
+  }
 
   def visitUrl(url: String) = {
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/url", UrlRequest(url).asJson))
@@ -132,7 +133,7 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts/implicit_wait", TimeoutValueRequest(milliseconds).asJson))
   }
 
-  def waitFor[T <: Searcher](element: T, condition: Condition, timeout: Int = getGlobalTimeout): WebElement = {
+  def waitFor[T <: Searcher](element: T, condition: Condition = Condition.isClickable, timeout: Int = getGlobalTimeout): WebElement = {
     Waitress(this).waitFor(element, condition, timeout)
   }
 
@@ -313,14 +314,11 @@ object FirefoxSession {
 
 }
 
-// nativeEvents = true for IE
-// resolution =
-
 object BrowserStackSession {
 
-  def apply(desiredCapabilities: Capabilities = Capabilities(browserName = "chrome"),
-            requiredCapabilities: Capabilities = Capabilities(browserName = "chrome"),
-            url: String = "http://#{ENV['BS_USERNAME']}:#{ENV['BS_AUTHKEY']}@hub-cloud.browserstack.com/wd/hub",
+  def apply(desiredCapabilities: Capabilities = Capabilities(),
+            requiredCapabilities: Capabilities = Capabilities(),
+            url: String = "http://hub-cloud.browserstack.com/wd/hub",
             basicAuth: Option[BasicAuth] = None
            )(block: (Session) => Unit) = {
 
@@ -342,68 +340,49 @@ object BrowserStackSession {
 
 object Run extends App {
 
-  val caps = Capabilities(
-    name = Some("Kingsley"),
-    browser = Some("Chrome"),
-    browserVersion = Some("50"),
-    os = Some("Windows"),
-    osVersion = Some("10"),
-    resolution = Some("1920x1080"),
-    nativeEvents = true,
-    project = Some("BOOST [CB]"),
-    browserStackLocal = Some(false),
-    browserStackDebug = Some(true)
-  )
+//  val capabilities = Capabilities(
+//    name              = Some("Kingsley"),
+//    browser           = Some("Chrome"),
+//    browserVersion    = Some("50"),
+//    os                = Some("Windows"),
+//    osVersion         = Some("10"),
+//    resolution        = Some("1920x1080"),
+//    project           = Some("BOOST [CB]"),
+//    browserStackLocal = Some(false),
+//    browserStackDebug = Some(true),
+//    nativeEvents = true
+//  )
+//
+//  BrowserStackSession(
+//    basicAuth = Some(BasicAuth("user", "key")),
+//    desiredCapabilities = capabilities
+//  )(session => {
+//
+//    session.setAllTimeouts(20000)
+//
+//    session.visitUrl("http://localhost:10270/cb/#login")
+//
+//    session
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login")).toButton.click()
+//
+//  })
 
-  BrowserStackSession(url = "http://hub-cloud.browserstack.com/wd/hub",
-    desiredCapabilities = caps
-  )(session => {
-
-    session.setGlobalTimeout(20000)
-    session.setTimeout(TimeoutType.IMPLICIT, 20000)
-    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
-
-//    session.visitUrl("http://www.google.co.uk")
-
-//    session.waitFor(By.className("cb-username"), Condition.isClickable)
-//      .toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password"), Condition.isClickable)
-//      .toTextInput.setValue("Password!")
-//      .waitFor(By.className("cb-login"), Condition.isClickable)
-//      .toButton.click()
-
-
-    session.visitUrl("https://www.fdmtime.co.uk")
-
-    val ele = session.waitFor(By.id("username"), Condition.isClickable)
-      .toTextInput.setValue("kingsley")
-      .waitFor(By.id("username"), Condition.attributeContains("value", "kingsley"))
-
-
-    println(ele.getAttribute("value"))
-
-    println(session.getCapabilities)
-
-
-  })
 
 //  FirefoxSession(
 //    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
 //    pathToFirefoxDriver = "/Users/hendrkin/Downloads/wires"
 //  )(session => {
 //
-//    session.setGlobalTimeout(20000)
-//    session.setTimeout(TimeoutType.IMPLICIT, 20000)
-//    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+//    session.setAllTimeouts(20000)
 //
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
-//    session.waitFor(By.className("cb-username"), Condition.isClickable)
-//      .toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password"), Condition.isClickable)
-//      .toTextInput.setValue("Password!")
-//      .waitFor(By.className("cb-login"), Condition.isClickable)
-//      .toButton.click()
+//    session
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login")).toButton.click()
 //
 //    println(session.getCapabilities)
 //
@@ -415,38 +394,30 @@ object Run extends App {
 //    pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver"
 //  )(session => {
 //
-//    session.setGlobalTimeout(20000)
-//    session.setTimeout(TimeoutType.IMPLICIT, 20000)
-//    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+//    session.setAllTimeouts(20000)
 //
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
-//    session.waitFor(By.className("cb-username"), Condition.isClickable)
-//      .toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password"), Condition.isClickable)
-//      .toTextInput.setValue("Password!")
-//      .waitFor(By.className("cb-login"), Condition.isClickable)
-//      .toButton.click()
+//    session
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login")).toButton.click()
 //
 //    println(session.getCapabilities)
 //
 //  })
 
-//
+
 //  PhantomJsSession()(session => {
 //
-//    session.setGlobalTimeout(20000)
-//    session.setTimeout(TimeoutType.IMPLICIT, 20000)
-//    session.setTimeout(TimeoutType.PAGE_LOAD, 20000)
+//    session.setAllTimeouts(20000)
 //
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
-//    session.waitFor(By.className("cb-username"), Condition.isClickable)
-//      .toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password"), Condition.isClickable)
-//      .toTextInput.setValue("Password!")
-//      .waitFor(By.className("cb-login"), Condition.isClickable)
-//      .toButton.click()
+//    session
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-login")).toButton.click()
 //
 //    println(session.getCapabilities)
 //
