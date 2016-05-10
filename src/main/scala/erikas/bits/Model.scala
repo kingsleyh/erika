@@ -48,6 +48,27 @@ object ChromeCapabilities {
     casecodec2(ChromeCapabilities.apply, ChromeCapabilities.unapply)("chromedriverVersion", "userDataDir")
 }
 
+case class BrowserStackCapabilities(name: Option[String] = None,
+                                    browser: Option[String] = None,
+                                    browserVersion: Option[String] = None,
+                                    os: Option[String] = None,
+                                    osVersion: Option[String] = None,
+                                    resolution: Option[String] = None,
+                                    browserStackSeleniumVersion: Option[String] = None,
+                                    project: Option[String] = None,
+                                    build: Option[String] = None,
+                                    browserStackLocal: Option[Boolean] = None,
+                                    browserStackIENoFlash: Option[Boolean] = None,
+                                    browserStackIECompatibility: Option[Boolean] = None,
+                                    browserStackIEDriver: Option[String] = None,
+                                    browserStackIEEnablePopups: Option[Boolean] = None,
+                                    browserStackSafariEnablePopups: Option[Boolean] = None,
+                                    browserStackSafariAllowAllCookies: Option[Boolean] = None,
+                                    browserStackSafariDriver: Option[String] = None,
+                                    browserStackDebug: Option[Boolean] = None,
+                                    browserStackVideo: Option[Boolean] = None,
+                                    browserStackLocalIdentifier: Option[String] = None)
+
 case class Capabilities(browserName: String = "phantomjs",
                         platform: String = Platform.MAC,
                         version: String = "phantomjs",
@@ -65,28 +86,7 @@ case class Capabilities(browserName: String = "phantomjs",
                         nativeEvents: Boolean = true,
                         proxy: Option[Proxy] = None,
                         chrome: Option[ChromeCapabilities] = None,
-                        name: Option[String] = None,
-                        browser: Option[String] = None,
-                        browserVersion: Option[String] = None,
-                        os: Option[String] = None,
-                        osVersion: Option[String] = None,
-                        resolution: Option[String] = None,
-                        browserStackSeleniumVersion: Option[String] = None,
-                        project: Option[String] = None,
-                        build: Option[String] = None,
-                        browserStackLocal: Option[Boolean] = None,
-                        browserStackIENoFlash: Option[Boolean] = None,
-                        browserStackIECompatibility: Option[Boolean] = None,
-                        browserStackIEDriver: Option[String] = None,
-                        browserStackIEEnablePopups: Option[Boolean] = None,
-                        browserStackSafariEnablePopups: Option[Boolean] = None,
-                        browserStackSafariAllowAllCookies: Option[Boolean] = None,
-                        browserStackSafariDriver: Option[String] = None,
-                        browserStackDebug: Option[Boolean] = None,
-                        browserStackVideo: Option[Boolean] = None,
-                        browserStackLocalIdentifier: Option[String] = None
-                              )
-
+                        browserStack: Option[BrowserStackCapabilities] = None)
 
 
 object Capabilities {
@@ -110,26 +110,26 @@ object Capabilities {
         ->: ("nativeEvents" := o.nativeEvents)
         ->: ("proxy" :?= o.proxy)
         ->?: ("chrome" :?= o.chrome)
-        ->?: ("name" :?= o.name)
-        ->?: ("browser" :?= o.browser)
-        ->?: ("browserVersion" :?= o.browserVersion)
-        ->?: ("os" :?= o.os)
-        ->?: ("os_version" :?= o.osVersion)
-        ->?: ("resolution" :?= o.resolution)
-        ->?: ("browserstack.selenium_version" :?= o.browserStackSeleniumVersion)
-        ->?: ("project" :?= o.project)
-        ->?: ("build" :?= o.build)
-        ->?: ("browserstack.local" :?= o.browserStackLocal)
-        ->?: ("browserstack.ie.noFlash" :?= o.browserStackIENoFlash)
-        ->?: ("browserstack.ie.compatibility" :?= o.browserStackIECompatibility)
-        ->?: ("browserstack.ie.driver" :?= o.browserStackIEDriver)
-        ->?: ("browserstack.ie.enablePopups" :?= o.browserStackIEEnablePopups)
-        ->?: ("browserstack.safari.enablePopups" :?= o.browserStackSafariEnablePopups)
-        ->?: ("browserstack.safari.allowAllCookies" :?= o.browserStackSafariAllowAllCookies)
-        ->?: ("browserstack.safari.driver" :?= o.browserStackSafariDriver)
-        ->?: ("browserstack.debug" :?= o.browserStackDebug)
-        ->?: ("browserstack.video" :?= o.browserStackVideo)
-        ->?: ("browserstack.localIdentifier" :?= o.browserStackLocalIdentifier)
+        ->?: ("name" :?= o.browserStack.map(_.name))
+        ->?: ("browser" :?= o.browserStack.map(_.browser))
+        ->?: ("browserVersion" :?= o.browserStack.map(_.browserVersion))
+        ->?: ("os" :?= o.browserStack.map(_.os))
+        ->?: ("os_version" :?= o.browserStack.map(_.osVersion))
+        ->?: ("resolution" :?= o.browserStack.map(_.resolution))
+        ->?: ("browserstack.selenium_version" :?= o.browserStack.map(_.browserStackSeleniumVersion))
+        ->?: ("project" :?= o.browserStack.map(_.project))
+        ->?: ("build" :?= o.browserStack.map(_.build))
+        ->?: ("browserstack.local" :?= o.browserStack.map(_.browserStackLocal))
+        ->?: ("browserstack.ie.noFlash" :?= o.browserStack.map(_.browserStackIENoFlash))
+        ->?: ("browserstack.ie.compatibility" :?= o.browserStack.map(_.browserStackIECompatibility))
+        ->?: ("browserstack.ie.driver" :?= o.browserStack.map(_.browserStackIEDriver))
+        ->?: ("browserstack.ie.enablePopups" :?= o.browserStack.map(_.browserStackIEEnablePopups))
+        ->?: ("browserstack.safari.enablePopups" :?= o.browserStack.map(_.browserStackSafariEnablePopups))
+        ->?: ("browserstack.safari.allowAllCookies" :?= o.browserStack.map(_.browserStackSafariAllowAllCookies))
+        ->?: ("browserstack.safari.driver" :?= o.browserStack.map(_.browserStackSafariDriver))
+        ->?: ("browserstack.debug" :?= o.browserStack.map(_.browserStackDebug))
+        ->?: ("browserstack.video" :?= o.browserStack.map(_.browserStackVideo))
+        ->?: ("browserstack.localIdentifier" :?= o.browserStack.map(_.browserStackLocalIdentifier))
         ->?: jEmptyObject)
 
   implicit def Decode =
@@ -173,10 +173,10 @@ object Capabilities {
       browserStackLocalId <- (c --\ "browserstack.localIdentifier").as[Option[String]]
     } yield Capabilities(browserName, platform, version, javascriptEnabled, takesScreenshot, handlesAlerts,
       databaseEnabled, locationContextEnabled, applicationCacheEnabled, browserConnectionEnabled, cssSelectorsEnabled,
-      webStorageEnabled, rotatable, acceptSslCerts, nativeEvents, proxy, chrome, name, browser, browserVersion, os, osVersion, resolution,
+      webStorageEnabled, rotatable, acceptSslCerts, nativeEvents, proxy, chrome, Some(BrowserStackCapabilities(name, browser, browserVersion, os, osVersion, resolution,
       project, build, browserStackSeleniumVersion, browserStackLocal, browserStackIENoFlash, browserStackIECompatibility,
       browserStackIEDriver, browserStackIEEnablePopups, browserStackSafariEnablePopups, browserStackSafariAllowAllCookies, browserStackSafariDriver,
-      browserStackDebug, browserStackVideo, browserStackLocalId))
+      browserStackDebug, browserStackVideo, browserStackLocalId))))
 
 
 }
