@@ -338,7 +338,7 @@ object BrowserStackSession {
 
 }
 
-object Run extends App {
+//object Run extends App {
 //
 //  val capabilities = Capabilities(
 //    name              = Some("Kingsley"),
@@ -421,6 +421,6 @@ object Run extends App {
 //
 //  })
 
-}
+//}
 
 
