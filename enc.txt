@@ -1,0 +1,15 @@
+brew install gpg2
+
+// encrypt jar
+sbt publish-local
+cd cd /Users/hendrkin/.ivy2/local/erika/erika_2.11/1/jars
+gpg2 -ab erika_2.11.jar
+mv erika_2.11.jar.asc sontatype.asc
+
+export SECRET=secret
+
+// encrypt it
+openssl des3 -a -salt -in sonatype.asc -out sonatype.asc.enc -k $SECRET
+
+// decrypt
+openssl des3 -d -salt -in ./publish/sonatype.asc.enc -out ./publish/sonatype.asc -k "$SECRET"
