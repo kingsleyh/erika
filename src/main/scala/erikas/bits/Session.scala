@@ -36,6 +36,7 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
     setTimeout(TimeoutType.IMPLICIT, 20000)
     setTimeout(TimeoutType.PAGE_LOAD, 20000)
     setTimeout(TimeoutType.SCRIPT, 20000)
+    this
   }
 
   def visitUrl(url: String) = {
@@ -338,7 +339,7 @@ object BrowserStackSession {
 }
 
 object Run extends App {
-
+//
 //  val capabilities = Capabilities(
 //    name              = Some("Kingsley"),
 //    browser           = Some("Chrome"),
@@ -349,7 +350,7 @@ object Run extends App {
 //    project           = Some("BOOST [CB]"),
 //    browserStackLocal = Some(false),
 //    browserStackDebug = Some(true),
-//    nativeEvents = true
+//    nativeEvents      = true
 //  )
 //
 //  BrowserStackSession(
@@ -357,13 +358,11 @@ object Run extends App {
 //    desiredCapabilities = capabilities
 //  )(session => {
 //
-//    session.setAllTimeouts(20000)
-//
-//    session.visitUrl("http://localhost:10270/cb/#login")
-//
 //    session
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .setAllTimeouts(20000)
+//      .visitUrl("http://localhost:10270/cb/#login")
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
 //      .waitFor(By.className("cb-login")).toButton.click()
 //
 //  })
@@ -379,8 +378,8 @@ object Run extends App {
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
 //    session
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
 //      .waitFor(By.className("cb-login")).toButton.click()
 //
 //    println(session.getCapabilities)
@@ -398,8 +397,8 @@ object Run extends App {
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
 //    session
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
 //      .waitFor(By.className("cb-login")).toButton.click()
 //
 //    println(session.getCapabilities)
@@ -414,8 +413,8 @@ object Run extends App {
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
 //    session
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("matt.cully@barclays.com")
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("Password!")
+//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
+//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
 //      .waitFor(By.className("cb-login")).toButton.click()
 //
 //    println(session.getCapabilities)
