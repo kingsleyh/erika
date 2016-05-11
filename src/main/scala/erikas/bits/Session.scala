@@ -341,33 +341,33 @@ object BrowserStackSession {
 //object Run extends App {
 //
 //  val capabilities = Capabilities(
-//    name              = Some("Kingsley"),
-//    browser           = Some("Chrome"),
-//    browserVersion    = Some("50"),
-//    os                = Some("Windows"),
-//    osVersion         = Some("10"),
-//    resolution        = Some("1920x1080"),
-//    project           = Some("BOOST [CB]"),
+//    browserStack = Some(BrowserStackCapabilities(
+//    name = Some("Kingsley"),
+//    browser = Some("Chrome"),
+//    browserVersion = Some("50"),
+//    os = Some("Windows"),
+//    osVersion = Some("10"),
+//    resolution = Some("1920x1080"),
+//    project = Some("BOOST [CB]"),
 //    browserStackLocal = Some(false),
-//    browserStackDebug = Some(true),
-//    nativeEvents      = true
+//    browserStackDebug = Some(true))),
+//    nativeEvents = true
 //  )
 //
 //  BrowserStackSession(
-//    basicAuth = Some(BasicAuth("user", "key")),
+//    basicAuth = Some(BasicAuth("kingsleyhendrick1", "Uaopg5egqaQ4h4tuJcsm")),
 //    desiredCapabilities = capabilities
 //  )(session => {
 //
 //    session
 //      .setAllTimeouts(20000)
-//      .visitUrl("http://localhost:10270/cb/#login")
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
-//      .waitFor(By.className("cb-login")).toButton.click()
+//      .visitUrl("https://www.fdmtime.co.uk")
+//      .waitFor(By.id("username")).toTextInput.setValue("username")
+//      .waitFor(By.id("password")).toTextInput.setValue("password")
 //
 //  })
-
-
+//
+//}
 //  FirefoxSession(
 //    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
 //    pathToFirefoxDriver = "/Users/hendrkin/Downloads/wires"
