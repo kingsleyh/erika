@@ -6,6 +6,8 @@ name := "erika"
 
 scalaVersion := "2.11.8"
 
+crossScalaVersions := Seq("2.11.8")
+
 organization := "erika"
 
 version := Try(sys.env("LIB_VERSION")).getOrElse("1")
