@@ -10,8 +10,6 @@ organization := "erika"
 
 version := Try(sys.env("LIB_VERSION")).getOrElse("1")
 
-crossScalaVersions := Seq("2.10.4", "2.11.2")
-
 resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
 libraryDependencies += "io.argonaut" % "argonaut_2.11" % "6.2-M1"
