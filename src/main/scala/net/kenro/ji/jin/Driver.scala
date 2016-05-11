@@ -1,11 +1,12 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 import argonaut._
 import io.shaka.http.ContentType.APPLICATION_JSON
 import io.shaka.http.Http.http
 import io.shaka.http.Request.{DELETE, GET, POST}
-import io.shaka.http.{Entity, Response, Status}
 import io.shaka.http.Status.OK
+import io.shaka.http.{Entity, Response}
+
 import scala.collection.mutable.Queue
 
 case class APIResponseError(message: String) extends Exception(message)
@@ -74,7 +75,7 @@ object Driver {
 
   def apply(url: String, basicAuth: Option[BasicAuth] = None) = new UrlDriver(url, basicAuth)
 
-  def handleRequest(url: String, response: Response) = {
+  def handleRequest(url: String, response: Response): Response = {
     response match {
       case r@Response(OK, _, _) => println(s"$url : ${r.entityAsString}"); r
       case _ => throw APIResponseError(s"request for $url returned failed error code: ${response.status.code} with message: ${response.entityAsString}")

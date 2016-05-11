@@ -1,11 +1,11 @@
-package erikas.bits
+package net.kenro.ji.jin
 
-import java.io.{IOException, File, FileOutputStream}
+import java.io.{File, FileOutputStream, IOException}
 
 import argonaut.Argonaut._
 import argonaut.Json
-import erikas.bits.Driver.handleRequest
-import erikas.bits.ResponseUtils._
+import Driver.handleRequest
+import ResponseUtils._
 import sun.misc.BASE64Decoder
 
 import scala.sys.process.Process

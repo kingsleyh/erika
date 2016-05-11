@@ -1,4 +1,4 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 import argonaut.Argonaut._
 import argonaut.{DecodeJson, EncodeJson, Json}

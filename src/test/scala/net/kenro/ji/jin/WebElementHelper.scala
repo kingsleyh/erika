@@ -1,4 +1,4 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 class WebElementHelper {
 

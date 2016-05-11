@@ -1,9 +1,9 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 import argonaut.Argonaut._
 import argonaut.Json
-import erikas.bits.Driver.handleRequest
-import erikas.bits.ResponseUtils._
+import Driver.handleRequest
+import ResponseUtils._
 import io.shaka.http.Response
 
 trait Element {

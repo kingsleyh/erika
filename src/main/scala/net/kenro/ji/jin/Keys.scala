@@ -1,4 +1,4 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 object Keys extends Enumeration {
   val NULL         = Value("\uE000")

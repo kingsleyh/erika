@@ -1,4 +1,4 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 object LocatorStrategy extends Enumeration {
   val CLASS_NAME = Value("class name")

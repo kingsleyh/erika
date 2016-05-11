@@ -1,4 +1,4 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 object SSLProtocol extends Enumeration {
   val SSLV3 = Value("sslv3")

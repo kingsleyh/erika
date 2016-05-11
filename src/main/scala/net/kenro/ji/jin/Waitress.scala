@@ -1,4 +1,4 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 case class TimeoutException(message: String) extends Exception(message)
 

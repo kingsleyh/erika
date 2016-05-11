@@ -1,10 +1,10 @@
-package erikas.bits
+package net.kenro.ji.jin
 
-import io.shaka.http.Response
 import argonaut.Argonaut._
 import argonaut.DecodeJson
+import io.shaka.http.Response
 
-import scalaz.{\/-, -\/}
+import scalaz.{-\/, \/-}
 
 
 object ResponseUtils {

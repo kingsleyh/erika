@@ -1,4 +1,4 @@
-package erikas.bits
+package net.kenro.ji.jin
 
 import scala.util.control.NonFatal
 

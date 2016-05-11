@@ -1,6 +1,6 @@
-package erikas.bits
+package net.kenro.ji.jin
 
-import erikas.bits.WebElementResponses.anyResponse
+import net.kenro.ji.jin.WebElementResponses.anyResponse
 import org.scalatest.{FreeSpec, Matchers}
 
 class WebElementSpec extends FreeSpec with Matchers {
