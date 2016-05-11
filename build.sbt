@@ -12,6 +12,8 @@ version := Try(sys.env("LIB_VERSION")).getOrElse("1")
 
 resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
+ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
+
 libraryDependencies += "io.argonaut" % "argonaut_2.11" % "6.2-M1"
 
 libraryDependencies += "io.shaka" %% "naive-http" % "85"
