@@ -25,16 +25,33 @@ case class IncorrectElementException(message: String) extends Exception(message)
 
 case class TextInput(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
-  def getValue = waitFor(this, Condition.isClickable).getAttribute("value")
-  def setValue(value: String) = waitFor(this, Condition.isClickable).clear().sendKeys(value)
-  def clearValue = waitFor(this, Condition.isClickable).clear()
+  def getValue = waitFor(this).getAttribute("value")
+  def setValue(value: String) = waitFor(this).clear().sendKeys(value)
+  def clearValue = waitFor(this).clear()
 }
 
 class Button(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
-  def getValue = waitFor(this, Condition.isClickable).getAttribute("value")
+  def getValue = waitFor(this).getAttribute("value")
   override def click(): Button = {
-    waitFor(this, Condition.isClickable)
+    waitFor(this)
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
+    this
+  }
+}
+
+case class TextArea(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
+  extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
+  def getValue = waitFor(this).getAttribute("value")
+  def setValue(value: String) = waitFor(this).clear().sendKeys(value)
+  def clearValue = waitFor(this).clear()
+  }
+
+case class Link(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
+  extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
+  override def getText = waitFor(this).getAttribute("text")
+  override def click() = {
+    waitFor(this)
     handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
     this
   }
@@ -48,6 +65,10 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def isButton = getName == "button" || (getName == "input" && getAttribute("type") == "submit")
 
+  def isTextArea = getName == "textarea"
+
+  def isLink = getName == "a"
+
   def toTextInput = {
     if(!isTextInput) throw IncorrectElementException(s"WebElement was not a <text input>. It is a: $getName")
     TextInput(elementId, sessionId, sessionUrl, driver, session)
@@ -56,6 +77,16 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
   def toButton = {
     if(!isButton) throw IncorrectElementException(s"WebElement was not a <text input>. It is a: $getName")
     new Button(elementId, sessionId, sessionUrl, driver, session)
+  }
+
+  def toTextArea = {
+    if(!isTextArea) throw IncorrectElementException(s"WebElement was not a <textarea>. It is a: $getName")
+    new TextArea(elementId, sessionId, sessionUrl, driver, session)
+  }
+
+  def toLink = {
+    if(!isLink) throw IncorrectElementException(s"WebElement was not an <a>. It is a: $getName")
+    new Link(elementId, sessionId, sessionUrl, driver, session)
   }
 
   def getTextOption: Option[String] = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/text")).decode[StringResponse].value

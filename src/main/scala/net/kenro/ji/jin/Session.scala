@@ -359,11 +359,15 @@ object BrowserStackSession {
 //    desiredCapabilities = capabilities
 //  )(session => {
 //
+////    ChromeSession(
+////      pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
+////      pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver"
+////    )(session => {
 //    session
 //      .setAllTimeouts(20000)
 //      .visitUrl("https://www.fdmtime.co.uk")
 //      .waitFor(By.id("username")).toTextInput.setValue("username")
-//      .waitFor(By.id("password")).toTextInput.setValue("password")
+//      .waitFor(By.id("inputPassword")).toTextInput.setValue("password")
 //
 //  })
 //

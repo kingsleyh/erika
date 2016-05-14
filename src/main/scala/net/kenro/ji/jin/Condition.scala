@@ -17,6 +17,9 @@ object Condition {
   def isClickable = new IsClickableCondition()
 
   def isPresent = new IsClickableCondition()
+
+  // TODO - valueContains, textContains, isVisible, hasAttribute
+
 }
 
 class TitleIsCondition(expectedTitle: String) extends Condition {
