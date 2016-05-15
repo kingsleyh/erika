@@ -32,10 +32,10 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   def getGlobalTimeout = globalTimeout
 
   def setAllTimeouts(timeout: Int) = {
-    setGlobalTimeout(20000)
-    setTimeout(TimeoutType.IMPLICIT, 20000)
-    setTimeout(TimeoutType.PAGE_LOAD, 20000)
-    setTimeout(TimeoutType.SCRIPT, 20000)
+    setGlobalTimeout(timeout)
+    setTimeout(TimeoutType.IMPLICIT, timeout)
+    setTimeout(TimeoutType.PAGE_LOAD, timeout)
+    setTimeout(TimeoutType.SCRIPT, timeout)
     this
   }
 
@@ -232,21 +232,18 @@ object PhantomJsSession {
 
 }
 
-object ChromeSession {
+object SeleniumRemoteSession {
 
   def apply(desiredCapabilities: Capabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
             requiredCapabilities: Capabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
-            seleniumServerOptions: SeleniumServerOptions = SeleniumServerOptions(),
-            pathToSeleniumServerStandalone: String = "/usr/local/bin/",
             pathToChromeDriver: String = "/usr/local/bin/chromedriver",
             host: String = "127.0.0.1",
             port: Int = Port.freePort4,
             transport: String = "http://",
-            serverSuffix: String = "/wd/hub",
-            pathToJava: String = "java"
+            serverSuffix: String = "/wd/hub"
            )(block: (Session) => Unit) = {
 
-    val commands = s"$pathToJava -jar $pathToSeleniumServerStandalone -port $port ${seleniumServerOptions.getOptions} -Dwebdriver.chrome.driver=$pathToChromeDriver"
+    val commands = s"$pathToChromeDriver --port=$port"
 
     println(commands)
 
@@ -256,7 +253,44 @@ object ChromeSession {
       process = Process(commands).run()
     })
 
-    val session = new Session(Driver(host, port, serverSuffix, transport), desiredCapabilities, requiredCapabilities)
+    val session = new Session(Driver(host, port), desiredCapabilities, requiredCapabilities)
+
+    Eventually(10000).tryExecute(() => {
+      session.create()
+    })
+
+    try {
+      block(session)
+    } finally {
+      session.dispose()
+      process.destroy()
+    }
+
+  }
+
+}
+
+object ChromeSession {
+
+  def apply(desiredCapabilities: Capabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
+            requiredCapabilities: Capabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
+            pathToChromeDriver: String = "/usr/local/bin/chromedriver",
+            chromeOptions: ChromeOptions = ChromeOptions(),
+            host: String = "127.0.0.1",
+            port: Int = Port.freePort4
+           )(block: (Session) => Unit) = {
+
+    val commands = s"$pathToChromeDriver --port=$port ${chromeOptions.getOptions}"
+
+    println(commands)
+
+    var process: Process = null
+
+    Eventually(10000).tryExecute(() => {
+      process = Process(commands).run()
+    })
+
+    val session = new Session(Driver(host, port), desiredCapabilities, requiredCapabilities)
 
     Eventually(10000).tryExecute(() => {
       session.create()
@@ -338,7 +372,7 @@ object BrowserStackSession {
 
 }
 
-//object Run extends App {
+object Run extends App {
 //
 //  val capabilities = Capabilities(
 //    browserStack = Some(BrowserStackCapabilities(
@@ -359,19 +393,18 @@ object BrowserStackSession {
 //    desiredCapabilities = capabilities
 //  )(session => {
 //
-////    ChromeSession(
-////      pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
-////      pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver"
-////    )(session => {
-//    session
+    ChromeSession(
+      pathToChromeDriver = "/Users/kings/Downloads/chromedriver"
+    )(session => {
+    session
 //      .setAllTimeouts(20000)
-//      .visitUrl("https://www.fdmtime.co.uk")
-//      .waitFor(By.id("username")).toTextInput.setValue("username")
-//      .waitFor(By.id("inputPassword")).toTextInput.setValue("password")
-//
-//  })
-//
-//}
+      .visitUrl("https://www.fdmtime.co.uk")
+      .waitFor(By.id("username")).toTextInput.setValue("username")
+      .waitFor(By.id("inputPassword")).toTextInput.setValue("password")
+
+  })
+
+}
 //  FirefoxSession(
 //    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
 //    pathToFirefoxDriver = "/Users/hendrkin/Downloads/wires"
