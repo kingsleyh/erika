@@ -32,8 +32,8 @@ class Waitress(session: Session) {
     if(counter >= timeout){
       throw TimeoutException(s"Timed out while waiting for function to evaluate: \n ${result.message}")
     } else {
-       Thread.sleep(100)
        if(!result.outcome){
+         Thread.sleep(100)
          counter = counter + 100
          waitForFunction(runnable, timeout, counter)
        }
@@ -45,8 +45,8 @@ class Waitress(session: Session) {
     if(counter >= timeout){
      throw TimeoutException(s"Timed out while waiting for condition: $condition for: $element")
    } else {
-     Thread.sleep(100)
      if (!condition.isSatisfied(List(element))){
+       Thread.sleep(100)
        counter = counter + 100
        waitForElementResult(element, counter, condition, timeout)
      } else {
@@ -60,8 +60,8 @@ class Waitress(session: Session) {
      if(counter >= timeout){
       None
     } else {
-      Thread.sleep(100)
       if (!condition.isSatisfied(List(element))){
+        Thread.sleep(100)
         counter = counter + 100
         waitForFirstElement(element, counter, condition, timeout)
       } else {
@@ -75,9 +75,9 @@ class Waitress(session: Session) {
     if(counter >= timeout){
       throw TimeoutException(s"Timed out while waiting for condition: $condition for: $by")
     } else {
-      Thread.sleep(100)
       val elements = session.findElements(by)
       if(!(elements.nonEmpty && condition.isSatisfied(elements))){
+        Thread.sleep(100)
         counter = counter + 100
         waitForResult(by, counter, condition, timeout)
       } else {
@@ -95,9 +95,9 @@ class Waitress(session: Session) {
       if(counter >= timeout){
         Nil
       } else {
-        Thread.sleep(100)
         val elements = session.findElements(by)
         if(!(elements.nonEmpty && condition.isSatisfied(elements))){
+          Thread.sleep(100)
           counter = counter + 100
           waitForAll(by, counter, condition, timeout)
         } else {
