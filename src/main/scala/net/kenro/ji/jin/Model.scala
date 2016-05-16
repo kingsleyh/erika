@@ -173,11 +173,29 @@ object Capabilities {
       browserStackLocalId <- (c --\ "browserstack.localIdentifier").as[Option[String]]
     } yield Capabilities(browserName, platform, version, javascriptEnabled, takesScreenshot, handlesAlerts,
       databaseEnabled, locationContextEnabled, applicationCacheEnabled, browserConnectionEnabled, cssSelectorsEnabled,
-      webStorageEnabled, rotatable, acceptSslCerts, nativeEvents, proxy, chrome, Some(BrowserStackCapabilities(name, browser, browserVersion, os, osVersion, resolution,
+      webStorageEnabled, rotatable, acceptSslCerts, nativeEvents, proxy, chrome, getBrowserStackCapabilities(
+        name, browser, browserVersion, os, osVersion, resolution,
+        project, build, browserStackSeleniumVersion, browserStackLocal, browserStackIENoFlash, browserStackIECompatibility,
+        browserStackIEDriver, browserStackIEEnablePopups, browserStackSafariEnablePopups, browserStackSafariAllowAllCookies, browserStackSafariDriver,
+        browserStackDebug, browserStackVideo, browserStackLocalId)
+      ))
+
+
+  private def getBrowserStackCapabilities(name: Option[String], browser: Option[String], browserVersion: Option[String], os: Option[String], osVersion: Option[String], resolution: Option[String],
+                                          project: Option[String], build: Option[String], browserStackSeleniumVersion: Option[String], browserStackLocal: Option[Boolean], browserStackIENoFlash: Option[Boolean], browserStackIECompatibility: Option[Boolean],
+                                          browserStackIEDriver: Option[String], browserStackIEEnablePopups: Option[Boolean], browserStackSafariEnablePopups: Option[Boolean], browserStackSafariAllowAllCookies: Option[Boolean], browserStackSafariDriver: Option[String],
+                                          browserStackDebug: Option[Boolean], browserStackVideo: Option[Boolean], browserStackLocalId: Option[String]): Option[BrowserStackCapabilities] = {
+    List(name, browser, browserVersion, os, osVersion, resolution,
       project, build, browserStackSeleniumVersion, browserStackLocal, browserStackIENoFlash, browserStackIECompatibility,
       browserStackIEDriver, browserStackIEEnablePopups, browserStackSafariEnablePopups, browserStackSafariAllowAllCookies, browserStackSafariDriver,
-      browserStackDebug, browserStackVideo, browserStackLocalId))))
-
+      browserStackDebug, browserStackVideo, browserStackLocalId).exists(i => i.isDefined) match {
+      case false => None
+      case  _ => Some(BrowserStackCapabilities(name, browser, browserVersion, os, osVersion, resolution,
+          project, build, browserStackSeleniumVersion, browserStackLocal, browserStackIENoFlash, browserStackIECompatibility,
+          browserStackIEDriver, browserStackIEEnablePopups, browserStackSafariEnablePopups, browserStackSafariAllowAllCookies, browserStackSafariDriver,
+          browserStackDebug, browserStackVideo, browserStackLocalId))
+    }
+  }
 
 }
 

@@ -32,7 +32,7 @@ class SessionSpec extends FreeSpec with Matchers {
     "getSessions should find a list of sessions" in {
       val (session, testDriver) = SessionHelper()
 
-      val expectedResponse = List(Sessions("82bed430-fdcf-11e5-ab4d-4bc17e26c21d",Capabilities("phantomjs","MAC","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true,None,None,Some(BrowserStackCapabilities(None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None)))))
+      val expectedResponse = List(Sessions("82bed430-fdcf-11e5-ab4d-4bc17e26c21d",Capabilities("phantomjs","MAC","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true,None,None,None)))
 
       testDriver.withPostResponse(PhantomResponses.sessionResponse,          () => session.create())
                 .withGetResponseAction(PhantomResponses.getSessionsResponse, () => session.getSessions) should be(expectedResponse)
@@ -56,7 +56,7 @@ class SessionSpec extends FreeSpec with Matchers {
     "getCapabilities should find the capabilities of the server" in {
       val (session, testDriver) = SessionHelper()
 
-      val expectedResponse = Capabilities("phantomjs","mac-unknown-32bit","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true,None,None,Some(BrowserStackCapabilities(None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None)))
+      val expectedResponse = Capabilities("phantomjs","mac-unknown-32bit","1.9.2",true,true,false,false,false,false,false,true,false,false,false,true,None,None,None)
 
       testDriver.withPostResponse(PhantomResponses.sessionResponse,      () => session.create())
         .withGetResponseAction(PhantomResponses.getCapabilitiesResponse, () => session.getCapabilities) should be(expectedResponse)
