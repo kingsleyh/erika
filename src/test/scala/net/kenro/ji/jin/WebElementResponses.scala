@@ -10,5 +10,6 @@ object WebElementResponses {
 
   val isEnabledResponse = """{"sessionId":"01819690-fdc6-11e5-9493-0d9253df0313","status":0,"value":true}"""
 
+  val isDisplayedResponse = """{"sessionId":"01819690-fdc6-11e5-9493-0d9253df0313","status":0,"value":true}"""
 
 }

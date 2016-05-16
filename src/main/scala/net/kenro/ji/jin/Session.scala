@@ -164,6 +164,7 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
 
 }
 
+
 object Port {
   def freePort = {
     withPort(0)
@@ -393,18 +394,18 @@ object Run extends App {
 //    desiredCapabilities = capabilities
 //  )(session => {
 //
-    ChromeSession(
-      pathToChromeDriver = "/Users/kings/Downloads/chromedriver"
-    )(session => {
-    session
-//      .setAllTimeouts(20000)
-      .visitUrl("https://www.fdmtime.co.uk")
-      .waitFor(By.id("username")).toTextInput.setValue("username")
-      .waitFor(By.id("inputPassword")).toTextInput.setValue("password")
-
-  })
-
-}
+//    ChromeSession(
+//      pathToChromeDriver = "/Users/kings/Downloads/chromedriver"
+//    )(session => {
+//    session
+////      .setAllTimeouts(20000)
+//      .visitUrl("https://www.fdmtime.co.uk")
+//      .waitFor(By.id("username")).toTextInput.setValue("username")
+//      .waitFor(By.id("inputPassword")).toTextInput.setValue("password")
+//
+//  })
+//
+//}
 //  FirefoxSession(
 //    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
 //    pathToFirefoxDriver = "/Users/hendrkin/Downloads/wires"

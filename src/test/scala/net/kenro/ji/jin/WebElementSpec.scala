@@ -38,6 +38,34 @@ class WebElementSpec extends FreeSpec with Matchers {
       element.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460015822532/enabled")
     }
 
+    "isDisplayed should return boolean" in {
+      val element = WebElementHelper()
+      element.withGetResponseAction(WebElementResponses.isDisplayedResponse, () => element.get().isDisplayed) should be(true)
+      element.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460015822532/displayed")
+    }
+
+    "isPresent should return boolean" in {
+      val element = WebElementHelper()
+      element.withGetResponses(List(WebElementResponses.isEnabledResponse, WebElementResponses.isDisplayedResponse))
+      element.get().isPresent should be(true)
+    }
+
+    "sendKeys should sent text" in {
+      val element = WebElementHelper()
+      element.withPostResponse("", () => element.get().sendKeys("hello")).getRequestUrl should be("/session/test-session-id/element/:wdc:1460015822532/value")
+      element.testDriver.getPostRequest should be("""{"value":["h","e","l","l","o"]}""")
+    }
+
+
+//    "Sub element types" - {
+//
+//      "toTextInput should return a text input" in {
+//        val element = WebElementHelper()
+//        element.withPostResponse(WebElementResponses.findElementResponse)
+//      }
+//
+//    }
+
 
   }
 
