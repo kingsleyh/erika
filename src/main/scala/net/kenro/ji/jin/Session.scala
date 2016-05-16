@@ -373,6 +373,7 @@ object BrowserStackSession {
 
 }
 
+
 //object Run extends App {
 //
 //  val capabilities = Capabilities(
