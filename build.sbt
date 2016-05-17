@@ -8,7 +8,7 @@ scalaVersion := "2.11.8"
 
 crossScalaVersions := Seq("2.11.8")
 
-organization := "net.kenro.ji.jin"
+organization := "net.kenro-ji-jin"
 
 version := Try(sys.env("LIB_VERSION")).getOrElse("1")
 
