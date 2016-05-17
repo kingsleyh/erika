@@ -323,7 +323,7 @@ object ExecuteScriptRequest {
   implicit def Encoder = jencode2L((o: ExecuteScriptRequest) => (o.script, o.args))("script","args")
 }
 
-case class ExecuteScriptResponse(sessionId: String, status: Int, value: String)
+case class ExecuteScriptResponse(sessionId: String, status: Int, value: Option[String])
 
 object ExecuteScriptResponse {
   implicit def Decoder = jdecode3L(ExecuteScriptResponse.apply)("sessionId", "status", "value")
