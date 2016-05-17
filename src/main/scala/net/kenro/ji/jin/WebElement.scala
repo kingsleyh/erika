@@ -160,19 +160,25 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 class StubWebElement() extends Element {
 
   var attr: Option[String] = None
+  var text: Option[String] = None
 
    def withAttribute(attribute: String) = {
      attr = Some(attribute)
      this
    }
 
+  def withText(value: String) = {
+    text = Some(value)
+    this
+  }
+
   override def getAttributeOption(attribute: String) = attr
 
   override def getAttribute(attribute: String) = attr.getOrElse("")
 
-  override def getTextOption: Option[String] = ???
+  override def getTextOption: Option[String] = text
 
-  override def getText: String = ???
+  override def getText: String = text.getOrElse("")
 
   override def getNameOption: Option[String] = ???
 

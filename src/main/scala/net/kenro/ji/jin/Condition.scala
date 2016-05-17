@@ -18,7 +18,9 @@ object Condition {
 
   def isPresent = new IsClickableCondition()
 
-  // TODO - valueContains, textContains, isVisible, hasAttribute
+  def textContains(expectedValue: String) = new TextContainsCondition(expectedValue)
+
+  // TODO - valueContains, isVisible, hasAttribute
 
 }
 
@@ -39,6 +41,16 @@ class AttributeContainsCondition(attributeName: String, expectedValue: String) e
 
   override def toString: String = s"AttributeContainsCondition, attributeName: $attributeName expectedValue: $expectedValue"
 
+}
+
+class TextContainsCondition(expectedValue: String) extends Condition {
+  override def isSatisfied(webElements: List[Element]): Boolean = {
+    if(webElements.isEmpty) false else {
+      webElements.flatMap(e => e.getTextOption).contains(expectedValue)
+    }
+  }
+
+  override def toString: String = s"TextContainsCondition expectedValue: $expectedValue"
 }
 
 class IsClickableCondition extends Condition {

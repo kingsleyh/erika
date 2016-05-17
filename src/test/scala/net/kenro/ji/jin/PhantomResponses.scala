@@ -28,6 +28,6 @@ object PhantomResponses {
 
   val getTitleResponse = """{"sessionId":"184375b0-fe93-11e5-88a9-11420d9826e2","status":0,"value":"title"}"""
 
-
+  val executeScriptResponse = """{"sessionId":"184375b0-fe93-11e5-88a9-11420d9826e2","status":0,"value":"some-result"}"""
 
 }

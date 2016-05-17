@@ -117,8 +117,8 @@ class SessionSpec extends FreeSpec with Matchers {
       val (session, testDriver) = SessionHelper()
       val script = "function(){ return 1+1;}"
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-        .withPostResponse(PhantomResponses.anyResponse,             () => session.executeScript(script))
-        .getPostRequest should be(PhantomRequests.executeScript)
+        .withPostResponseAction(PhantomResponses.executeScriptResponse,   () => session.executeScript(script)).value should be("some-result")
+      testDriver.getPostRequest should be(PhantomRequests.executeScript)
       testDriver.getRequestUrl should be("/session/test-session-id/execute")
     }
 
@@ -126,8 +126,8 @@ class SessionSpec extends FreeSpec with Matchers {
       val (session, testDriver) = SessionHelper()
       val script = "function(){ return 1+1;}"
       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-        .withPostResponse(PhantomResponses.anyResponse,             () => session.executeAsyncScript(script))
-        .getPostRequest should be(PhantomRequests.executeScript)
+        .withPostResponseAction(PhantomResponses.executeScriptResponse,   () => session.executeAsyncScript(script)).value should be("some-result")
+      testDriver.getPostRequest should be(PhantomRequests.executeScript)
       testDriver.getRequestUrl should be("/session/test-session-id/execute_async")
     }
 

@@ -108,12 +108,14 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
 
   def getTitle: Option[String] = handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/title")).decode[StringResponse].value
 
-  def executeScript(script: String, args: List[String] = Nil) = {
+  def executeScript(script: String, args: List[String] = Nil): ExecuteScriptResponse = {
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/execute", ExecuteScriptRequest(script, args).asJson))
+      .decode[ExecuteScriptResponse]
   }
 
-  def executeAsyncScript(script: String, args: List[String] = Nil) = {
+  def executeAsyncScript(script: String, args: List[String] = Nil): ExecuteScriptResponse = {
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/execute_async", ExecuteScriptRequest(script, args).asJson))
+      .decode[ExecuteScriptResponse]
   }
 
   def takeScreenshot(outputFile: String = "screenshot.png") = {

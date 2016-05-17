@@ -323,6 +323,12 @@ object ExecuteScriptRequest {
   implicit def Encoder = jencode2L((o: ExecuteScriptRequest) => (o.script, o.args))("script","args")
 }
 
+case class ExecuteScriptResponse(sessionId: String, status: Int, value: String)
+
+object ExecuteScriptResponse {
+  implicit def Decoder = jdecode3L(ExecuteScriptResponse.apply)("sessionId", "status", "value")
+}
+
 object TimeoutType extends Enumeration {
   val SCRIPT = Value("script")
   val IMPLICIT = Value("implicit")
