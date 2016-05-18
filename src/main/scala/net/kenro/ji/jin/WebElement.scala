@@ -161,6 +161,9 @@ class StubWebElement() extends Element {
 
   var attr: Option[String] = None
   var text: Option[String] = None
+  var present: Boolean = false
+  var enabled: Boolean = false
+  var displayed: Boolean = false
 
    def withAttribute(attribute: String) = {
      attr = Some(attribute)
@@ -169,6 +172,21 @@ class StubWebElement() extends Element {
 
   def withText(value: String) = {
     text = Some(value)
+    this
+  }
+
+  def withPresent(value: Boolean) = {
+   present = value
+   this
+  }
+
+  def withEnabled(value: Boolean) = {
+    enabled = value
+    this
+  }
+
+  def withDisplayed(value: Boolean) = {
+    displayed = value
     this
   }
 
@@ -186,9 +204,9 @@ class StubWebElement() extends Element {
 
   override def sendKeys(text: String): WebElement = ???
 
-  override def isPresent: Boolean = ???
+  override def isPresent: Boolean = present
 
-  override def isEnabled: Boolean = ???
+  override def isEnabled: Boolean = enabled
 
   override def clear(): WebElement = ???
 
@@ -196,7 +214,7 @@ class StubWebElement() extends Element {
 
 //  override def click2(): Unit = ???
 
-  override def isDisplayed: Boolean = ???
+  override def isDisplayed: Boolean = displayed
 }
 
 object StubWebElement {
