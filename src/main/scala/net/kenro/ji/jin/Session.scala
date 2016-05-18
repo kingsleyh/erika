@@ -137,17 +137,19 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
     handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts/implicit_wait", TimeoutValueRequest(milliseconds).asJson))
   }
 
-  def waitFor[T <: Searcher](element: T, condition: Condition = Condition.isClickable, timeout: Int = getGlobalTimeout): WebElement = {
+  def waitFor[T <: Searcher](element: T, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = {
     Waitress(this).waitFor(element, condition, timeout)
   }
 
-  def findFirst[T <: Searcher](element: T, condition: Condition, timeout: Int = getGlobalTimeout): Option[WebElement] = {
+  def findFirst[T <: Searcher](element: T, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): Option[WebElement] = {
      Waitress(this).waitAndFindFirst(element, condition, timeout)
   }
 
-  def findAll(by: By, condition: Condition, timeout: Int = getGlobalTimeout): List[WebElement] = {
+  def findAll(by: By, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): List[WebElement] = {
       Waitress(this).waitAndFindAll(by, condition, timeout)
   }
+
+  def waitForClass(className: String): WebElement = waitFor(By.className(className))
 
   def waitForFunction(runnable: () => Result, timeout: Int = getGlobalTimeout){
     Waitress(this).waitFor(runnable, timeout)
