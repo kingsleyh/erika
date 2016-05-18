@@ -50,6 +50,12 @@ class WebElementSpec extends FreeSpec with Matchers {
       element.get().isPresent should be(true)
     }
 
+    "isSelected should return boolean" in {
+      val element = WebElementHelper()
+      element.withGetResponses(List(WebElementResponses.isSelectedResponse))
+      element.get().isSelected should be(true)
+    }
+
     "sendKeys should sent text" in {
       val element = WebElementHelper()
       element.withPostResponse("", () => element.get().sendKeys("hello")).getRequestUrl should be("/session/test-session-id/element/:wdc:1460015822532/value")
@@ -57,14 +63,40 @@ class WebElementSpec extends FreeSpec with Matchers {
     }
 
 
-//    "Sub element types" - {
-//
-//      "toTextInput should return a text input" in {
-//        val element = WebElementHelper()
-//        element.withPostResponse(WebElementResponses.findElementResponse)
-//      }
-//
-//    }
+    "Sub element types" - {
+
+      "toTextInput should return a text input" in {
+        val element = WebElementHelper()
+        element.withGetResponses(List(WebElementResponses.nameResponseWith("input"),  WebElementResponses.attributeResponseWith("text")))
+        element.get().toTextInput shouldBe a [TextInput]
+      }
+
+      "toRadioMulti should return a list of radios" in {
+
+       import ListOfWebElementUtils.ListDecorator
+
+       val helper = WebElementHelper()
+       helper.withGetResponses(List(
+         WebElementResponses.nameResponseWith("input"),
+         WebElementResponses.attributeResponseWith("radio"),
+         WebElementResponses.nameResponseWith("input"),
+         WebElementResponses.attributeResponseWith("radio"),
+         WebElementResponses.attributeResponseWith("some-name"),
+         WebElementResponses.attributeResponseWith("some-name"),
+         WebElementResponses.attributeResponseWith("some-name"),
+         WebElementResponses.nameResponseWith("input"),
+         WebElementResponses.attributeResponseWith("radio"),
+         WebElementResponses.nameResponseWith("input"),
+         WebElementResponses.attributeResponseWith("radio")
+       ))
+
+       val elements = helper.getAll()
+       elements.toRadioMulti.getRadios shouldBe a [List[Radio]]
+
+
+      }
+
+    }
 
 
   }

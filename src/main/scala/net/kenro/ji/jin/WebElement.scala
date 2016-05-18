@@ -1,10 +1,12 @@
 package net.kenro.ji.jin
 
 import argonaut.Argonaut._
-import argonaut.Json
+import argonaut.{DecodeJson, Json}
 import Driver.handleRequest
 import ResponseUtils._
 import io.shaka.http.Response
+
+import scalaz.{\/-, -\/}
 
 trait Element {
   def getAttributeOption(attribute: String): Option[String]
@@ -57,6 +59,44 @@ case class Link(elementId :String, sessionId: String, sessionUrl: String, driver
   }
 }
 
+class Radio(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
+  extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
+  def getValue = waitFor(this).getAttribute("value")
+  override def isSelected = waitFor(this).isSelected
+  override def click(): Radio = {
+    waitFor(this)
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
+    this
+  }
+}
+
+case class RadioMulti(radios: List[WebElement]) {
+  def getSelected: Option[WebElement] = radios.find(r => r.isSelected)
+  def hasSelected: Boolean = getSelected.nonEmpty
+  def getByValue(value: String) = radios.find(r => r.getAttribute("value") == value)
+  def getRadios: List[Radio] = radios.map(e => e.toRadio)
+  def selectByValue(value: String) = getByValue(value).map(e => e.click())
+}
+
+object ListOfWebElementUtils {
+  implicit class ListDecorator(list: List[Element]) {
+    def toRadioMulti = {
+
+      val radios = list.filterNot(ele => ele.asInstanceOf[WebElement].isRadio)
+      if(radios.nonEmpty) throw IncorrectElementException(s"All elements must be radios - at least one was not of type radio")
+      if(list.isEmpty) throw IncorrectElementException(s"You have an empty list - at least one radio is expected")
+
+      val name = list.head.getAttribute("name")
+
+      val sameNames = list.filterNot(ele => ele.getAttribute("name") == name)
+      if(sameNames.nonEmpty) throw IncorrectElementException(s"All radio elements should have the same name for a multi - at least one had a different name")
+
+      RadioMulti(list.map(ele => ele.asInstanceOf[WebElement]))
+
+    }
+  }
+}
+
 class WebElement(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session) extends Searcher with Element {
 
   val elementSessionUrl = s"$sessionUrl/element/$elementId"
@@ -69,6 +109,8 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def isLink = getName == "a"
 
+  def isRadio = getName == "input" && getAttribute("type") == "radio"
+
   def toTextInput = {
     if(!isTextInput) throw IncorrectElementException(s"WebElement was not a <text input>. It is a: $getName")
     TextInput(elementId, sessionId, sessionUrl, driver, session)
@@ -79,7 +121,12 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
     new Button(elementId, sessionId, sessionUrl, driver, session)
   }
 
-  def toTextArea = {
+  def toRadio = {
+    if(!isRadio) throw IncorrectElementException(s"WebElement was not a <radio>. It is a: $getName")
+    new Radio(elementId, sessionId, sessionUrl, driver, session)
+  }
+
+   def toTextArea = {
     if(!isTextArea) throw IncorrectElementException(s"WebElement was not a <textarea>. It is a: $getName")
     new TextArea(elementId, sessionId, sessionUrl, driver, session)
   }
@@ -116,6 +163,8 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
   def isEnabled: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/enabled")).decode[BooleanResponse].value
 
   def isDisplayed: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/displayed")).decode[BooleanResponse].value
+
+  def isSelected: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/selected")).decode[BooleanResponse].value
 
   def isPresent: Boolean = isEnabled && isDisplayed
 
