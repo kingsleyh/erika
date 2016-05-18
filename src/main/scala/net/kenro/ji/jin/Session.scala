@@ -18,8 +18,6 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   var globalTimeout = 5000
 
   def create(): Unit = {
-    println(SessionRequest(desiredCapabilities, requiredCapabilities).asJson)
-
     sessionId = handleRequest("/session", driver.doPost("/session", SessionRequest(desiredCapabilities, requiredCapabilities).asJson))
       .response.decode[CreateSessionResponse].sessionId
 
@@ -280,7 +278,8 @@ object ChromeSession {
             pathToChromeDriver: String = "/usr/local/bin/chromedriver",
             chromeOptions: ChromeOptions = ChromeOptions(),
             host: String = "127.0.0.1",
-            port: Int = Port.freePort4
+            port: Int = Port.freePort4,
+            debug: Boolean = false
            )(block: (Session) => Unit) = {
 
     val commands = s"$pathToChromeDriver --port=$port ${chromeOptions.getOptions}"

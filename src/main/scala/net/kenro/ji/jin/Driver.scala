@@ -77,7 +77,7 @@ object Driver {
 
   def handleRequest(url: String, response: Response): Response = {
     response match {
-      case r@Response(OK, _, _) => println(s"$url : ${r.entityAsString}"); r
+      case r@Response(OK, _, _) => r
       case _ => throw APIResponseError(s"request for $url returned failed error code: ${response.status.code} with message: ${response.entityAsString}")
     }
   }
