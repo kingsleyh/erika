@@ -62,7 +62,10 @@ case class Link(elementId :String, sessionId: String, sessionUrl: String, driver
 class Radio(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
   def getValue = waitFor(this).getAttribute("value")
-  override def isSelected = waitFor(this).isSelected
+  override def isSelected = {
+    waitFor(this)
+    handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/selected")).decode[BooleanResponse].value
+  }
   override def click(): Radio = {
     waitFor(this)
     handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
@@ -71,9 +74,9 @@ class Radio(elementId :String, sessionId: String, sessionUrl: String, driver: Ba
 }
 
 case class RadioMulti(radios: List[WebElement]) {
-  def getSelected: Option[WebElement] = radios.find(r => r.isSelected)
+  def getSelected: Option[Radio] = getRadios.find(r => r.isSelected)
   def hasSelected: Boolean = getSelected.nonEmpty
-  def getByValue(value: String) = radios.find(r => r.getAttribute("value") == value)
+  def getByValue(value: String) = getRadios.find(r => r.getAttribute("value") == value)
   def getRadios: List[Radio] = radios.map(e => e.toRadio)
   def selectByValue(value: String) = getByValue(value).map(e => e.click())
 }
@@ -200,7 +203,7 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
     } yield new WebElement(elementId,sessionId, sessionUrl, driver, session)
   }
 
-  def waitFor[T <: Searcher](element: T, condition: Condition = Condition.isClickable, timeout: Int = session.getGlobalTimeout): WebElement = {
+  def waitFor[T <: Searcher](element: T, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = {
     Waitress(session).waitFor(element, condition, timeout)
   }
 
