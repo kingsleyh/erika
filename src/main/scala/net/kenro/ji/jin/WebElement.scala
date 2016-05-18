@@ -75,6 +75,7 @@ class Radio(elementId :String, sessionId: String, sessionUrl: String, driver: Ba
 
 case class RadioMulti(radios: List[WebElement]) {
   def getSelected: Option[Radio] = getRadios.find(r => r.isSelected)
+  def getSelectedValue: String = getSelected.map(v => v.getValue).getOrElse("")
   def hasSelected: Boolean = getSelected.nonEmpty
   def getByValue(value: String) = getRadios.find(r => r.getAttribute("value") == value)
   def getRadios: List[Radio] = radios.map(e => e.toRadio)
