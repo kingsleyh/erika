@@ -233,7 +233,6 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def waitForTag(tagName: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.tagName(tagName),condition, timeout)
 
-
 }
 
 class StubWebElement() extends Element {
