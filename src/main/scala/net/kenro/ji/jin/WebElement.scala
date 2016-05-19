@@ -208,6 +208,32 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
     Waitress(session).waitFor(element, condition, timeout)
   }
 
+  def findFirst[T <: Searcher](element: T, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): Option[WebElement] = {
+    Waitress(session).waitAndFindFirst(element, condition, timeout)
+  }
+
+  def findAll(by: By, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): List[WebElement] = {
+    Waitress(session).waitAndFindAll(by, condition, timeout)
+  }
+
+  // short methods
+  def waitForClass(className: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.className(className),condition, timeout)
+
+  def waitForId(id: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.id(id),condition, timeout)
+
+  def waitForCss(cssSelector: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.cssSelector(cssSelector),condition, timeout)
+
+  def waitForXpath(xpath: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.xpath(xpath),condition, timeout)
+
+  def waitForName(name: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.name(name),condition, timeout)
+
+  def waitForLink(linkText: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.linkText(linkText),condition, timeout)
+
+  def waitForLinkP(partialLinkText: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.partialLinkText(partialLinkText),condition, timeout)
+
+  def waitForTag(tagName: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.tagName(tagName),condition, timeout)
+
+
 }
 
 class StubWebElement() extends Element {
