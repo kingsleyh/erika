@@ -85,7 +85,6 @@ class WebElementSpec extends FreeSpec with Matchers {
           element.get().toTextInput shouldBe a[TextInput]
         }
 
-
         "getValue should get value" in {
           val helper = WebElementHelper()
           val item = TextInput("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
