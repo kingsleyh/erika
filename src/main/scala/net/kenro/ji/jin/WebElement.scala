@@ -32,7 +32,7 @@ case class TextInput(elementId :String, sessionId: String, sessionUrl: String, d
   def clearValue = waitFor(this).clear()
 }
 
-class Button(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
+case class Button(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
   def getValue = waitFor(this).getAttribute("value")
   override def click(): Button = {
@@ -59,7 +59,7 @@ case class Link(elementId :String, sessionId: String, sessionUrl: String, driver
   }
 }
 
-class Radio(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
+case class Radio(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
   def getValue = waitFor(this).getAttribute("value")
   override def isSelected = {
@@ -122,22 +122,22 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def toButton = {
     if(!isButton) throw IncorrectElementException(s"WebElement was not a <text input>. It is a: $getName")
-    new Button(elementId, sessionId, sessionUrl, driver, session)
+    Button(elementId, sessionId, sessionUrl, driver, session)
   }
 
   def toRadio = {
     if(!isRadio) throw IncorrectElementException(s"WebElement was not a <radio>. It is a: $getName")
-    new Radio(elementId, sessionId, sessionUrl, driver, session)
+    Radio(elementId, sessionId, sessionUrl, driver, session)
   }
 
    def toTextArea = {
     if(!isTextArea) throw IncorrectElementException(s"WebElement was not a <textarea>. It is a: $getName")
-    new TextArea(elementId, sessionId, sessionUrl, driver, session)
+    TextArea(elementId, sessionId, sessionUrl, driver, session)
   }
 
   def toLink = {
     if(!isLink) throw IncorrectElementException(s"WebElement was not an <a>. It is a: $getName")
-    new Link(elementId, sessionId, sessionUrl, driver, session)
+    Link(elementId, sessionId, sessionUrl, driver, session)
   }
 
   def getTextOption: Option[String] = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/text")).decode[StringResponse].value

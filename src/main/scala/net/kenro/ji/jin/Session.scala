@@ -149,8 +149,6 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
       Waitress(this).waitAndFindAll(by, condition, timeout)
   }
 
-  def waitForClass(className: String): WebElement = waitFor(By.className(className))
-
   def waitForFunction(runnable: () => Result, timeout: Int = getGlobalTimeout){
     Waitress(this).waitFor(runnable, timeout)
   }
@@ -163,6 +161,23 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
     }
     Waitress(this).waitFor(waitForUrlFunction, timeout)
   }
+
+  // short methods
+  def waitForClass(className: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.className(className),condition, timeout)
+
+  def waitForId(id: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.id(id),condition, timeout)
+
+  def waitForCss(cssSelector: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.cssSelector(cssSelector),condition, timeout)
+
+  def waitForXpath(xpath: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.xpath(xpath),condition, timeout)
+
+  def waitForName(name: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.name(name),condition, timeout)
+
+  def waitForLink(linkText: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.linkText(linkText),condition, timeout)
+
+  def waitForLinkP(partialLinkText: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.partialLinkText(partialLinkText),condition, timeout)
+
+  def waitForTag(tagName: String, condition: Condition = Condition.isVisible, timeout: Int = getGlobalTimeout): WebElement = waitFor(By.tagName(tagName),condition, timeout)
 
 }
 

@@ -221,6 +221,50 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
+    "WaitFor By shortcuts" - {
+
+      "waitForId should find an element by id" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForId("some-id"), session, testDriver)
+      }
+
+      "waitForClass should find an element by classname" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForClass("some-classname"), session, testDriver)
+      }
+
+      "waitForCss should find an element by cssSelector" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForCss("some-css"), session, testDriver)
+      }
+
+      "waitForName should find an element by name" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForName("some-name"), session, testDriver)
+      }
+
+      "waitForLink should find an element by link text" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForLink("some-link-text"), session, testDriver)
+      }
+
+      "waitForLinkP should find an element by partial link text" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForLinkP("some-partial-link-text"), session, testDriver)
+      }
+
+      "waitForTag should find an element by tag name" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForTag("some-tagname"), session, testDriver)
+      }
+
+      "waitForXpath should find an element by xpath" in {
+        val (session, testDriver) = SessionHelper()
+        assertWaitForByShortcut(() => session.waitForXpath("some-xpath"), session, testDriver)
+      }
+
+    }
+
     "Timeouts" - {
 
       "getGlobalTimeout should return the global timeout in milliseconds" in {
@@ -376,6 +420,15 @@ class SessionSpec extends FreeSpec with Matchers {
     testDriver.getPostRequest should be(expectedRequest)
     element.elementSessionUrl should be("/session/test-session-id/element/:wdc:1460015822532")
     testDriver.getRequestUrl should be("/session/test-session-id/element")
+  }
+
+  def assertWaitForByShortcut(kind: () => WebElement, session: Session, testDriver: TestDriver) = {
+    val notFoundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":false}""")
+    val foundResponses = makeResponses(4, """{"sessionId":"test-session-id","status":0,"value":true}""")
+
+    testDriver
+      .withPostResponses(makeResponses(8, PhantomResponses.findElementsResponse))
+      .withGetResponses(notFoundResponses ++ foundResponses, () => kind())
   }
 
   private def makeResponses(number: Int, response: String) = 1.to(number).map(n => response).toList

@@ -65,34 +65,311 @@ class WebElementSpec extends FreeSpec with Matchers {
 
     "Sub element types" - {
 
-      "toTextInput should return a text input" in {
-        val element = WebElementHelper()
-        element.withGetResponses(List(WebElementResponses.nameResponseWith("input"),  WebElementResponses.attributeResponseWith("text")))
-        element.get().toTextInput shouldBe a [TextInput]
+      "TextInput" - {
+
+        "toTextInput should return a text input when type text" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(WebElementResponses.nameResponseWith("input"), WebElementResponses.attributeResponseWith("text")))
+          element.get().toTextInput shouldBe a[TextInput]
+        }
+
+        "toTextInput should return a text input when type password" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(WebElementResponses.nameResponseWith("input"), WebElementResponses.attributeResponseWith("password")))
+          element.get().toTextInput shouldBe a[TextInput]
+        }
+
+        "toTextInput should return a text input when type email" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(WebElementResponses.nameResponseWith("input"), WebElementResponses.attributeResponseWith("email")))
+          element.get().toTextInput shouldBe a[TextInput]
+        }
+
+
+        "getValue should get value" in {
+          val helper = WebElementHelper()
+          val item = TextInput("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponses(List(
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getValueResponse("some-value")
+          ))
+          item.getValue should be("some-value")
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/attribute/value")
+        }
+
+        "setValue should set value" in {
+          val helper = WebElementHelper()
+          val item = TextInput("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponseAction(WebElementResponses.getBooleanResponse, () => item.setValue("some-value"))
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/value")
+        }
+
+        "clearValue should clear value" in {
+          val helper = WebElementHelper()
+          val item = TextInput("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponseAction(WebElementResponses.getBooleanResponse, () => item.clearValue)
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/clear")
+        }
+
       }
 
-      "toRadioMulti should return a list of radios" in {
+      "TextArea" - {
 
-       import ListOfWebElementUtils.ListDecorator
+        "toTextArea should return a text area" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(WebElementResponses.nameResponseWith("textarea")))
+          element.get().toTextArea shouldBe a[TextArea]
+        }
 
-       val helper = WebElementHelper()
-       helper.withGetResponses(List(
-         WebElementResponses.nameResponseWith("input"),
-         WebElementResponses.attributeResponseWith("radio"),
-         WebElementResponses.nameResponseWith("input"),
-         WebElementResponses.attributeResponseWith("radio"),
-         WebElementResponses.attributeResponseWith("some-name"),
-         WebElementResponses.attributeResponseWith("some-name"),
-         WebElementResponses.attributeResponseWith("some-name"),
-         WebElementResponses.nameResponseWith("input"),
-         WebElementResponses.attributeResponseWith("radio"),
-         WebElementResponses.nameResponseWith("input"),
-         WebElementResponses.attributeResponseWith("radio")
-       ))
+        "getValue should get value" in {
+          val helper = WebElementHelper()
+          val item = TextArea("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponses(List(
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getValueResponse("some-value")
+          ))
+          item.getValue should be("some-value")
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/attribute/value")
+        }
 
-       val elements = helper.getAll()
-       elements.toRadioMulti.getRadios shouldBe a [List[Radio]]
+        "setValue should set value" in {
+          val helper = WebElementHelper()
+          val item = TextArea("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponseAction(WebElementResponses.getBooleanResponse, () => item.setValue("some-value"))
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/value")
+        }
 
+        "clearValue should clear value" in {
+          val helper = WebElementHelper()
+          val item = TextArea("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponseAction(WebElementResponses.getBooleanResponse, () => item.clearValue)
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/clear")
+        }
+
+      }
+
+      "Button" - {
+
+        "toButton should return a button when input submit" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("submit")
+          ))
+          element.get().toButton shouldBe a[Button]
+        }
+
+        "toButton should return a button when type button" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(
+            WebElementResponses.nameResponseWith("button")
+          ))
+          element.get().toButton shouldBe a[Button]
+        }
+
+        "getValue should get value" in {
+          val helper = WebElementHelper()
+          val item = Button("elementId", "sessionId", "sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponses(List(
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getValueResponse("some-value")
+          ))
+          item.getValue should be("some-value")
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/attribute/value")
+        }
+
+        "click should send click" in {
+          val helper = WebElementHelper()
+          val item = Button("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponseAction(WebElementResponses.getBooleanResponse, () => item.click())
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/click")
+        }
+
+      }
+
+      "Link" - {
+
+        "toLink should return a link" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(
+            WebElementResponses.nameResponseWith("a")
+          ))
+          element.get().toLink shouldBe a[Link]
+        }
+
+        "getText should get link text" in {
+          val helper = WebElementHelper()
+          val item = Link("elementId", "sessionId", "sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponses(List(
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getValueResponse("some-value")
+          ))
+          item.getText should be("some-value")
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/attribute/text")
+        }
+
+        "click should send click" in {
+          val helper = WebElementHelper()
+          val item = Link("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponseAction(WebElementResponses.getBooleanResponse, () => item.click())
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/click")
+        }
+
+      }
+
+      "Radio" - {
+
+        "toRadio should return a radio" in {
+          val element = WebElementHelper()
+          element.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio")
+          ))
+          element.get().toRadio shouldBe a[Radio]
+        }
+
+        "getValue should get value" in {
+          val helper = WebElementHelper()
+          val item = Radio("elementId", "sessionId", "sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponses(List(
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getValueResponse("some-value")
+          ))
+          item.getValue should be("some-value")
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/attribute/value")
+        }
+
+        "click should send click" in {
+          val helper = WebElementHelper()
+          val item = Radio("elementId","sessionId","sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponseAction(WebElementResponses.getBooleanResponse, () => item.click())
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/click")
+        }
+
+        "getSelected should send selected" in {
+          val helper = WebElementHelper()
+          val item = Radio("elementId", "sessionId", "sessionUrl", helper.testDriver, helper.session)
+          helper.withGetResponses(List(
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getBooleanResponse
+          ))
+          item.isSelected should be(true)
+          helper.testDriver.getRequestUrl should be("sessionUrl/element/elementId/selected")
+        }
+
+      }
+
+      "RadioMulti" - {
+
+        "toRadioMulti should return a list of radios" in {
+
+          import ListOfWebElementUtils.ListDecorator
+
+          val helper = WebElementHelper()
+          helper.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.attributeResponseWith("some-name"),
+            WebElementResponses.attributeResponseWith("some-name"),
+            WebElementResponses.attributeResponseWith("some-name"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio")
+          ))
+
+          val elements = helper.getAll()
+          elements.toRadioMulti.getRadios shouldBe a[List[Radio]]
+        }
+
+        "getSelected should send select" in {
+          val helper = WebElementHelper()
+          val item = RadioMulti(helper.getAll())
+
+          helper.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getBooleanResponse
+          ))
+
+          item.getSelected shouldBe a [Some[Radio]]
+          helper.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460215713666/selected")
+        }
+
+        "getSelectedValue should get value" in {
+          val helper = WebElementHelper()
+          val item = RadioMulti(helper.getAll())
+
+          helper.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getValueResponse("a")
+          ))
+
+          item.getSelectedValue should be("a")
+          helper.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460215713666/attribute/value")
+        }
+
+        "hasSelected should get boolean" in {
+          val helper = WebElementHelper()
+          val item = RadioMulti(helper.getAll())
+
+          helper.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.getBooleanResponse,
+            WebElementResponses.getBooleanResponse
+          ))
+
+          item.hasSelected should be(true)
+          helper.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460215713666/selected")
+        }
+
+        "getByValue should get value" in {
+          val helper = WebElementHelper()
+          val item = RadioMulti(helper.getAll())
+
+          helper.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.getValueResponse("a")
+          ))
+
+          item.getByValue("a") shouldBe a [Some[Radio]]
+          helper.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460215713666/attribute/value")
+        }
+
+        "selectByValue should send click" in {
+          val helper = WebElementHelper()
+          val item = RadioMulti(helper.getAll())
+
+          helper.withGetResponses(List(
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.nameResponseWith("input"),
+            WebElementResponses.attributeResponseWith("radio"),
+            WebElementResponses.getValueResponse("a"),
+            WebElementResponses.getBooleanResponse
+          ))
+
+          item.selectByValue("a")
+          helper.testDriver.getRequestUrl should be("/session/test-session-id/element/:wdc:1460215713666/click")
+        }
 
       }
 
