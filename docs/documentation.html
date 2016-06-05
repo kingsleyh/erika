@@ -45,11 +45,35 @@
     <ul class="nav nav-pills nav-stacked toc">
 
         
-        <li class="func" data-name="setGlobalTimeout" data-category="Unit">
+        <li class="func" data-name="setGlobalTimeout" data-category="Session">
             <a href="#setGlobalTimeout">
                 setGlobalTimeout
-                    <span data-category="Unit" class="label label-category pull-right"
-                            >Unit</span>
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
+        <li class="func" data-name="getGlobalTimeout" data-category="Session">
+            <a href="#getGlobalTimeout">
+                getGlobalTimeout
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
+        <li class="func" data-name="setAllTimeouts" data-category="Session">
+            <a href="#setAllTimeouts">
+                setAllTimeouts
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
+        <li class="func" data-name="visitUrl" data-category="Session">
+            <a href="#visitUrl">
+                visitUrl
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
             </a>
         </li>
             
@@ -63,7 +87,115 @@
         <h2>
             <a tabindex="2" class="name" href="#setGlobalTimeout">setGlobalTimeout</a>
                 <span class="pull-right">
-                        <span class="label label-category">Unit</span>
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>Int</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                    <li class="list-group-item">
+                        <span class="type">Int</span>
+                        <span class="name">timeout</span>
+                        <span class="description">(in millis, defaults to 5000)</span>
+                    </li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>Sets the timeout used in all the functions that perform an internal timeout while waiting for something</p>
+
+        
+            <div class="see">
+             See also:
+            <ul>
+            
+              <li><a href="#getGlobalTimeout">getGlobalTimeout</a></li>
+            
+            </ul>
+            </div>
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">session.setGlobalTimeout(8000)</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="getGlobalTimeout">
+        <h2>
+            <a tabindex="2" class="name" href="#getGlobalTimeout">getGlobalTimeout</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>Int</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                </ul>
+                
+                <div class="panel-body">
+                
+                    <span class="returns">Returns</span>
+                    <span class="type">Int</span>
+                    <span class="description"></span>
+                
+                </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>Gets the current value in millis of the global timeout</p>
+
+        
+            <div class="see">
+             See also:
+            <ul>
+            
+              <li><a href="#setGlobalTimeout">setGlobalTimeout</a></li>
+            
+            </ul>
+            </div>
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">val timeout: Int = session.getGlobalTimeout</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="setAllTimeouts">
+        <h2>
+            <a tabindex="2" class="name" href="#setAllTimeouts">setAllTimeouts</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
                         
                           <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
                         
@@ -90,24 +222,67 @@
         </div>
         
 
-        <div class="description"><p>Sets the timeout used in all the functions that perform an internal timeout while waiting for something</p>
+        <div class="description"><p>Sets all the timeouts to the supplied value in millis</p>
 
-        
-            <div class="see">
-             See also:
-            <ul>
-            
-              <li><a href="#getGlobalTimeout">getGlobalTimeout</a></li>
-            
-            </ul>
-            </div>
         
 
         </div>
 
         
             
-	           <pre><code class="hljs javascript"></code></pre>
+	           <pre><code class="hljs javascript">session.setAllTimeouts(8000)</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="visitUrl">
+        <h2>
+            <a tabindex="2" class="name" href="#visitUrl">visitUrl</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>String &#8594; Session</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                    <li class="list-group-item">
+                        <span class="type">String</span>
+                        <span class="name">url</span>
+                        <span class="description"></span>
+                    </li>
+                    
+                </ul>
+                
+                <div class="panel-body">
+                
+                    <span class="returns">Returns</span>
+                    <span class="type">Session</span>
+                    <span class="description"></span>
+                
+                </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>navigate to the supplied url</p>
+
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">session.visitUrl(&quot;www.google.com&quot;)</code></pre>
             
         
     </section>
