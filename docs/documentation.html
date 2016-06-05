@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="docs-page">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Erika Documentation</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<input type="checkbox" id="open-nav">
+<header class="navbar navbar-fixed-top navbar-inverse container-fluid">
+    <div class="navbar-header">
+        <label class="open-nav" for="open-nav"></label>
+        <a class="navbar-brand" href="/">
+            <strong>Erika</strong>
+            <span class="version">v40</span>
+        </a>
+    </div>
+    <div class="navbar-left">
+        <ul class="nav navbar-nav">
+            
+                <li class=""><a href="home.html">Home</a></li>
+            
+                <li class="active"><a href="#">Documentation</a></li>
+            
+                <li class=""><a href="https://github.com/kingsleyh/erika">Github</a></li>
+            
+        </ul>
+    </div>
+</header>
+<aside class="sidebar container-fluid">
+    <div class="form-group has-feedback filter">
+        <input class="form-control"
+               tabindex="1"
+               id="name-filter"
+               placeholder="Filter"
+               type="text"
+               data-bind="textInput: filter"
+               autofocus
+                >
+            <span class="form-control-feedback">
+                <span class="glyphicon glyphicon-search"></span>
+            </span>
+    </div>
+    <ul class="nav nav-pills nav-stacked toc">
+
+        
+        <li class="func" data-name="setGlobalTimeout" data-category="Unit">
+            <a href="#setGlobalTimeout">
+                setGlobalTimeout
+                    <span data-category="Unit" class="label label-category pull-right"
+                            >Unit</span>
+            </a>
+        </li>
+            
+
+    </ul>
+</aside>
+<main class="container-fluid">
+
+    
+    <section class="card" id="setGlobalTimeout">
+        <h2>
+            <a tabindex="2" class="name" href="#setGlobalTimeout">setGlobalTimeout</a>
+                <span class="pull-right">
+                        <span class="label label-category">Unit</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>Int</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                    <li class="list-group-item">
+                        <span class="type">Int</span>
+                        <span class="name">timeout</span>
+                        <span class="description">(in millis)</span>
+                    </li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>Sets the timeout used in all the functions that perform an internal timeout while waiting for something</p>
+
+        
+            <div class="see">
+             See also:
+            <ul>
+            
+              <li><a href="#getGlobalTimeout">getGlobalTimeout</a></li>
+            
+            </ul>
+            </div>
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript"></code></pre>
+            
+        
+    </section>
+        
+
+</main>
+<script src="main.js"></script>
+</body>
+</html>
