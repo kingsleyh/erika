@@ -24,7 +24,7 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "2.2.6"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 
-libraryDependencies += "net.kenro-ji-jin" % "docs4s_2.11" % "12"
+//libraryDependencies += "net.kenro-ji-jin" % "docs4s_2.11" % "12"
 
 pgpPassphrase := Some(Try(sys.env("SECRET")).getOrElse("goaway").toCharArray)
 
