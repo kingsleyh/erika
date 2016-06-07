@@ -13,7 +13,7 @@
         <label class="open-nav" for="open-nav"></label>
         <a class="navbar-brand" href="/">
             <strong>Erika</strong>
-            <span class="version">v40</span>
+            <span class="version">v48</span>
         </a>
     </div>
     <div class="navbar-left">
@@ -45,14 +45,6 @@
     <ul class="nav nav-pills nav-stacked toc">
 
         
-        <li class="func" data-name="setGlobalTimeout" data-category="Session">
-            <a href="#setGlobalTimeout">
-                setGlobalTimeout
-                    <span data-category="Session" class="label label-category pull-right"
-                            >Session</span>
-            </a>
-        </li>
-            
         <li class="func" data-name="getGlobalTimeout" data-category="Session">
             <a href="#getGlobalTimeout">
                 getGlobalTimeout
@@ -64,6 +56,14 @@
         <li class="func" data-name="setAllTimeouts" data-category="Session">
             <a href="#setAllTimeouts">
                 setAllTimeouts
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
+        <li class="func" data-name="setGlobalTimeout" data-category="Session">
+            <a href="#setGlobalTimeout">
+                setGlobalTimeout
                     <span data-category="Session" class="label label-category pull-right"
                             >Session</span>
             </a>
@@ -83,59 +83,6 @@
 <main class="container-fluid">
 
     
-    <section class="card" id="setGlobalTimeout">
-        <h2>
-            <a tabindex="2" class="name" href="#setGlobalTimeout">setGlobalTimeout</a>
-                <span class="pull-right">
-                        <span class="label label-category">Session</span>
-                        
-                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
-                        
-                </span>
-        </h2>
-
-        
-        <div><code>Int</code></div>
-
-        <div class="params" data-expanded="false">
-            <a href="#expand" class="toggle-params">Parameters</a>
-            <div class="details panel panel-default">
-                <ul class="list-group">
-                    
-                    <li class="list-group-item">
-                        <span class="type">Int</span>
-                        <span class="name">timeout</span>
-                        <span class="description">(in millis, defaults to 5000)</span>
-                    </li>
-                    
-                </ul>
-                
-            </div>
-        </div>
-        
-
-        <div class="description"><p>Sets the timeout used in all the functions that perform an internal timeout while waiting for something</p>
-
-        
-            <div class="see">
-             See also:
-            <ul>
-            
-              <li><a href="#getGlobalTimeout">getGlobalTimeout</a></li>
-            
-            </ul>
-            </div>
-        
-
-        </div>
-
-        
-            
-	           <pre><code class="hljs javascript">session.setGlobalTimeout(8000)</code></pre>
-            
-        
-    </section>
-        
     <section class="card" id="getGlobalTimeout">
         <h2>
             <a tabindex="2" class="name" href="#getGlobalTimeout">getGlobalTimeout</a>
@@ -231,6 +178,59 @@
         
             
 	           <pre><code class="hljs javascript">session.setAllTimeouts(8000)</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="setGlobalTimeout">
+        <h2>
+            <a tabindex="2" class="name" href="#setGlobalTimeout">setGlobalTimeout</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>Int</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                    <li class="list-group-item">
+                        <span class="type">Int</span>
+                        <span class="name">timeout</span>
+                        <span class="description">(in millis, defaults to 5000)</span>
+                    </li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>Sets the timeout used in all the functions that perform an internal timeout while waiting for something</p>
+
+        
+            <div class="see">
+             See also:
+            <ul>
+            
+              <li><a href="#getGlobalTimeout">getGlobalTimeout</a></li>
+            
+            </ul>
+            </div>
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">session.setGlobalTimeout(8000)</code></pre>
             
         
     </section>
