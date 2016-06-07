@@ -25,7 +25,7 @@ object Docs extends App {
       "src/main/scala/net/kenro/ji/jin/Session.scala"
     ),
 
-    Card("visitUrl", "navigate to the supplied url", "Session",
+    Card("visitUrl", "Navigate to the supplied url", "Session",
       List(
         Param("String", "url", "", ParamType.INPUT),
         Param("Session", "", "", ParamType.OUTPUT)
@@ -33,7 +33,48 @@ object Docs extends App {
       List(Example("session.visitUrl(\"www.google.com\")")),
       List.empty,
       "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("findElement", "Find an element using a By locator - throws an exception if not found within implicit timeout", "Session",
+      List(
+        Param("By", "by", "", ParamType.INPUT),
+        Param("WebElement", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.findElement(By.className(\"some-class\"))")),
+      List(Link("By","#By"), Link("WebElement", "#WebElement")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("findElements", "Find all elements using a By locator - does not throw an exception if nothing found just returns an empty list", "Session",
+      List(
+        Param("By", "by", "", ParamType.INPUT),
+        Param("List[WebElement]", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.findElements(By.className(\"some-class\"))")),
+      List(Link("By","#By"), Link("WebElement", "#WebElement")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("elementExists", "uses findElements to ascertain if an element exists based on By locator", "Session",
+      List(
+        Param("By", "by", "", ParamType.INPUT),
+        Param("Boolean", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("val result: Boolean = session.elementExists(By.className(\"some-class\"))")),
+      List(Link("By","#By")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getSessions", "shows a list of existing sessions started by whichever driver is used: e.g. phantom, chrome", "Session",
+      List(
+        Param("List[Sessions]", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getSessions()")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
     )
+
+
   )
 
   val links = List(
@@ -50,7 +91,7 @@ object Docs extends App {
     ), "README.md")
   )
 
-  new DocGen("Erika", "v48", "https://github.com/kingsleyh/erika/blob/master")
+  new DocGen("Erika", "v49", "https://github.com/kingsleyh/erika/blob/master")
     .withLinks(links)
     .withCards(cards)
     .withPages(pages)

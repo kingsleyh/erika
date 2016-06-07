@@ -13,7 +13,7 @@
         <label class="open-nav" for="open-nav"></label>
         <a class="navbar-brand" href="/">
             <strong>Erika</strong>
-            <span class="version">v48</span>
+            <span class="version">v49</span>
         </a>
     </div>
     <div class="navbar-left">
@@ -45,9 +45,41 @@
     <ul class="nav nav-pills nav-stacked toc">
 
         
+        <li class="func" data-name="elementExists" data-category="Session">
+            <a href="#elementExists">
+                elementExists
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
+        <li class="func" data-name="findElement" data-category="Session">
+            <a href="#findElement">
+                findElement
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
+        <li class="func" data-name="findElements" data-category="Session">
+            <a href="#findElements">
+                findElements
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
         <li class="func" data-name="getGlobalTimeout" data-category="Session">
             <a href="#getGlobalTimeout">
                 getGlobalTimeout
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
+        <li class="func" data-name="getSessions" data-category="Session">
+            <a href="#getSessions">
+                getSessions
                     <span data-category="Session" class="label label-category pull-right"
                             >Session</span>
             </a>
@@ -83,6 +115,193 @@
 <main class="container-fluid">
 
     
+    <section class="card" id="elementExists">
+        <h2>
+            <a tabindex="2" class="name" href="#elementExists">elementExists</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>By &#8594; Boolean</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                    <li class="list-group-item">
+                        <span class="type">By</span>
+                        <span class="name">by</span>
+                        <span class="description"></span>
+                    </li>
+                    
+                </ul>
+                
+                <div class="panel-body">
+                
+                    <span class="returns">Returns</span>
+                    <span class="type">Boolean</span>
+                    <span class="description"></span>
+                
+                </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>uses findElements to ascertain if an element exists based on By locator</p>
+
+        
+            <div class="see">
+             See also:
+            <ul>
+            
+              <li><a href="#By">By</a></li>
+            
+            </ul>
+            </div>
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">val result: Boolean = session.elementExists(By.className(&quot;some-class&quot;))</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="findElement">
+        <h2>
+            <a tabindex="2" class="name" href="#findElement">findElement</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>By &#8594; WebElement</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                    <li class="list-group-item">
+                        <span class="type">By</span>
+                        <span class="name">by</span>
+                        <span class="description"></span>
+                    </li>
+                    
+                </ul>
+                
+                <div class="panel-body">
+                
+                    <span class="returns">Returns</span>
+                    <span class="type">WebElement</span>
+                    <span class="description"></span>
+                
+                </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>Find an element using a By locator - throws an exception if not found within implicit timeout</p>
+
+        
+            <div class="see">
+             See also:
+            <ul>
+            
+              <li><a href="#By">By</a></li>
+            
+              <li><a href="#WebElement">WebElement</a></li>
+            
+            </ul>
+            </div>
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">session.findElement(By.className(&quot;some-class&quot;))</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="findElements">
+        <h2>
+            <a tabindex="2" class="name" href="#findElements">findElements</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>By &#8594; List[WebElement]</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                    <li class="list-group-item">
+                        <span class="type">By</span>
+                        <span class="name">by</span>
+                        <span class="description"></span>
+                    </li>
+                    
+                </ul>
+                
+                <div class="panel-body">
+                
+                    <span class="returns">Returns</span>
+                    <span class="type">List[WebElement]</span>
+                    <span class="description"></span>
+                
+                </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>Find all elements using a By locator - does not throw an exception if nothing found just returns an empty list</p>
+
+        
+            <div class="see">
+             See also:
+            <ul>
+            
+              <li><a href="#By">By</a></li>
+            
+              <li><a href="#WebElement">WebElement</a></li>
+            
+            </ul>
+            </div>
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">session.findElements(By.className(&quot;some-class&quot;))</code></pre>
+            
+        
+    </section>
+        
     <section class="card" id="getGlobalTimeout">
         <h2>
             <a tabindex="2" class="name" href="#getGlobalTimeout">getGlobalTimeout</a>
@@ -134,6 +353,52 @@
         
             
 	           <pre><code class="hljs javascript">val timeout: Int = session.getGlobalTimeout</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="getSessions">
+        <h2>
+            <a tabindex="2" class="name" href="#getSessions">getSessions</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>List[Sessions]</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                </ul>
+                
+                <div class="panel-body">
+                
+                    <span class="returns">Returns</span>
+                    <span class="type">List[Sessions]</span>
+                    <span class="description"></span>
+                
+                </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>shows a list of existing sessions started by whichever driver is used: e.g. phantom, chrome</p>
+
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">session.getSessions()</code></pre>
             
         
     </section>
@@ -274,7 +539,7 @@
         </div>
         
 
-        <div class="description"><p>navigate to the supplied url</p>
+        <div class="description"><p>Navigate to the supplied url</p>
 
         
 
