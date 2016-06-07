@@ -85,6 +85,14 @@
             </a>
         </li>
             
+        <li class="func" data-name="getStatus" data-category="Session">
+            <a href="#getStatus">
+                getStatus
+                    <span data-category="Session" class="label label-category pull-right"
+                            >Session</span>
+            </a>
+        </li>
+            
         <li class="func" data-name="setAllTimeouts" data-category="Session">
             <a href="#setAllTimeouts">
                 setAllTimeouts
@@ -154,7 +162,7 @@
         </div>
         
 
-        <div class="description"><p>uses findElements to ascertain if an element exists based on By locator</p>
+        <div class="description"><p>Uses findElements to ascertain if an element exists based on By locator</p>
 
         
             <div class="see">
@@ -390,7 +398,7 @@
         </div>
         
 
-        <div class="description"><p>shows a list of existing sessions started by whichever driver is used: e.g. phantom, chrome</p>
+        <div class="description"><p>Shows a list of existing sessions started by whichever driver is used: e.g. phantom, chrome</p>
 
         
 
@@ -399,6 +407,52 @@
         
             
 	           <pre><code class="hljs javascript">session.getSessions()</code></pre>
+            
+        
+    </section>
+        
+    <section class="card" id="getStatus">
+        <h2>
+            <a tabindex="2" class="name" href="#getStatus">getStatus</a>
+                <span class="pull-right">
+                        <span class="label label-category">Session</span>
+                        
+                          <a target="_blank" title="View source on GitHub" href="https://github.com/kingsleyh/erika/blob/master/src/main/scala/net/kenro/ji/jin/Session.scala"><small class="glyphicon glyphicon-new-window"></small></a>
+                        
+                </span>
+        </h2>
+
+        
+        <div><code>String</code></div>
+
+        <div class="params" data-expanded="false">
+            <a href="#expand" class="toggle-params">Parameters</a>
+            <div class="details panel panel-default">
+                <ul class="list-group">
+                    
+                </ul>
+                
+                <div class="panel-body">
+                
+                    <span class="returns">Returns</span>
+                    <span class="type">String</span>
+                    <span class="description"></span>
+                
+                </div>
+                
+            </div>
+        </div>
+        
+
+        <div class="description"><p>Describes the general status of the server</p>
+
+        
+
+        </div>
+
+        
+            
+	           <pre><code class="hljs javascript">session.getStatus()</code></pre>
             
         
     </section>

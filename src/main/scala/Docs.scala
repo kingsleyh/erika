@@ -55,7 +55,7 @@ object Docs extends App {
       "src/main/scala/net/kenro/ji/jin/Session.scala"
     ),
 
-    Card("elementExists", "uses findElements to ascertain if an element exists based on By locator", "Session",
+    Card("elementExists", "Uses findElements to ascertain if an element exists based on By locator", "Session",
       List(
         Param("By", "by", "", ParamType.INPUT),
         Param("Boolean", "", "", ParamType.OUTPUT)
@@ -65,11 +65,20 @@ object Docs extends App {
       "src/main/scala/net/kenro/ji/jin/Session.scala"
     ),
 
-    Card("getSessions", "shows a list of existing sessions started by whichever driver is used: e.g. phantom, chrome", "Session",
+    Card("getSessions", "Shows a list of existing sessions started by whichever driver is used: e.g. phantom, chrome", "Session",
       List(
         Param("List[Sessions]", "", "", ParamType.OUTPUT)
       ),
       List(Example("session.getSessions()")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getStatus", "Describes the general status of the server", "Session",
+      List(
+        Param("String", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getStatus()")),
       List.empty,
       "src/main/scala/net/kenro/ji/jin/Session.scala"
     )

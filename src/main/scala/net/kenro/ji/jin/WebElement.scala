@@ -290,8 +290,6 @@ class StubWebElement() extends Element {
 
   override def click(): WebElement = ???
 
-//  override def click2(): Unit = ???
-
   override def isDisplayed: Boolean = displayed
 }
 
