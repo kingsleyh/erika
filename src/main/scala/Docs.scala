@@ -76,13 +76,187 @@ object Docs extends App {
 
     Card("getStatus", "Describes the general status of the server", "Session",
       List(
-        Param("String", "", "", ParamType.OUTPUT)
+        Param("ServerStatus", "", "", ParamType.OUTPUT)
       ),
       List(Example("session.getStatus()")),
+      List(Link("ServerStatus", "#ServerStatus")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getCapabilities", "Return the current capability information", "Session",
+      List(
+        Param("Capabilities", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getCapabilities()")),
+      List(Link("Capabilities", "#Capabilities")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("dispose()", "Disposes/terminates the current session", "Session",
+      List(
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.dispose()")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getUrl", "Gets the current url of the page", "Session",
+      List(
+        Param("Option[String]", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getUrl")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getWindowHandles", "Gets a list of open windows", "Session",
+      List(
+        Param("List[WindowHandle]", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getWindowHandles")),
+      List(Link("WindowHandle", "#WindowHandle")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getWindowHandle", "Gets the current window handle", "Session",
+      List(
+        Param("WindowHandle", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getWindowHandle")),
+      List(Link("WindowHandle", "#WindowHandle")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("goForward", "Operate the browsers go forward", "Session",
+      List(
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.goForward")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("goBack", "Operate the browsers go back", "Session",
+      List(
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.goBack")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("refresh", "Operate the browsers refresh", "Session",
+      List(
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.refresh")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getSource", "Get the source of the current page", "Session",
+      List(
+        Param("Option[String]", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getSource")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("getTitle", "Get the title of the current page", "Session",
+      List(
+        Param("Option[String]", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.getTitle")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("executeScript", "Execute some javascript synchronously", "Session",
+      List(
+        Param("ExecuteScriptResponse", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.executeScript(\"return $('.name');\")")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("executeAsyncScript", "Execute some javascript asynchronously", "Session",
+      List(
+        Param("ExecuteScriptResponse", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.executeAsyncScript(\"alert('woop');\")")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("takeScreenshot", "Take a screenshot", "Session",
+      List(
+        Param("String", "outputFile", "(defaults to screenshot.png)", ParamType.INPUT),
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.takeScreenshot(\"some-file.png\")")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("setTimeout", "set a timeout for a specific TimeoutType", "Session",
+      List(
+        Param("TimeoutType", "timeoutType", "", ParamType.INPUT),
+        Param("Int", "milliseconds", "", ParamType.INPUT),
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.setTimeout(TimeoutType.IMPLICIT, 5000)")),
+      List(Link("TimeoutType", "#TimeoutType")),
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("setAsyncScriptTimeout", "set a timeout for async script execution", "Session",
+      List(
+        Param("Int", "milliseconds", "", ParamType.INPUT),
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.setAsyncScriptTimeout(5000)")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("setImplicitWaitTimeout", "set a timeout for implicit wait", "Session",
+      List(
+        Param("Int", "milliseconds", "", ParamType.INPUT),
+        Param("Unit", "", "", ParamType.OUTPUT)
+      ),
+      List(Example("session.setImplicitWaitTimeout(5000)")),
+      List.empty,
+      "src/main/scala/net/kenro/ji/jin/Session.scala"
+    ),
+
+    Card("waitFor", "wait for condition to be satisfied", "Session",
+      List(
+        Param("T <: Searcher", "element", "(takes an element or a By locator)", ParamType.INPUT),
+        Param("WebElement", "", "", ParamType.OUTPUT)
+      ),
+      List(
+        Example(
+          """
+            | // using By locator with default Condition.isVisible
+            | val ele1: WebElement = session.waitFor(By.id("username"))
+            |
+            | // using By locator with a Condition
+            | val ele2: WebElement = session.waitFor(By.id("username"), Condition.isEnabled)
+            |
+            | // using an element
+            | val ele3: WebElement = session.waitFor(ele1)
+            |
+            | // using an element with a Condition
+            | val ele4: WebElement = session.waitFor(ele1, Condition.textContains("hello"))
+            |
+          """.stripMargin)
+      ),
       List.empty,
       "src/main/scala/net/kenro/ji/jin/Session.scala"
     )
-
 
   )
 
