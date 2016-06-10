@@ -32,11 +32,117 @@
     <article>
         <h1 id = "Erika___a_href__https:__travis-ci_org_kingsleyh_erika___img_src__https:__travis-ci_org_kingsleyh_erika_png_branch_master__alt__Build_Status_____a___a_href__https:__bintray_com_kingsleyh_repo_erika___95_latestVersion____img_src__https:__api_bintray_com_packages_kingsleyh_repo_erika_images_download_svg__alt__Download______a_">Erika  <a href="https://travis-ci.org/kingsleyh/erika"><img src="https://travis-ci.org/kingsleyh/erika.png?branch=master" alt="Build Status"/></a> <a href="https://bintray.com/kingsleyh/repo/erika/&#95;latestVersion"> <img src="https://api.bintray.com/packages/kingsleyh/repo/erika/images/download.svg" alt="Download"/> </a></h1>
 
-<p>Web Testing in Scala</p>
+<p>Erika was originally designed as a pure Scala wrapper around the phantomJs GhostDriver API. However she has been expanded to cope with:</p>
+
+<ul>
+<li>PhantomJs (Ghostdriver)</li>
+<li>ChromeDriver</li>
+<li>Wires (Firefox) - currently not working</li>
+<li>BrowserStack</li>
+</ul>
+
+<p>When writing Erika I have attempted to make the functions as robust as possible. For example instead of relying on a drivers ability to findElements - Erika
+continually makes the findElements call until a timeout has been reached or success. There are some functions for blowing up if elements are not found 
+and there are some functions which don't blow up and return an option instead.</p>
+
+<p>There are also wrappers around common types of elements e.g. TextInput which add another layer or robustness around getting, setting and clearing values.</p>
+
+<h3 id = "Getting_Erika">Getting Erika</h3>
+
+<p>Add a resolver to my bintray repo and then add a library dependency specifying the version. You can see the latest version on the download label next to the build 
+status at the top of this page.</p>
+
+<p>(I also push to the sonatype oss maven repo occasionally or if requested via an Issue.)</p>
 
 <pre><code> resolvers += "Kingsley Hendrickse's repo" at "http://dl.bintray.com/kingsleyh/repo/"
 
- libraryDependencies += "erika" %% "erika_2.10" % "11"</code></pre>
+ libraryDependencies += "erika" %% "erika_2.11" % "&lt;latest version&gt;"</code></pre>
+
+<h3 id = "Getting_Started">Getting Started</h3>
+
+<p>Have a look at the <a href="https://rawgit.com/kingsleyh/erika/master/docs/documentation.html">Documentation</a></p>
+
+<p>Once you have Erika you must choose the kind of session you want to run e.g chrome, phantomjs. Below are some examples of using these.</p>
+
+<h4 id = "ChromeSession">ChromeSession</h4>
+
+<pre><code>ChromeSession(
+  pathToChromeDriver = "/path/to/binary/chromedriver"
+)(session =&gt; {
+
+  session.visitUrl("http://localhost:8080/app/#login")
+
+  session
+    .waitFor(By.className("username")).toTextInput.setValue("email")
+    .waitFor(By.className("password")).toTextInput.setValue("password")
+    .waitFor(By.className("login")).toButton.click()
+
+  val element: WebElement = session.waitForClass("welcome-page")
+  println(element.getText)
+
+})</code></pre>
+
+<p>The ChromeSession object has a few things you can set - the most important being the path to the chromedriver binary. You can also set 
+parameters to pass to the chromedriver binary via the ChromeOptions argument of ChromeSession. </p>
+
+<h3 id = "PhantomJsSession">PhantomJsSession</h3>
+
+<pre><code>PhantomJsSession(
+  pathToPhantom = "/path/to/binary/phantomjs",
+  phantomJsOptions = PhantomJsOptions().setIgnoreSslError(true)
+                                       .setSslProtocol(SSLProtocol.ANY)
+                                       .setWebSecurity(false)
+)(session =&gt; {
+
+  session.visitUrl("http://localhost:8080/app/#login")
+
+  session
+    .waitFor(By.className("username")).toTextInput.setValue("email")
+    .waitFor(By.className("password")).toTextInput.setValue("password")
+    .waitFor(By.className("login")).toButton.click()
+
+  val element: WebElement = session.waitForClass("welcome-page")
+  println(element.getText)
+
+})</code></pre>
+
+<p>The PhantomJsSession object need to know the path to the phantomjs binary. You also set parameter to pass to the phantomjs binary using the PhantomJsOptions
+object. In the example above it shows a common configuration for testing against HTTPS websites.</p>
+
+<h3 id = "BrowserStackSession">BrowserStackSession</h3>
+
+<pre><code>val capabilities = Capabilities(
+    browserStack = Some(BrowserStackCapabilities(
+    name = Some("Kingsley"),
+    browser = Some("Chrome"),
+    browserVersion = Some("50"),
+    os = Some("Windows"),
+    osVersion = Some("10"),
+    resolution = Some("1920x1080"),
+    project = Some("MYPROJECT [KH]"),
+    browserStackLocal = Some(false),
+    browserStackDebug = Some(true))),
+    nativeEvents = true)
+
+BrowserStackSession(
+  basicAuth = Some(BasicAuth("browserstack-username", "browserstack-api-key")),
+      desiredCapabilities = capabilities
+)(session =&gt; {
+
+  session.visitUrl("http://localhost:8080/app/#login")
+
+  session
+    .waitFor(By.className("username")).toTextInput.setValue("email")
+    .waitFor(By.className("password")).toTextInput.setValue("password")
+    .waitFor(By.className("login")).toButton.click()
+
+  val element: WebElement = session.waitForClass("welcome-page")
+  println(element.getText)
+
+})</code></pre>
+
+<p>When testing against Browserstack you need to connect with your auth credentials - username and api key. You also need to supply the desired 
+capabilities you want - e.g. the platform (Windows), platform version (10), the browser (Chrome) and browser version (50).</p>
     </article>
 </main>
 </body>
