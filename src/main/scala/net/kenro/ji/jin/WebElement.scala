@@ -27,9 +27,9 @@ case class IncorrectElementException(message: String) extends Exception(message)
 
 case class TextInput(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
   extends WebElement(elementId, sessionId, sessionUrl, driver, session) {
-  def getValue = waitFor(this).getAttribute("value")
-  def setValue(value: String) = waitFor(this).clear().sendKeys(value)
-  def clearValue = waitFor(this).clear()
+  def getValue: String = waitFor(this).getAttribute("value")
+  def setValue(value: String): WebElement = waitFor(this).clear().sendKeys(value)
+  def clearValue: WebElement = waitFor(this).clear()
 }
 
 case class Button(elementId :String, sessionId: String, sessionUrl: String, driver: BaseDriver, session: Session)
@@ -206,6 +206,10 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def waitFor[T <: Searcher](element: T, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = {
     Waitress(session).waitFor(element, condition, timeout)
+  }
+
+  def waitForFunction(runnable: () => Result, timeout: Int = session.getGlobalTimeout) = {
+    Waitress(session).waitFor(runnable, timeout)
   }
 
   def findFirst[T <: Searcher](element: T, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): Option[WebElement] = {
