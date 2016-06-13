@@ -2,7 +2,7 @@ package net.kenro.ji.jin
 
 import argonaut._
 import io.shaka.http.ContentType.APPLICATION_JSON
-import io.shaka.http.Http.http
+import io.shaka.http.Http.{Timeout, http}
 import io.shaka.http.Request.{DELETE, GET, POST}
 import io.shaka.http.Status.OK
 import io.shaka.http.{Entity, Response}
@@ -12,6 +12,8 @@ import scala.collection.mutable.Queue
 case class APIResponseError(message: String) extends Exception(message)
 
 trait BaseDriver {
+  implicit val timeout = Timeout(30000)
+
   def doGet(url: String): Response
 
   def doPost(url: String, json: Json): Response
