@@ -808,7 +808,7 @@ object Docs extends App {
     ), "README.md")
   )
 
-  new DocGen("Erika", "v54", "https://github.com/kingsleyh/erika/blob/master")
+  new DocGen("Erika", "v56", "https://github.com/kingsleyh/erika/blob/master")
     .withLinks(links)
     .withCards(cards)
     .withPages(pages)
