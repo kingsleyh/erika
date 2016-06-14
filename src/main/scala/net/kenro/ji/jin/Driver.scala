@@ -8,6 +8,8 @@ import io.shaka.http.Status.OK
 import io.shaka.http.{Entity, Response}
 
 import scala.collection.mutable.Queue
+import io.shaka.http.proxy.noProxy
+import io.shaka.http.proxy
 
 case class APIResponseError(message: String) extends Exception(message)
 
@@ -43,7 +45,7 @@ case class BasicAuth(username: String = "", password: String = "") {
   def toOption = Option(this)
 }
 
-class UrlDriver(remoteUrl: String, basicAuth: Option[BasicAuth]) extends BaseDriver {
+class UrlDriver(remoteUrl: String, basicAuth: Option[BasicAuth])(implicit proxy: () => java.net.Proxy = noProxy) extends BaseDriver {
 
   override def doGet(url: String): Response = {
     basicAuth match {

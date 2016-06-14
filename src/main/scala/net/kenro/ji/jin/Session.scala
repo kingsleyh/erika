@@ -1,6 +1,7 @@
 package net.kenro.ji.jin
 
 import java.io.{File, FileOutputStream, IOException}
+import java.net.Proxy
 
 import argonaut.Argonaut._
 import argonaut.Json
@@ -382,9 +383,11 @@ object BrowserStackSession {
   def apply(desiredCapabilities: Capabilities = Capabilities(),
             requiredCapabilities: Capabilities = Capabilities(),
             url: String = "http://hub-cloud.browserstack.com/wd/hub",
-            basicAuth: Option[BasicAuth] = None
+            basicAuth: Option[BasicAuth] = None,
+            proxy: Option[() => java.net.Proxy] = None
            )(block: (Session) => Unit) = {
 
+    implicit val proxyToUse = proxy.getOrElse(io.shaka.http.proxy.noProxy)
     val session = new Session(new UrlDriver(url, basicAuth), desiredCapabilities, requiredCapabilities)
 
     Eventually(10000).tryExecute(() => {
@@ -454,24 +457,22 @@ object BrowserStackSession {
 //  })
 //
 //
-  object R extends App {
-  ChromeSession(
-    pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver"
-  )(session => {
-
-    session.visitUrl("http://localhost:10270/cb/#login")
-
-    val ele: WebElement = session.waitFor(By.className("cb-username")).toTextInput.setValue("email")
-
-    println(ele.submit)
-
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
-//      .waitFor(By.className("cb-login")).toButton.click()
-
-
-
-  })
-}
+//  object R extends App {
+//  BrowserStackSession(proxy = Some()(session => {
+//
+//    session.visitUrl("http://localhost:10270/cb/#login")
+//
+//    val ele: WebElement = session.waitFor(By.className("cb-username")).toTextInput.setValue("email")
+//
+////    println(ele.submit)
+//
+////      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
+////      .waitFor(By.className("cb-login")).toButton.click()
+//
+//
+//
+//  })
+//}
 
 //  PhantomJsSession()(session => {
 //
