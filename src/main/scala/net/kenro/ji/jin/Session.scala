@@ -66,12 +66,6 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
 
   def elementExists(by: By): Boolean = findElements(by).nonEmpty
 
-  // why does this return the text "active" intead of an elementId?
-//  def getActiveElement: Option[String] = {
-//   handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/element/active")).decode[ElementResponse].value.get("ELEMENT")
-//  }
-
-
   def getActiveElement : WebElement = {
     val elementId = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/element/active", ActiveRequest(sessionId).asJson))
       .response.decode[ElementResponse].value.get("ELEMENT") match {
@@ -458,13 +452,13 @@ object BrowserStackSession {
 //
 //
 //  object R extends App {
-//  BrowserStackSession(proxy = Some()(session => {
+//  ChromeSession(pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver")(session => {
 //
 //    session.visitUrl("http://localhost:10270/cb/#login")
 //
 //    val ele: WebElement = session.waitFor(By.className("cb-username")).toTextInput.setValue("email")
 //
-////    println(ele.submit)
+//    println(ele.submit)
 //
 ////      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
 ////      .waitFor(By.className("cb-login")).toButton.click()

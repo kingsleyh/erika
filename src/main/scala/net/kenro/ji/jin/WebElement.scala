@@ -172,9 +172,10 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def isPresent: Boolean = isEnabled && isDisplayed
 
-//  def submit: WebElement = {
-//    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/submit", ElementRequest(elementId, sessionId)))
-//  }
+  def submit: WebElement = {
+    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/submit", ElementRequest(elementId, sessionId).asJson))
+    this
+  }
 
   def sendKeys(text: String): WebElement = {
     handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/value", SendKeysRequest(text.toArray.toList).asJson))
