@@ -165,14 +165,6 @@ class SessionSpec extends FreeSpec with Matchers {
           .getRequestUrl should be("/session/test-session-id/refresh")
       }
 
-      "getActiveElement seems to be broken in phantomjs" in {
-        val (session, testDriver) = SessionHelper()
-
-        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
-          .withGetResponse(PhantomResponses.anyResponse, () => session.getActiveElement)
-          .getRequestUrl should be("/session/test-session-id/element/active")
-      }
-
     }
 
     "Finding Elements" - {
@@ -217,6 +209,16 @@ class SessionSpec extends FreeSpec with Matchers {
 
         testDriver.getPostRequest should be(PhantomRequests.findElementById)
         testDriver.getRequestUrl should be("/session/test-session-id/elements")
+      }
+
+      "getActiveElement should return the active element" in {
+        val (session, testDriver) = SessionHelper()
+
+        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponseAction(PhantomResponses.findElementResponse, () => session.getActiveElement)
+
+        testDriver.getPostRequest should be(PhantomRequests.findActiveElement)
+        testDriver.getRequestUrl should be("/session/test-session-id/element/active")
       }
 
     }

@@ -152,7 +152,7 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def getNameOption: Option[String] = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/name")).decode[StringResponse].value
 
-  def getName = getNameOption.getOrElse("")
+  def getName: String = getNameOption.getOrElse("")
 
   def click(): WebElement = {
     handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/click", ElementClickRequest(elementId).asJson))
@@ -172,6 +172,10 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
 
   def isPresent: Boolean = isEnabled && isDisplayed
 
+//  def submit: WebElement = {
+//    handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/submit", ElementRequest(elementId, sessionId)))
+//  }
+
   def sendKeys(text: String): WebElement = {
     handleRequest(elementSessionUrl, driver.doPost(s"$elementSessionUrl/value", SendKeysRequest(text.toArray.toList).asJson))
     this
@@ -186,7 +190,7 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
   def findElement(by: By): WebElement = {
     val elementId = handleRequest(sessionUrl, driver.doPost(elementSessionUrl, FindElementRequest(by.locatorStrategy, by.value).asJson))
       .response.decode[ElementResponse].value.get("ELEMENT") match {
-      case None => throw APIResponseError("oops")
+      case None => throw APIResponseError("was not an element")
       case Some(ele) => ele
     }
 

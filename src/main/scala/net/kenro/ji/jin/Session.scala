@@ -66,8 +66,18 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   def elementExists(by: By): Boolean = findElements(by).nonEmpty
 
   // why does this return the text "active" intead of an elementId?
-  def getActiveElement: Option[String] = {
-   handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/element/active")).decode[ElementResponse].value.get("ELEMENT")
+//  def getActiveElement: Option[String] = {
+//   handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/element/active")).decode[ElementResponse].value.get("ELEMENT")
+//  }
+
+
+  def getActiveElement : WebElement = {
+    val elementId = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/element/active", ActiveRequest(sessionId).asJson))
+      .response.decode[ElementResponse].value.get("ELEMENT") match {
+      case None => throw APIResponseError("was not an element")
+      case Some(ele) => ele
+    }
+    new WebElement(elementId, sessionId, sessionUrl, driver, this)
   }
 
   def getSessions: List[Sessions] = {
@@ -126,7 +136,7 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   }
 
   def setTimeout(timeoutType: TimeoutType.Value, milliseconds: Int) = {
-    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts", TimeoutRequest(timeoutType, milliseconds).toJson()))
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/timeouts", TimeoutRequest(timeoutType, milliseconds).toJson))
   }
 
   def setAsyncScriptTimeout(milliseconds: Int) = {
@@ -444,24 +454,24 @@ object BrowserStackSession {
 //  })
 //
 //
-//  ChromeSession(
-//    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
-//    pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver"
-//  )(session => {
-//
-//    session.setAllTimeouts(20000)
-//
-//    session.visitUrl("http://localhost:10270/cb/#login")
-//
-//    session
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
+  object R extends App {
+  ChromeSession(
+    pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver"
+  )(session => {
+
+    session.visitUrl("http://localhost:10270/cb/#login")
+
+    val ele: WebElement = session.waitFor(By.className("cb-username")).toTextInput.setValue("email")
+
+    println(ele.submit)
+
 //      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
 //      .waitFor(By.className("cb-login")).toButton.click()
-//
-//    println(session.getCapabilities)
-//
-//  })
 
+
+
+  })
+}
 
 //  PhantomJsSession()(session => {
 //

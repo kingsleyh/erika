@@ -1,7 +1,7 @@
 package net.kenro.ji.jin
 
 import argonaut.Argonaut._
-import argonaut.{DecodeJson, EncodeJson, Json}
+import argonaut.{DecodeJson, EncodeJson}
 
 case class Proxy(proxyType: String = ProxyType.DIRECT,
                  proxyAutoconfigUrl: String = "",
@@ -281,6 +281,19 @@ object ElementClearRequest {
      jencode2L((o: ElementClearRequest) => (o.id, o.sessionId))("id", "sessionId")
 }
 
+case class ElementRequest(id: String, sessionId: String)
+
+object ElementRequest {
+  implicit def Encoder =
+    jencode2L((o: ElementRequest) => (o.id, o.sessionId))("id", "sessionId")
+}
+
+case class ActiveRequest(sessionId: String)
+
+object ActiveRequest {
+  implicit def Encoder = jencode1L((o: ActiveRequest) => o.sessionId)("sessionId")
+}
+
 case class ServerStatus(build: Map[String, String], os: Map[String, String])
 
 object ServerStatus {
@@ -343,7 +356,7 @@ object TimeoutReq {
 }
 
 case class TimeoutRequest(timeoutType: TimeoutType.Value, milliseconds: Int) {
-  def toJson() = {
+  def toJson = {
     TimeoutReq(timeoutType.toString, milliseconds).asJson
   }
 }
@@ -359,3 +372,4 @@ case class SendKeysRequest(value: List[Char])
 object SendKeysRequest {
   implicit def Encoder = jencode1L((o: SendKeysRequest) => o.value)("value")
 }
+

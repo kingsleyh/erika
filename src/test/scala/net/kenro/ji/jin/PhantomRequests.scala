@@ -8,6 +8,8 @@ object PhantomRequests {
 
   val findElementById = """{"using":"id","value":"some-id"}"""
 
+  val findActiveElement = """{"sessionId":"test-session-id"}"""
+
   val findElementByClassName = """{"using":"class name","value":"some-classname"}"""
 
   val findElementByCssSelector = """{"using":"css selector","value":".some-selector"}"""
