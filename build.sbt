@@ -18,7 +18,7 @@ resolvers += "Kingsley's repo" at "http://dl.bintray.com/kingsleyh/repo/"
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
-libraryDependencies += "io.argonaut" % "argonaut_2.11" % "6.1"
+libraryDependencies += "io.argonaut" % "argonaut_2.11" % "6.2-M2"
 
 libraryDependencies += "io.shaka" %% "naive-http" % "85"
 

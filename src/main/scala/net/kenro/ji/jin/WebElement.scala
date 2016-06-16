@@ -6,8 +6,6 @@ import Driver.handleRequest
 import ResponseUtils._
 import io.shaka.http.Response
 
-import scalaz.{\/-, -\/}
-
 trait Element {
   def getAttributeOption(attribute: String): Option[String]
   def getAttribute(attribute: String): String
