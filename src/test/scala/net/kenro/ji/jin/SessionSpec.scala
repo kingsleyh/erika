@@ -29,6 +29,14 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
+    "visitLocationUrl should fire an async execute to change the document location" in {
+      val (session, testDriver) = SessionHelper()
+      testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+        .withPostResponseAction(PhantomResponses.executeScriptResponse, () => session.visitLocationUrl("http://some-url"))
+      testDriver.getPostRequest should be(PhantomRequests.visitLocationUrlRequest)
+      testDriver.getRequestUrl should be("/session/test-session-id/execute")
+    }
+
     "getSessions should find a list of sessions" in {
       val (session, testDriver) = SessionHelper()
 

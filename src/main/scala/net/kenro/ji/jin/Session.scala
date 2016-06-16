@@ -43,6 +43,16 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
     this
   }
 
+  def visitLocation(locationHash: String) = {
+    executeScript(s"return window.location.hash='$locationHash';")
+    this
+  }
+
+  def visitLocationUrl(locationUrl: String) = {
+    executeScript(s"return window.location = '$locationUrl';")
+    this
+  }
+
   def findElement(by: By): WebElement = {
     val elementId = handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/element", FindElementRequest(by.locatorStrategy, by.value).asJson))
       .response.decode[ElementResponse].value.get("ELEMENT") match {
