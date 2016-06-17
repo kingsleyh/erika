@@ -206,6 +206,11 @@ object SessionRequest {
     jencode2L((o: SessionRequest) => (o.desiredCapabilities, o.requiredCapabilities))("desiredCapabilities", "requiredCapabilities")
 }
 
+case class FailureResponse(state: String)
+object FailureResponse {
+  implicit def Decoder = jdecode1L(FailureResponse.apply)("state")
+}
+
 case class UrlRequest(url: String)
 
 object UrlRequest {

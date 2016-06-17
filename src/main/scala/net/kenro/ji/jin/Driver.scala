@@ -4,7 +4,7 @@ import argonaut._
 import io.shaka.http.ContentType.APPLICATION_JSON
 import io.shaka.http.Http.{Timeout, http}
 import io.shaka.http.Request.{DELETE, GET, POST}
-import io.shaka.http.Status.OK
+import io.shaka.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import io.shaka.http.{Entity, Response}
 
 import scala.collection.mutable.Queue
@@ -82,6 +82,7 @@ object Driver {
   def handleRequest(url: String, response: Response): Response = {
     response match {
       case r@Response(OK, _, _) => r
+      case r@Response(INTERNAL_SERVER_ERROR, _, _) => r
       case _ => throw APIResponseError(s"request for $url returned failed error code: ${response.status.code} with message: ${response.entityAsString}")
     }
   }

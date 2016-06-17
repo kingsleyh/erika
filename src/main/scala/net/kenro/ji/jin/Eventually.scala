@@ -1,5 +1,8 @@
 package net.kenro.ji.jin
 
+import io.shaka.http.Response
+import io.shaka.http.Status.OK
+
 import scala.util.control.NonFatal
 
 class Eventually(val millis: Int = 5000) {
@@ -20,6 +23,17 @@ class Eventually(val millis: Int = 5000) {
         count = count + 100
         tryExecute(runnable)
       }
+    }
+  }
+
+  def tryHttp(runnable: () => Response): Response = {
+    if (count >= millis) {
+      throw TimeoutException(s"Timed out after $millis millis - waiting for request to return with HTTP 200, got exception: \n $ex")
+    }
+    val response = runnable()
+    response match {
+      case r@Response(OK, _, _) => r
+      case _ => tryHttp(runnable)
     }
   }
 

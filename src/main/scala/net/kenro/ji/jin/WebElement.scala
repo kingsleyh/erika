@@ -138,17 +138,24 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
     Link(elementId, sessionId, sessionUrl, driver, session)
   }
 
-  def getTextOption: Option[String] = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/text")).decode[StringResponse].value
+  def getTextOption: Option[String] = {
+    val response = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/text"))
+      handleStaleReference(response, () => response.decode[StringResponse].value)
+  }
 
   def getText: String = getTextOption.getOrElse("")
 
   def getAttributeOption(attribute: String): Option[String] = {
-    handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/attribute/$attribute")).decode[StringResponse].value
+    val response = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/attribute/$attribute"))
+    handleStaleReference(response, () => response.decode[StringResponse].value)
   }
 
   def getAttribute(attribute: String): String = getAttributeOption(attribute).getOrElse("")
 
-  def getNameOption: Option[String] = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/name")).decode[StringResponse].value
+  def getNameOption: Option[String] = {
+    val response = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/name"))
+      handleStaleReference(response, () => response.decode[StringResponse].value)
+  }
 
   def getName: String = getNameOption.getOrElse("")
 
@@ -162,11 +169,20 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
     this
   }
 
-  def isEnabled: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/enabled")).decode[BooleanResponse].value
+  def isEnabled: Boolean = {
+    val response = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/enabled"))
+    handleStaleReferenceBoolean(response, () => response.decode[BooleanResponse].value)
+  }
 
-  def isDisplayed: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/displayed")).decode[BooleanResponse].value
+  def isDisplayed: Boolean = {
+    val response = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/displayed"))
+    handleStaleReferenceBoolean(response, () => response.decode[BooleanResponse].value)
+  }
 
-  def isSelected: Boolean = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/selected")).decode[BooleanResponse].value
+  def isSelected: Boolean = {
+    val response = handleRequest(elementSessionUrl, driver.doGet(s"$elementSessionUrl/selected"))
+    handleStaleReferenceBoolean(response, () => response.decode[BooleanResponse].value)
+  }
 
   def isPresent: Boolean = isEnabled && isDisplayed
 
@@ -239,6 +255,20 @@ class WebElement(elementId :String, sessionId: String, sessionUrl: String, drive
   def waitForLinkP(partialLinkText: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.partialLinkText(partialLinkText),condition, timeout)
 
   def waitForTag(tagName: String, condition: Condition = Condition.isVisible, timeout: Int = session.getGlobalTimeout): WebElement = waitFor(By.tagName(tagName),condition, timeout)
+
+  private def handleStaleReference(response: Response, runnable: () => Option[String]): Option[String] = {
+    val result = response.entityAsString.decodeOption[FailureResponse]
+    val stale: Boolean = result.exists(r => r.state == "stale element reference")
+    if(stale) Some("stale element reference") else runnable()
+  }
+
+  private def handleStaleReferenceBoolean(response: Response, runnable: () => Boolean): Boolean = {
+    val result = response.entityAsString.decodeOption[FailureResponse]
+    val stale: Boolean = result.exists(r => r.state == "stale element reference")
+    if(stale) false else runnable()
+  }
+
+
 
 }
 
