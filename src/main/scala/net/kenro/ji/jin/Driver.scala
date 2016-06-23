@@ -5,11 +5,10 @@ import io.shaka.http.ContentType.APPLICATION_JSON
 import io.shaka.http.Http.{Timeout, http}
 import io.shaka.http.Request.{DELETE, GET, POST}
 import io.shaka.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import io.shaka.http.proxy.noProxy
 import io.shaka.http.{Entity, Response}
 
 import scala.collection.mutable.Queue
-import io.shaka.http.proxy.noProxy
-import io.shaka.http.proxy
 
 case class APIResponseError(message: String) extends Exception(message)
 
@@ -28,15 +27,15 @@ class Driver(host: String, port: Int, context: String = "", transport: String = 
   val phantomServer = s"$transport$host:$port$context"
 
   override def doGet(url: String): Response = {
-    http(GET(phantomServer + url).contentType(APPLICATION_JSON))
+    Eventually().reTryHttp(() => http(GET(phantomServer + url).contentType(APPLICATION_JSON)))
   }
 
   override def doPost(url: String, json: Json) = {
-    http(POST(phantomServer + url).contentType(APPLICATION_JSON).entity(json.toString()))
+    Eventually().reTryHttp(() => http(POST(phantomServer + url).contentType(APPLICATION_JSON).entity(json.toString())))
   }
 
   override def doDelete(url: String) = {
-    http(DELETE(phantomServer + url).contentType(APPLICATION_JSON))
+    Eventually().reTryHttp(() => http(DELETE(phantomServer + url).contentType(APPLICATION_JSON)))
   }
 
 }
@@ -49,22 +48,22 @@ class UrlDriver(remoteUrl: String, basicAuth: Option[BasicAuth])(implicit proxy:
 
   override def doGet(url: String): Response = {
     basicAuth match {
-      case Some(BasicAuth(username, password)) => http(GET(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password))
-      case _ => http(GET(remoteUrl + url).contentType(APPLICATION_JSON))
+      case Some(BasicAuth(username, password)) => Eventually().reTryHttp(() => http(GET(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password)))
+      case _ => Eventually().reTryHttp(() => http(GET(remoteUrl + url).contentType(APPLICATION_JSON)))
     }
   }
 
   override def doPost(url: String, json: Json) = {
     basicAuth match {
-      case Some(BasicAuth(username, password)) => http(POST(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password).entity(json.toString()))
-      case _ => http(POST(remoteUrl + url).contentType(APPLICATION_JSON).entity(json.toString()))
+      case Some(BasicAuth(username, password)) => Eventually().reTryHttp(() => http(POST(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password).entity(json.toString())))
+      case _ => Eventually().reTryHttp(() => http(POST(remoteUrl + url).contentType(APPLICATION_JSON).entity(json.toString())))
     }
   }
 
   override def doDelete(url: String) = {
     basicAuth match {
-      case Some(BasicAuth(username, password)) => http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password))
-      case _ => http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON))
+      case Some(BasicAuth(username, password)) => Eventually().reTryHttp(() => http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON).basicAuth(username, password)))
+      case _ => Eventually().reTryHttp(() => http(DELETE(remoteUrl + url).contentType(APPLICATION_JSON)))
     }
 
   }

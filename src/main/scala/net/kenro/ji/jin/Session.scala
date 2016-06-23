@@ -168,6 +168,10 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
     Waitress(this).waitFor(runnable, timeout)
   }
 
+  def waitForResultFunction[T](runnable: () => FunctionResult[T], maxRetry: Int = 3, restPeriod: Int = 500): FunctionResult[T] = {
+    Eventually().reTryFunction[T](runnable, maxRetry, restPeriod)
+  }
+
   def waitForUrl(expectedUrl: String, timeout: Int = getGlobalTimeout) = {
     val waitForUrlFunction: () => Result = () => {
       val actualUrl = this.getUrl.getOrElse("")
@@ -407,92 +411,5 @@ object BrowserStackSession {
   }
 
 }
-
-
-//object Run extends App {
-//
-//  val capabilities = Capabilities(
-//    browserStack = Some(BrowserStackCapabilities(
-//    name = Some("Kingsley"),
-//    browser = Some("Chrome"),
-//    browserVersion = Some("50"),
-//    os = Some("Windows"),
-//    osVersion = Some("10"),
-//    resolution = Some("1920x1080"),
-//    project = Some("BOOST [CB]"),
-//    browserStackLocal = Some(false),
-//    browserStackDebug = Some(true))),
-//    nativeEvents = true
-//  )
-//
-//  BrowserStackSession(
-//    basicAuth = Some(BasicAuth("kingsleyhendrick1", "Uaopg5egqaQ4h4tuJcsm")),
-//    desiredCapabilities = capabilities
-//  )(session => {
-//
-//    ChromeSession(
-//      pathToChromeDriver = "/Users/kings/Downloads/chromedriver"
-//    )(session => {
-//    session
-////      .setAllTimeouts(20000)
-//      .visitUrl("https://www.fdmtime.co.uk")
-//      .waitFor(By.id("username")).toTextInput.setValue("username")
-//      .waitFor(By.id("inputPassword")).toTextInput.setValue("password")
-//
-//  })
-//
-//}
-//  FirefoxSession(
-//    pathToSeleniumServerStandalone = "/Users/hendrkin/Downloads/selenium-server-standalone-2.53.0.jar",
-//    pathToFirefoxDriver = "/Users/hendrkin/Downloads/wires"
-//  )(session => {
-//
-//    session.setAllTimeouts(20000)
-//
-//    session.visitUrl("http://localhost:10270/cb/#login")
-//
-//    session
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
-//      .waitFor(By.className("cb-login")).toButton.click()
-//
-//    println(session.getCapabilities)
-//
-//  })
-//
-//
-//  object R extends App {
-//  ChromeSession(pathToChromeDriver = "/Users/hendrkin/Downloads/chromedriver")(session => {
-//
-//    session.visitUrl("http://localhost:10270/cb/#login")
-//
-//    val ele: WebElement = session.waitFor(By.className("cb-username")).toTextInput.setValue("email")
-//
-//    println(ele.submit)
-//
-////      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
-////      .waitFor(By.className("cb-login")).toButton.click()
-//
-//
-//
-//  })
-//}
-
-//  PhantomJsSession()(session => {
-//
-//    session.setAllTimeouts(20000)
-//
-//    session.visitUrl("http://localhost:10270/cb/#login")
-//
-//    session
-//      .waitFor(By.className("cb-username")).toTextInput.setValue("email")
-//      .waitFor(By.className("cb-password")).toTextInput.setValue("password")
-//      .waitFor(By.className("cb-login")).toButton.click()
-//
-//    println(session.getCapabilities)
-//
-//  })
-
-//}
 
 

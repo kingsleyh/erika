@@ -1,6 +1,7 @@
 package net.kenro.ji.jin
 
 case class TimeoutException(message: String) extends Exception(message)
+case class MaxReTryException(message: String) extends Exception(message)
 
 class Waitress(session: Session) {
 
