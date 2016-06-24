@@ -1,7 +1,5 @@
 package net.kenro.ji.jin
 
-import java.io.IOException
-
 import io.shaka.http.Response
 import io.shaka.http.Status.OK
 
@@ -19,12 +17,11 @@ class Eventually(val millis: Int = 5000) {
     try {
       runnable()
     } catch {
-      case NonFatal(throwable) => {
+      case NonFatal(throwable) =>
         ex = throwable
         Thread.sleep(100)
         count = count + 100
         tryExecute(runnable)
-      }
     }
   }
 
@@ -37,11 +34,18 @@ class Eventually(val millis: Int = 5000) {
     var response: Response = null
     breakable {
       (0 to maxLoop).foreach(n => {
-        response = runnable()
-        if (response.status == OK) {
-          break
+
+        try {
+          response = runnable()
+          if (response.status == OK) {
+            break
+          }
+          Thread.sleep(restPeriod)
+        } catch {
+          case NonFatal(throwable) =>
+            val exception = throwable
+            println(s"[reTryHttp] Exception happened when making http call (continuing on anyway) - exception was: $exception")
         }
-        Thread.sleep(restPeriod)
       })
     }
     response
@@ -49,12 +53,12 @@ class Eventually(val millis: Int = 5000) {
 
   //  Example
   //  object Example extends App {
-  //    val tryFunc: () => ReTryResult[String] = () => {
+  //    val tryFunc: () => FunctionResult[String] = () => {
   //      val a = 1
   //      val outcome = a > 1
-  //      if(outcome) ReTryResult[String](outcome, "cool") else ReTryResult[String](outcome, "yikes")
+  //      if(outcome) FunctionResult[String](outcome, "cool") else FunctionResult[String](outcome, "yikes")
   //    }
-  //    val r: ReTryResult[String] = Eventually().reTryFunction(tryFunc)
+  //    val r: FunctionResult[String] = Eventually().reTryFunction(tryFunc)
   //    println(r.payLoad)
   //  }
   def reTryFunction[T](runnable: () => FunctionResult[T], maxLoop: Int = 3, restPeriod: Int = 500): FunctionResult[T] = {
