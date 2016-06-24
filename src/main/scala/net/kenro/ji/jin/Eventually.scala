@@ -40,12 +40,15 @@ class Eventually(val millis: Int = 5000) {
           if (response.status == OK) {
             break
           }
-          Thread.sleep(restPeriod)
         } catch {
           case NonFatal(throwable) =>
             val exception = throwable
             println(s"[reTryHttp] Exception happened when making http call (continuing on anyway) - exception was: $exception")
         }
+
+        println(s"[reTryHttp] waiting for $restPeriod millis before trying again")
+        Thread.sleep(restPeriod)
+
       })
     }
     response
@@ -65,11 +68,18 @@ class Eventually(val millis: Int = 5000) {
     var conclusion: FunctionResult[T] = null
     breakable {
       (1 to maxLoop).foreach(n => {
-        conclusion = runnable()
-        if (conclusion.wasSatisfied) {
-          break
+        try {
+          conclusion = runnable()
+          if (conclusion.wasSatisfied) {
+            break
+          }
+        } catch {
+          case NonFatal(throwable) =>
+            val exception = throwable
+            println(s"[reTryFunction] Exception happened when calling function (continuing on anyway) - exception was: $exception")
         }
-        println(s"waiting for $restPeriod millis before trying again")
+
+        println(s"[reTryFunction] waiting for $restPeriod millis before trying again")
         Thread.sleep(restPeriod)
       })
     }

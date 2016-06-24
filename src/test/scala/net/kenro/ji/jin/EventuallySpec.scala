@@ -44,16 +44,23 @@ class EventuallySpec extends FreeSpec with Matchers {
   "Eventually" - {
 
     "reTryFunction should retry" in {
-      val stub = TestResponse[Int,Boolean]()
-      stub.setResponses(List(1,2,3))
+      val stub = TestResponse[() => Int,Boolean]()
+
+      val unhappy: () => Int = () => { throw APIResponseError("something failed") }
+      val timeout: () => Int = () => { throw new java.net.SocketTimeoutException }
+      val happy1: () => Int = () => { 1 }
+      val happy2: () => Int = () => { 2 }
+      val happy3: () => Int = () => { 3 }
+
+      stub.setResponses(List(unhappy, timeout, happy1, happy2, happy3))
 
       val tryFunc: () => FunctionResult[String] = () => {
-        val outcome = stub.respond() > 2
+        val outcome = stub.respond()() > 2
         stub.recordResult(outcome)
         if (outcome) FunctionResult[String](outcome, "cool") else FunctionResult[String](outcome, "yikes")
       }
 
-      val result: FunctionResult[String] = Eventually().reTryFunction(tryFunc)
+      val result: FunctionResult[String] = Eventually().reTryFunction(tryFunc, 5)
       result.wasSatisfied should be(true)
       result.payLoad should be("cool")
       stub.getResult should be(List(false,false,true))
