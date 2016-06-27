@@ -419,6 +419,54 @@ class SessionSpec extends FreeSpec with Matchers {
 
     }
 
+    "Window sizing and position" - {
+
+      "getWindowSize should find window size" in {
+        val (session, testDriver) = SessionHelper()
+
+        val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withGetResponseAction(PhantomResponses.getWindowSize, () => session.getWindowSize("current"))
+        testDriver.getRequestUrl should be("/session/test-session-id/window/current/size")
+        element.value should be(WindowSize(807, 932))
+      }
+
+      "getWindowPosition should find a window position" in {
+        val (session, testDriver) = SessionHelper()
+
+       val element = testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withGetResponseAction(PhantomResponses.getWindowPosition, () => session.getWindowPosition("current"))
+        testDriver.getRequestUrl should be("/session/test-session-id/window/current/position")
+        element.value should be(WindowPosition(22, 45))
+      }
+
+      "resizeWindow should resize window" in {
+        val (session, testDriver) = SessionHelper()
+
+       testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponseAction(PhantomResponses.anyResponse, () => session.resizeWindow("current", 1000, 1000))
+        testDriver.getPostRequest should be("""{"width":1000,"height":1000}""")
+        testDriver.getRequestUrl should be("/session/test-session-id/window/current/size")
+      }
+
+      "moveWindow should move window" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponseAction(PhantomResponses.anyResponse, () => session.moveWindow("current", 45, 45))
+        testDriver.getPostRequest should be("""{"x":45,"y":45}""")
+        testDriver.getRequestUrl should be("/session/test-session-id/window/current/position")
+      }
+
+      "maximizeWindow should maximize window" in {
+        val (session, testDriver) = SessionHelper()
+
+        testDriver.withPostResponse(PhantomResponses.sessionResponse, () => session.create())
+          .withPostResponseAction(PhantomResponses.anyResponse, () => session.maximizeWindow("current"))
+        testDriver.getRequestUrl should be("/session/test-session-id/window/current/maximize")
+      }
+
+    }
+
   }
 
   def AssertFindElementBy(expectedRequest: String, locator: By) = {

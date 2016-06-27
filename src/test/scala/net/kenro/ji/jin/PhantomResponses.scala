@@ -30,4 +30,8 @@ object PhantomResponses {
 
   val executeScriptResponse = """{"sessionId":"184375b0-fe93-11e5-88a9-11420d9826e2","status":0,"value":"some-result"}"""
 
+  val getWindowSize = """{"sessionId":"d8a7a1157c7fbace9b49ef786b7aaabf","status":0,"value":{"height":932,"width":807}}"""
+
+  val getWindowPosition = """{"sessionId":"6c2e8a555920c919d60c0a48ff7e38f1","status":0,"value":{"x":22,"y":45}}"""
+
 }

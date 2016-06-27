@@ -347,6 +347,37 @@ object ExecuteScriptResponse {
   implicit def Decoder = jdecode3L(ExecuteScriptResponse.apply)("sessionId", "status", "value")
 }
 
+case class ResizeWindowRequest(width: Int, height: Int)
+object ResizeWindowRequest {
+  implicit def Encoder = jencode2L((o: ResizeWindowRequest) => (o.width, o.height))("width","height")
+}
+
+case class WindowSize(width: Int, height: Int)
+object WindowSize {
+  implicit def Casecodec = casecodec2(WindowSize.apply, WindowSize.unapply)("width", "height")
+}
+
+
+case class WindowPosition(x: Int, y: Int)
+object WindowPosition {
+  implicit def Casecodec = casecodec2(WindowPosition.apply, WindowPosition.unapply)("x", "y")
+}
+
+case class WindowSizeResponse(sessionId: String, status: Int, value: WindowSize)
+object WindowSizeResponse {
+  implicit def Decoder = jdecode3L(WindowSizeResponse.apply)("sessionId", "status", "value")
+}
+
+case class WindowPositionRequest(x: Int, y: Int)
+object WindowPositionRequest {
+  implicit def Encoder = jencode2L((o: WindowPositionRequest) => (o.x, o.y))("x","y")
+}
+
+case class WindowPositionResponse(sessionId: String, status: Int, value: WindowPosition)
+object WindowPositionResponse {
+  implicit def Encoder = jdecode3L(WindowPositionResponse.apply)("sessionId", "status", "value")
+}
+
 object TimeoutType extends Enumeration {
   val SCRIPT = Value("script")
   val IMPLICIT = Value("implicit")

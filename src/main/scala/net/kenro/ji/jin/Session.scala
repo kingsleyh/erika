@@ -7,6 +7,7 @@ import argonaut.Argonaut._
 import argonaut.Json
 import Driver.handleRequest
 import ResponseUtils._
+import io.shaka.http.Response
 import sun.misc.BASE64Decoder
 
 import scala.sys.process.Process
@@ -108,6 +109,39 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
   def getWindowHandle: WindowHandle = {
     WindowHandle(handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/window_handle")).decode[WindowHandleResponse].value)
   }
+
+  def resizeWindow(windowHandleId: String, width: Int, height: Int): Session = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/window/$windowHandleId/size", ResizeWindowRequest(width, height).asJson))
+    this
+  }
+
+  def resizeCurrentWindow(width: Int, height: Int): Session = resizeWindow("current", width, height)
+
+  def getWindowSize(windowHandleId: String): WindowSizeResponse = {
+    handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/window/$windowHandleId/size")).decode[WindowSizeResponse]
+  }
+
+  def getCurrentWindowSize: WindowSizeResponse = getWindowSize("current")
+
+  def moveWindow(windowHandleId: String, x: Int, y: Int): Session = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/window/$windowHandleId/position", WindowPositionRequest(x, y).asJson))
+    this
+  }
+
+  def moveCurrentWindow(x: Int, y: Int): Session = moveWindow("current", x, y)
+
+  def getWindowPosition(windowHandleId: String): WindowPositionResponse = {
+    handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/window/$windowHandleId/position")).decode[WindowPositionResponse]
+  }
+
+  def getCurrentWindowPosition: WindowPositionResponse = getWindowPosition("current")
+
+  def maximizeWindow(windowHandleId: String): Session = {
+    handleRequest(sessionUrl, driver.doPost(s"$sessionUrl/window/$windowHandleId/maximize", Json()))
+    this
+  }
+
+  def maximizeCurrentWindow(): Session = maximizeWindow("current")
 
   def getUrl: Option[String] = handleRequest(sessionUrl, driver.doGet(s"$sessionUrl/url")).decode[StringResponse].value
 
@@ -411,5 +445,6 @@ object BrowserStackSession {
   }
 
 }
+
 
 
