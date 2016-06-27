@@ -11,6 +11,7 @@ import io.shaka.http.Response
 import sun.misc.BASE64Decoder
 
 import scala.sys.process.Process
+import scala.util.Random
 
 class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabilities(),
               requiredCapabilities: Capabilities = Capabilities()) {
@@ -236,30 +237,14 @@ class Session(driver: BaseDriver, desiredCapabilities: Capabilities = Capabiliti
 
 
 object Port {
-  def freePort = {
+   def freePort = {
     withPort(0)
   }
 
-  def withPort(port: Int) = {
+  private def withPort(port: Int) = {
     val p = new java.net.ServerSocket(port)
     p.close()
     p.getLocalPort
-  }
-
-  import util.control.Breaks._
-  def freePort4: Int = {
-    var p = 1025
-    breakable {
-      (1025 to 9999).foreach(port => {
-        try{
-          p = withPort(port)
-          break
-        } catch {
-          case ioe: IOException =>
-        }
-      })
-    }
-    p
   }
 
 }
@@ -309,7 +294,7 @@ object SeleniumRemoteSession {
             requiredCapabilities: Capabilities = Capabilities(browserName = "chrome", proxy = Some(Proxy())),
             pathToChromeDriver: String = "/usr/local/bin/chromedriver",
             host: String = "127.0.0.1",
-            port: Int = Port.freePort4,
+            port: Int = Port.freePort,
             transport: String = "http://",
             serverSuffix: String = "/wd/hub"
            )(block: (Session) => Unit) = {
@@ -348,7 +333,7 @@ object ChromeSession {
             pathToChromeDriver: String = "/usr/local/bin/chromedriver",
             chromeOptions: ChromeOptions = ChromeOptions(),
             host: String = "127.0.0.1",
-            port: Int = Port.freePort4,
+            port: Int = Port.freePort,
             debug: Boolean = false
            )(block: (Session) => Unit) = {
 
@@ -387,7 +372,7 @@ object FirefoxSession {
             pathToSeleniumServerStandalone: String = "/usr/local/bin/",
             pathToFirefoxDriver: String = "/usr/local/bin/wires",
             host: String = "127.0.0.1",
-            port: Int = Port.freePort4,
+            port: Int = Port.freePort,
             transport: String = "http://",
             serverSuffix: String = "/wd/hub",
             pathToJava: String = "java"
@@ -445,6 +430,5 @@ object BrowserStackSession {
   }
 
 }
-
 
 
