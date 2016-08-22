@@ -76,7 +76,9 @@ class Eventually(val millis: Int = 5000) {
         } catch {
           case NonFatal(throwable) =>
             val exception = throwable
-            println(s"[reTryFunction] Exception happened when calling function (continuing on anyway) - exception was: $exception")
+            val message = s"[reTryFunction] Exception happened when calling function - exception was: $exception"
+            println(message)
+            conclusion = FunctionResult[T](wasSatisfied = false, message.asInstanceOf[T])
         }
 
         println(s"[reTryFunction] waiting for $restPeriod millis before trying again")

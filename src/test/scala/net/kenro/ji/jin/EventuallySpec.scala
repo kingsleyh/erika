@@ -66,6 +66,16 @@ class EventuallySpec extends FreeSpec with Matchers {
       stub.getResult should be(List(false,false,true))
     }
 
+    "reTryFunction should return FunctionResult set to false if exception is thrown in runnable" in {
+      val tryFunc: () => FunctionResult[String] = () => {
+        throw APIResponseError("runnable threw exception")
+      }
+
+      val result: FunctionResult[String] = Eventually().reTryFunction(tryFunc, 1)
+      result.wasSatisfied should be(false)
+      result.payLoad should be("[reTryFunction] Exception happened when calling function - exception was: net.kenro.ji.jin.APIResponseError: runnable threw exception")
+    }
+
     "reTryHttp should retry" in {
       val stub = TestResponse[() => Response,String]()
 
