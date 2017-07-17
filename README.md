@@ -23,7 +23,7 @@ status at the top of this page.
 
      resolvers += "Kingsley Hendrickse's repo" at "http://dl.bintray.com/kingsleyh/repo/"
 
-     libraryDependencies += "erika" %% "erika_2.11" % "<latest version>"
+     libraryDependencies += "net.kenro-ji-jin" % "erika_2.11" % "<latest version>"
      
 ### Getting Started
      
